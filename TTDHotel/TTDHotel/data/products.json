@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Khách sạn The Odys Boutique",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_353338/c2218c38816c64f14f10aded265aa4fe.jpg",
+    "category_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Khách sạn The Odys Boutique",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_353338/c2218c38816c64f14f10aded265aa4fe.jpg",
+    "category_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Khách sạn The OU Boutique",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_353338/c2218c38816c64f14f10aded265aa4fe.jpg",
+    "category_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Khách sạn The Odys Boutique",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_353338/c2218c38816c64f14f10aded265aa4fe.jpg",
+    "category_id": 1
+  },
+  {
+    "id": 5,
+    "name": "Khách sạn The Odys Boutique",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_353338/c2218c38816c64f14f10aded265aa4fe.jpg",
+    "category_id": 1
+  },
+  {
+    "id": 6,
+    "name": "Khách sạn Lucky Star",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain",
+    "category_id": 2
+  },
+  {
+    "id": 7,
+    "name": "Khách sạn Lucky Star",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain",
+    "category_id": 2
+  },
+  {
+    "id": 8,
+    "name": "Khách sạn Lucky Star",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain",
+    "category_id": 2
+  },
+  {
+    "id": 9,
+    "name": "Khách sạn Lucky Star",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain",
+    "category_id": 2
+  },
+  {
+    "id": 10,
+    "name": "Khách sạn Queen An",
+    "address": "65-67-69 Nguyễn Thái Bình, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam",
+    "price": 1500000,
+    "image": "https://th.bing.com/th/id/R.10079e8592364b6da26c66853f0b9523?rik=%2byYtyKDcAHYT7Q&riu=http%3a%2f%2fdatphongresort.com%2fwp-content%2fuploads%2f2021%2f05%2f4.2-1.jpg&ehk=mYlNbGNDzkz2jrBbyY5d%2bCvyuX9GF%2b%2b51hL3K24Swx4%3d&risl=&pid=ImgRaw&r=0",
+    "category_id": 3
+  }
+]
