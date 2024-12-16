@@ -18,12 +18,16 @@ def details(id):
     return render_template('product-details.html', product=product)
 
 
+@app.route('/login')
+def login_my_user():
+    return render_template('login.html')
+
+
 @app.route('/')
 @app.route('/welcome')
 def home():
     categories = dao.load_categories()
     return render_template('welcome.html', categories=categories)
-
 
 
 @app.context_processor
