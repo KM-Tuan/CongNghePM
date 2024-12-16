@@ -20,3 +20,14 @@ footer a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
+
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    margin-top: auto;
+    font-size: 0.9rem;
+}
