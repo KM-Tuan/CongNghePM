@@ -12,11 +12,20 @@
     <title>{% block title %}HOTEL MANAGEMENT{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css.css') }}">
     <style>
-        .content {
-            padding-top: 80px;
+        html, body {
+            height: 100%;
+            margin: 0;
         }
-        .footer {
-            margin-top: 10px;
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .content {
+            padding-top: 62px;
+            flex: 1;
         }
     </style>
 </head>
@@ -28,8 +37,7 @@
 
 <div class="content">
     <div class="container">
-        {% block content required%}
-
+        {% block content required %}
         {% endblock %}
     </div>
 </div>
