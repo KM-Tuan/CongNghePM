@@ -11,6 +11,11 @@
             crossorigin="anonymous"></script>
     <title>HOTEL MANAGEMENT</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css.css') }}">
+    <style>
+        .content {
+            padding-top: 80px;
+        }
+    </style>
 </head>
 <body>
 
@@ -18,9 +23,10 @@
 {% include 'layout/header.html' %}
 {% endblock %}
 
-{% block content required%}
-
-{% endblock %}
+<div class ="content">
+    {% block content required%}
+    {% endblock %}
+</div>
 
 {% block footer %}
 {% include 'layout/footer.html' %}

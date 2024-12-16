@@ -5,7 +5,8 @@ import dao
 
 app = Flask(__name__)
 
-@app.route('/')
+
+@app.route('/home')
 def index():
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
@@ -16,13 +17,15 @@ def index():
 
 @app.route('/products/<int:id>')
 def details(id):
-
     return render_template('product-details.html')
 
-@app.route('/home')
+
+@app.route('/')
+@app.route('/welcome')
 def home():
     categories = dao.load_categories()
-    return render_template('home.html', categories=categories)
+    return render_template('welcome.html', categories=categories)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
