@@ -7,24 +7,26 @@ from TTDHotel.TTDHotel.dao import load_products
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/home')
 def index():
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
+    categories = dao.load_categories()
     products = dao.load_products(q=q, cate_id=cate_id)
-    return render_template('index.html', products=products)
+    return render_template('index.html', categories=categories, products=products)
 
 
 @app.route('/products/<int:id>')
 def details(id):
-    product = dao.load_product_by_id(id)
-    return render_template('product-details.html', product=product)
+    return render_template('product-details.html')
 
 
-@app.route('/home')
+@app.route('/')
+@app.route('/welcome')
 def home():
     categories = dao.load_categories()
-    return render_template('home.html', categories=categories)
+    return render_template('welcome.html', categories=categories)
+
 
 
 @app.context_processor
@@ -35,5 +37,4 @@ def common_attributes():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        app.run(debug=True)
+    app.run(debug=True)
