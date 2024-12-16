@@ -1,12 +1,7 @@
-from itertools import product
-
-from flask import Flask, render_template, request, url_for
-from unicodedata import category
+from flask import render_template, request
 
 import dao
-from TTDHotel.TTDHotel.dao import load_products
-
-app = Flask(__name__)
+from TTDHotel.TTDHotel import app
 
 
 @app.route('/home')
