@@ -31,3 +31,14 @@ footer a:hover {
     margin-top: auto;
     font-size: 0.9rem;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.content {
+    padding-top: 62px;
+    flex: 1;
+}

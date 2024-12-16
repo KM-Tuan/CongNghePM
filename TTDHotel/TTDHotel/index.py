@@ -25,7 +25,6 @@ def home():
     return render_template('welcome.html', categories=categories)
 
 
-
 @app.context_processor
 def common_attributes():
     return {
