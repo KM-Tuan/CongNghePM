@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, url_for
 from unicodedata import category
 
 import dao
-from TTDHotel.TTDHotel.dao import load_products
+from TTDHotel.dao import load_products
 
 app = Flask(__name__)
 
