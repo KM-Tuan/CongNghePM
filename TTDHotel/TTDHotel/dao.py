@@ -52,3 +52,24 @@ def load_product_by_category_id(id):
         query = query.filter(Product.category_id.__eq__(id))
 
     return query.all()
+
+
+def get_or_create_user(user_info):
+    # Kiểm tra xem người dùng đã tồn tại hay chưa
+    gg_id = (int) ((int)(user_info['id'])/10000000000000)
+    user = User.query.filter_by(id=gg_id).first()
+
+    if not user:
+        # Nếu người dùng chưa tồn tại, tạo mới
+        user = User(
+            id=gg_id,  # Sử dụng id từ Google
+            name=user_info['name'],
+            username=user_info['email'],  # Sử dụng email làm username
+            password=str(gg_id),  # Chuyển đổi id thành chuỗi cho password (nên mã hóa)
+            avatar=user_info['picture'],
+            active=True
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    return user
