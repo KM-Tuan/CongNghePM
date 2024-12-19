@@ -45,3 +45,10 @@ def load_product_by_id(id):
         for p in products:
             if p["id"] == id:
                 return p
+
+def load_product_by_category_id(id):
+    query = Product.query
+    if id:
+        query = query.filter(Product.category_id.__eq__(id))
+
+    return query.all()

@@ -17,6 +17,13 @@ def details(id):
     product = dao.load_product_by_id(id)
     return render_template('product-details.html', product=product)
 
+@app.route('/')
+def categories():
+    category_id = request.args.get('category_id')
+    products = dao.load_product_by_category_id(category_id)
+    return render_template('index.html', products=products)
+
+
 
 @app.route('/login', methods=['get', 'post'])
 def login_my_user():
