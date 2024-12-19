@@ -119,7 +119,11 @@
                 </li>
                 {% endfor %}
                 <li class="nav-item">
-                    <a class="nav-link text-info" href="/login">&#128512;Đăng nhập</a>
+                    {% if logged_in %}
+                    <a class="nav-link text-info" href="{{ url_for('logout') }}">&#128512;Đăng xuất</a>
+                    {% else %}
+                    <a class="nav-link text-info" href="{{ url_for('login_my_user') }}">&#128512;Đăng nhập</a>
+                    {% endif %}
                 </li>
             </ul>
 
