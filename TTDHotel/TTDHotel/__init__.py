@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote
 
 app = Flask(__name__)
-app.secret_key="234@#$%^"
+app.secret_key = 'secret_key'
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/hoteldb?charset=utf8mb4" % quote('Admin@123')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config['PAGE_SIZE'] = 8

@@ -14,7 +14,11 @@
         <h1 class="product-title text-info">{{product.name}}</h1>
         <h3 class="product-price text-danger">{{product.price}}đ</h3>
         <p class="product-description text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper...</p>
+        {% if logged_in %}
         <a href="#" class="btn btn-lg btn-primary mt-4">Đặt phòng ngay</a>
+        {% else %}
+        <a href="/login" class="btn btn-lg btn-primary mt-4">Đăng nhập để đặt phòng</a>
+        {% endif %}
     </div>
 </div>
 
