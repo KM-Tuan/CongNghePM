@@ -56,7 +56,7 @@ def load_product_by_category_id(id):
 
 def get_or_create_user(user_info):
     # Kiểm tra xem người dùng đã tồn tại hay chưa
-    gg_id = (int) ((int)(user_info['id'])/10000000000000)
+    gg_id = f"{int(user_info['id']):06}"[:6]
     user = User.query.filter_by(id=gg_id).first()
 
     if not user:
