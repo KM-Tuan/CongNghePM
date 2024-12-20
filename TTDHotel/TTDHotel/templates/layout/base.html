@@ -19,17 +19,17 @@
         }
     </style>
 </head>
-<body>
+<!--<body>-->
 
 {% block header%}
 {% include 'layout/header.html' %}
 {% endblock %}
 
 <div class="content">
-<!--    <div class="container">-->
-        {% block content required %}
-        {% endblock %}
-<!--    </div>-->
+    <!--    <div class="container">-->
+    {% block content required %}
+    {% endblock %}
+    <!--    </div>-->
 </div>
 
 <div class="footer">
