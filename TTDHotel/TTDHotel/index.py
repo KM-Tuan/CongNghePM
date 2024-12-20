@@ -1,7 +1,10 @@
 from authlib.integrations.flask_client import OAuth
-from flask import render_template, request, redirect,url_for, session
+from flask import render_template, request, redirect,url_for, session, flash
 from dotenv import load_dotenv
 import os
+
+from pyexpat.errors import messages
+
 import dao
 from TTDHotel.TTDHotel import app
 
@@ -12,7 +15,8 @@ def index():
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
     products = dao.load_products(q=q, cate_id=cate_id)
-    session['next'] = request.url
+    if not logged_in:
+        session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in)
 
 
@@ -30,6 +34,8 @@ def categories():
     logged_in = session.get('logged_in',False)
     category_id = request.args.get('category_id')
     products = dao.load_product_by_category_id(category_id)
+    if not logged_in:
+        session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in)
 
 
@@ -50,14 +56,18 @@ def login_my_user():
 @app.route('/logout')
 def logout():
     session.pop('logged_in',None)
+    flash('Cút', 'success')
     return redirect(request.referrer)
 
 
 @app.route('/')
 @app.route('/welcome')
 def home():
+    logged_in = session.get('logged_in',False)
     categories = dao.load_categories()
-    return render_template('welcome.html', categories=categories)
+    if not logged_in:
+        session['next'] = request.url
+    return render_template('welcome.html', categories=categories, logged_in=logged_in)
 
 
 @app.context_processor
@@ -108,6 +118,7 @@ def authorize():
     # and set ur own data in the session not the profile from Google
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    session['logged_in'] = True
     return redirect('/')
 
 
