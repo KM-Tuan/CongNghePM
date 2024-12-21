@@ -1,10 +1,6 @@
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect,url_for, session, flash
-from dotenv import load_dotenv
 import os
-
-from pyexpat.errors import messages
-
 import dao
 from TTDHotel.TTDHotel import app
 
