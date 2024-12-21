@@ -2,8 +2,22 @@
 
 {% block content %}
 <div class="login-page d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(120deg, #1d2671, #c33764); overflow: hidden;">
-    <!-- Card đăng nhập -->
     <div class="login-card glass-effect p-5 rounded-4 text-center" style="width: 100%; max-width: 420px;">
+        <!-- Thông báo lỗi -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="mb-4">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Các thành phần khác -->
         <!-- Logo -->
         <div class="mb-5">
             <div class="logo-container mx-auto mb-4 position-relative" style="width: 120px; height: 120px;">
@@ -55,7 +69,6 @@
         </div>
     </div>
 </div>
-
 
 <style>
     /* Logo Container */
