@@ -46,13 +46,14 @@ def login_my_user():
             session['logged_in'] = True
             next_page = session.get('next')
             return redirect(next_page)
+        else:
+            flash('Invalid username or password. Please try again.', 'danger')
 
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in',None)
-    flash('Cút', 'success')
     return redirect(request.referrer)
 
 

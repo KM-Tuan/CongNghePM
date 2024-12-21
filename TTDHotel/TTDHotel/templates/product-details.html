@@ -15,10 +15,47 @@
         <h3 class="product-price text-danger">{{product.price}}đ</h3>
         <p class="product-description text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ullamcorper...</p>
         {% if logged_in %}
-        <a href="#" class="btn btn-lg btn-primary mt-4">Đặt phòng ngay</a>
+        <button class="btn btn-lg btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng ngay</button>
         {% else %}
         <a href="/login" class="btn btn-lg btn-primary mt-4">Đăng nhập để đặt phòng</a>
         {% endif %}
+    </div>
+</div>
+
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="modal-header bg-dark text-white px-5 py-4">
+                <h5 class="modal-title fw-bold" id="bookingModalLabel">Đặt phòng ngay</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <form method="post" action="/booking">
+                <div class="modal-body bg-light px-5 py-4">
+                    <!-- Full Name -->
+                    <div class="form-floating mb-4">
+                        <input type="text" class="form-control rounded-pill shadow-sm" id="fullname" name="fullname" placeholder="Họ và Tên" required>
+                        <label for="fullname"><i class="bi bi-person-fill me-2"></i>Họ và Tên</label>
+                    </div>
+                    <!-- Phone -->
+                    <div class="form-floating mb-4">
+                        <input type="tel" class="form-control rounded-pill shadow-sm" id="phone" name="phone" placeholder="Số Điện Thoại" required>
+                        <label for="phone"><i class="bi bi-phone-fill me-2"></i>Số Điện Thoại</label>
+                    </div>
+                    <!-- Note -->
+                    <div class="form-floating mb-4">
+                        <textarea class="form-control rounded-3 shadow-sm" id="note" name="note" placeholder="Ghi chú (không bắt buộc)" rows="3"></textarea>
+                        <label for="note"><i class="bi bi-chat-left-dots-fill me-2"></i>Ghi chú (không bắt buộc)</label>
+                    </div>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer bg-light px-5 py-3">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Xác nhận</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -137,6 +174,79 @@
 
         .product-image-container {
             box-shadow: none; /* Giảm độ bóng trên thiết bị di động */
+        }
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        color: #fff;
+        border: none;
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .modal-header .modal-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Form Fields */
+    .form-floating .form-control {
+        padding: 1.25rem 1rem;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-floating .form-control:focus {
+        outline: none;
+        box-shadow: 0 4px 15px rgba(29, 38, 113, 0.3);
+        border: none;
+    }
+
+    .form-floating label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(to right, #007bff, #0056b3);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(to right, #0056b3, #007bff);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 768px) {
+        .modal-header,
+        .modal-footer {
+            padding: 1rem;
+        }
+
+        .form-floating .form-control {
+            padding: 1rem;
         }
     }
 </style>
