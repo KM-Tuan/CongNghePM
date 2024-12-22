@@ -1,10 +1,6 @@
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
-from dotenv import load_dotenv
 import os
-
-from pyexpat.errors import messages
-
 import dao
 from TTDHotel.TTDHotel import app
 
@@ -15,7 +11,7 @@ def index():
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
     page = request.args.get("page")
-    products = dao.load_products(q=q, cate_id=cate_id, page=int(page))
+    products = dao.load_products(q=q, cate_id=cate_id, page=page)
     if not logged_in:
         session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in)

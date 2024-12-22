@@ -30,7 +30,7 @@ def load_products(q=None, cate_id=None, page=None):
         query = query.filter(Category.id.__eq__(cate_id))
     if page:
         page_size = app.config['PAGE_SIZE']
-        start = (page - 1) * page_size
+        start = (int(page) - 1) * page_size
         query = query.slice(start, start + page_size)
 
     return query.all()
