@@ -3,7 +3,17 @@ from flask_admin.contrib.sqla import ModelView
 from models import Category, Product
 from TTDHotel.TTDHotel import app, db
 
-admin = Admin(app, name="TTDHotel", template_mode="boostrap4")
+admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
 
-admin.add_view(ModelView(Category, db.session))
-admin.add_view(ModelView(Product, db.session))
+
+class MyCategoryView(ModelView):
+    column_list = ['name', 'products',]
+    column_searchable_list = ['id', 'name']
+
+
+class MyProductView(ModelView):
+    column_searchable_list = ['id', 'name']
+    column_filters = ['id', 'name']
+
+admin.add_view(MyCategoryView(Category, db.session))
+admin.add_view(MyProductView(Product, db.session))
