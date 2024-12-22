@@ -1,3 +1,5 @@
+import math
+
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect,url_for, session, flash
 from dotenv import load_dotenv
@@ -14,10 +16,13 @@ def index():
     logged_in = session.get('logged_in',False)
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
-    products = dao.load_products(q=q, cate_id=cate_id)
+    page = int(request.args.get("page"))
+    products = dao.load_products(q=q, cate_id=cate_id, page=page)
+    total = dao.count_products()
+    pages = math.ceil(total / app.config['PAGE_SIZE'])
     if not logged_in:
         session['next'] = request.url
-    return render_template('index.html', products=products, logged_in=logged_in)
+    return render_template('index.html', products=products, logged_in=logged_in, pages=pages)
 
 
 @app.route('/products/<int:id>')
