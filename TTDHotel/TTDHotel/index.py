@@ -30,7 +30,7 @@ def details(id):
     return render_template('product-details.html', product=product, logged_in=logged_in)
 
 
-@app.route('/')
+@app.route('/categories')
 def categories():
     logged_in = session.get('logged_in', False)
     category_id = request.args.get('category_id')
@@ -63,7 +63,6 @@ def logout():
 
 
 @app.route('/')
-@app.route('/welcome')
 def home():
     logged_in = session.get('logged_in', False)
     categories = dao.load_categories()
