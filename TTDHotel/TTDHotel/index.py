@@ -1,3 +1,5 @@
+import math
+
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
 import os
@@ -15,7 +17,7 @@ def index():
     total = dao.count_products()
     if not logged_in:
         session['next'] = request.url
-    return render_template('index.html', products=products, logged_in=logged_in, pages=math.ceil(total/app.config['PAGE_SIZE'])
+    return render_template('index.html', products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
 
 
 @app.route('/products/<int:id>')
