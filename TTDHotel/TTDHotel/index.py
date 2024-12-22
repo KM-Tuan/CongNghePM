@@ -128,7 +128,9 @@ def authorize():
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
-    return redirect('/')
+    next_page = session.get('next')
+    return redirect(next_page)
+
 
 
 @app.route('/logout_google')
@@ -173,7 +175,10 @@ def authorize_facebook():
     # Lưu thông tin vào session
     session['profile'] = user_info
     session['logged_in'] = True
-    return redirect('/')
+
+    next_page = session.get('next')
+    return redirect(next_page)
+
 
 
 @app.route('/logout_facebook')
