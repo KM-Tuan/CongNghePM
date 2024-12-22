@@ -4,17 +4,41 @@
 
 <section class="container py-5">
     <div class="row">
-        {% if pages>1 %}
-        <ul class="pagination">
-            {% for i in range(1,pages+1) %}
-            <li class="page-item"><a class="page-link" href="/home?page={{i}}">{{i}}</a></li>
-            {% endfor %}
-        </ul>
+        {% if pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!-- Nút Previous -->
+                <li class="page-item {% if request.args.get('page', 1)|int == 1 %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="/home?page={{ request.args.get('page', 1)|int - 1 if request.args.get('page', 1)|int > 1 else 1 }}">
+                        <i class="bi bi-chevron-left"></i> Trước
+                    </a>
+                </li>
+
+                <!-- Nút số trang -->
+                {% for i in range(1, pages + 1) %}
+                <li class="page-item {% if i == request.args.get('page', 1)|int %}active{% endif %}">
+                    <a class="page-link" href="/home?page={{ i }}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endfor %}
+
+                <!-- Nút Next -->
+                <li class="page-item {% if request.args.get('page', 1)|int == pages %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="/home?page={{ request.args.get('page', 1)|int + 1 if request.args.get('page', 1)|int < pages else pages }}">
+                        Tiếp <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
         {% endif %}
         {% for p in products %}
         <div class="col-md-3 col-12" style="padding:0.7rem">
             <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
-                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image" style="height: 250px; object-fit: cover;"></a>
+                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image"
+                                                     style="height: 250px; object-fit: cover;"></a>
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
                     <p class="card-text text-muted">{{ p.address }}</p>
@@ -135,7 +159,41 @@
         padding: 8px 12px;
     }
 }
+.pagination {
+        margin-top: 20px;
+        padding: 0;
+    }
 
+    .pagination .page-link {
+        color: #007bff;
+        background: linear-gradient(90deg, #e3f2fd, #e0f7fa);
+        border: none;
+        border-radius: 5px;
+        margin: 0 5px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .pagination .page-link:hover {
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(90deg, #42a5f5, #1e88e5);
+        color: white;
+        font-weight: bold;
+        border: none;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .pagination .page-link i {
+        vertical-align: middle;
+        margin-right: 3px;
 </style>
 
 {% endblock %}
