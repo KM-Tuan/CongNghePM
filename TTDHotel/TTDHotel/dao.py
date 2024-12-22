@@ -37,6 +37,10 @@ def load_products(q=None, cate_id=None, page=None):
 def count_products():
     return Product.query.count()
 
+def count_products():
+    return Product.query.count()
+
+
 def auth_user(username, password):
 
     password = str(hashlib.md5(password.encode('utf-8')).hexdigest())

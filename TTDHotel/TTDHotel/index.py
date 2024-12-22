@@ -4,7 +4,7 @@ from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
-from TTDHotel.TTDHotel import app
+from TTDHotel.TTDHotel import app, admin
 
 
 @app.route('/home')
