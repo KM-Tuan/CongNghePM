@@ -2,6 +2,7 @@ import hashlib
 import json
 from itertools import product
 
+from dns.e164 import query
 from sqlalchemy.dialects.postgresql.pg_catalog import quote_ident
 
 from models import *
@@ -27,7 +28,9 @@ def load_products(q=None, cate_id=None, page=None):
     if q:
         query = query.filter(Product.name.contains(q))
     if cate_id:
-        query = query.filter(Category.id.__eq__(cate_id))
+        query = query.filter(Product.category_id.__eq__(cate_id))
+        print(f"count: {query.count()}")
+
     if page:
         page_size = app.config['PAGE_SIZE']
         start = (int(page) - 1) * page_size
@@ -37,8 +40,11 @@ def load_products(q=None, cate_id=None, page=None):
 def count_products():
     return Product.query.count()
 
-def count_products():
-    return Product.query.count()
+def count_products(cate_id=None):
+    query=Product.query
+    if cate_id:
+        query=query.filter(Product.category_id==cate_id)
+    return query.count()
 
 
 def auth_user(username, password):
