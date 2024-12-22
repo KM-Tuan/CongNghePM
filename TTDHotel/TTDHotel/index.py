@@ -12,7 +12,7 @@ def index():
     logged_in = session.get('logged_in', False)
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
-    page = request.args.get("page", 1)
+    page = request.args.get("page",1)
     products = dao.load_products(q=q, cate_id=cate_id, page=page)
     total = dao.count_products()
     if not logged_in:
@@ -30,7 +30,7 @@ def details(id):
     return render_template('product-details.html', product=product, logged_in=logged_in)
 
 
-@app.route('/')
+@app.route('/categories')
 def categories():
     logged_in = session.get('logged_in', False)
     category_id = request.args.get('category_id')
@@ -63,7 +63,6 @@ def logout():
 
 
 @app.route('/')
-@app.route('/welcome')
 def home():
     logged_in = session.get('logged_in', False)
     categories = dao.load_categories()
@@ -128,7 +127,8 @@ def authorize():
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
-    return redirect('/')
+    next_page = session.get('next')
+    return redirect(next_page)
 
 
 @app.route('/logout_google')
@@ -173,7 +173,8 @@ def authorize_facebook():
     # Lưu thông tin vào session
     session['profile'] = user_info
     session['logged_in'] = True
-    return redirect('/')
+    next_page = session.get('next')
+    return redirect(next_page)
 
 
 @app.route('/logout_facebook')
