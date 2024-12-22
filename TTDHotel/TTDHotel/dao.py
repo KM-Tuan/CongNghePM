@@ -13,7 +13,7 @@ def load_categories():
     return Category.query.all()
 
 
-def load_products(q=None, cate_id=None):
+def load_products(q=None, cate_id=None, page=None):
     # with open('data/products.json', encoding='utf-8') as f:
     #     products = json.load(f)
     #     if q:
@@ -28,12 +28,15 @@ def load_products(q=None, cate_id=None):
         query = query.filter(Product.name.contains(q))
     if cate_id:
         query = query.filter(Category.id.__eq__(cate_id))
+    if page:
+        page_size = app.config['PAGE_SIZE']
+        start = (page - 1) * page_size
+        query = query.slice(start, start + page_size)
 
     return query.all()
 
 
 def auth_user(username, password):
-
     password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
 
     return User.query.filter(User.username.__eq__(username), User.password.__eq__(password)).first()
@@ -45,6 +48,7 @@ def load_product_by_id(id):
         for p in products:
             if p["id"] == id:
                 return p
+
 
 def load_product_by_category_id(id):
     query = Product.query

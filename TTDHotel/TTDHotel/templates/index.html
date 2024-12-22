@@ -4,10 +4,16 @@
 
 <section class="container py-5">
     <div class="row">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="/?page=1">1</a></li>
+            <li class="page-item"><a class="page-link" href="/?page=2">2</a></li>
+            <li class="page-item"><a class="page-link" href="/?page=3">3</a></li>
+        </ul>
         {% for p in products %}
         <div class="col-md-3 col-12" style="padding:0.7rem">
             <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
-                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image" style="height: 250px; object-fit: cover;"></a>
+                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image"
+                                                     style="height: 250px; object-fit: cover;"></a>
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
                     <p class="card-text text-muted">{{ p.address }}</p>

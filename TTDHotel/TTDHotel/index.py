@@ -1,16 +1,21 @@
 from authlib.integrations.flask_client import OAuth
-from flask import render_template, request, redirect,url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash
+from dotenv import load_dotenv
 import os
+
+from pyexpat.errors import messages
+
 import dao
 from TTDHotel.TTDHotel import app
 
 
 @app.route('/home')
 def index():
-    logged_in = session.get('logged_in',False)
+    logged_in = session.get('logged_in', False)
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
-    products = dao.load_products(q=q, cate_id=cate_id)
+    page = request.args.get("page")
+    products = dao.load_products(q=q, cate_id=cate_id, page=int(page))
     if not logged_in:
         session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in)
@@ -19,21 +24,21 @@ def index():
 @app.route('/products/<int:id>')
 def details(id):
     product = dao.load_product_by_id(id)
-    logged_in = session.get('logged_in',False)
+    logged_in = session.get('logged_in', False)
     if not logged_in:
         session['next'] = request.url
 
     return render_template('product-details.html', product=product, logged_in=logged_in)
 
+
 @app.route('/')
 def categories():
-    logged_in = session.get('logged_in',False)
+    logged_in = session.get('logged_in', False)
     category_id = request.args.get('category_id')
     products = dao.load_product_by_category_id(category_id)
     if not logged_in:
         session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in)
-
 
 
 @app.route('/login', methods=['get', 'post'])
@@ -51,16 +56,17 @@ def login_my_user():
 
     return render_template('login.html')
 
+
 @app.route('/logout')
 def logout():
-    session.pop('logged_in',None)
+    session.pop('logged_in', None)
     return redirect(request.referrer)
 
 
 @app.route('/')
 @app.route('/welcome')
 def home():
-    logged_in = session.get('logged_in',False)
+    logged_in = session.get('logged_in', False)
     categories = dao.load_categories()
     if not logged_in:
         session['next'] = request.url
@@ -72,6 +78,7 @@ def common_attributes():
     return {
         "categories": dao.load_categories()
     }
+
 
 ###################
 
@@ -90,7 +97,8 @@ google = oauth.register(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
+    # This is only needed if using openId to fetch user info
     client_kwargs={'scope': 'email profile'},
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
 )
@@ -142,10 +150,12 @@ facebook = oauth.register(
     client_kwargs={'scope': 'email'}
 )
 
+
 @app.route('/login_facebook')
 def login_facebook():
     redirect_uri = url_for('authorize_facebook', _external=True)
     return facebook.authorize_redirect(redirect_uri)
+
 
 @app.route('/authorize_facebook')
 def authorize_facebook():
@@ -166,11 +176,13 @@ def authorize_facebook():
     session['logged_in'] = True
     return redirect('/')
 
+
 @app.route('/logout_facebook')
 def logout_facebook():
     session.pop('logged_in', None)
     session.pop('profile', None)
     return redirect('/')
+
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)
