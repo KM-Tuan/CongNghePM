@@ -12,9 +12,10 @@ def index():
     cate_id = request.args.get("category_id")
     page = request.args.get("page")
     products = dao.load_products(q=q, cate_id=cate_id, page=page)
+    total = dao.count_products()
     if not logged_in:
         session['next'] = request.url
-    return render_template('index.html', products=products, logged_in=logged_in)
+    return render_template('index.html', products=products, logged_in=logged_in, pages=math.ceil(total/app.config['PAGE_SIZE'])
 
 
 @app.route('/products/<int:id>')
