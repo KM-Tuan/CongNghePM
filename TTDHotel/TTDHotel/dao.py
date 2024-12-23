@@ -29,8 +29,6 @@ def load_products(q=None, cate_id=None, page=None):
         query = query.filter(Product.name.contains(q))
     if cate_id:
         query = query.filter(Product.category_id.__eq__(cate_id))
-        print(f"count: {query.count()}")
-
     if page:
         page_size = app.config['PAGE_SIZE']
         start = (int(page) - 1) * page_size
