@@ -18,53 +18,59 @@
         {% endif %}
         {% endwith %}
 
-        <!-- Các thành phần khác -->
-        <!-- Logo -->
-        <div class="mb-5">
-            <div class="logo-container mx-auto mb-4 position-relative" style="width: 120px; height: 120px;">
-                <img src="/static/images/logo.jpg" alt="Logo" class="img-fluid logo-image">
-                <div class="soft-glow"></div>
-            </div>
-            <h2 class="text-light fw-bold">Welcome Back</h2>
-            <p class="text-light">Access amazing features in no time</p>
-        </div>
-
         <!-- Form -->
-        <form method="post" action="/login">
+        <form method="post" action="/register" enctype="multipart/form-data">
+            <!-- Full Name -->
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control bg-light bg-opacity-25 text-dark shadow-sm rounded-pill"
+                       id="name" placeholder="Nhập họ tên" name="name" required>
+                <label for="name"><i class="bi bi-person-fill me-2"></i>Họ tên</label>
+            </div>
+
             <!-- Username -->
             <div class="form-floating mb-4">
                 <input type="text" class="form-control bg-light bg-opacity-25 text-dark shadow-sm rounded-pill"
-                       id="username" placeholder="Username" name="username" required>
-                <label for="username"><i class="bi bi-person-fill me-2"></i>Username</label>
+                       id="username" placeholder="Tài khoản" name="username" required>
+                <label for="username"><i class="bi bi-person-fill me-2"></i>Tài khoản</label>
             </div>
 
             <!-- Password -->
             <div class="form-floating mb-4">
                 <input type="password" class="form-control bg-light bg-opacity-25 text-dark shadow-sm rounded-pill"
-                       id="password" placeholder="Password" name="password" required>
-                <label for="password"><i class="bi bi-lock-fill me-2"></i>Password</label>
+                       id="password" placeholder="Mật khẩu" name="password" required>
+                <label for="password"><i class="bi bi-lock-fill me-2"></i>Mật khẩu</label>
             </div>
 
-            <!-- Button -->
+            <!-- Confirm Password -->
+            <div class="form-floating mb-4">
+                <input type="password" class="form-control bg-light bg-opacity-25 text-dark shadow-sm rounded-pill"
+                       id="confirm" placeholder="Nhập lại mật khẩu" name="confirm" required>
+                <label for="confirm"><i class="bi bi-lock-fill me-2"></i>Nhập lại mật khẩu</label>
+            </div>
+
+            <!-- Avatar -->
+            <div class="mb-4">
+                <label for="avatar"
+                       class="custom-file-upload d-flex flex-column align-items-center justify-content-center p-3">
+                    <div class="upload-icon mb-2">
+                        <i class="bi bi-camera text-light" style="font-size: 2rem;"></i>
+                    </div>
+                    <p class="text-light mb-0">Nhấp để tải ảnh đại diện</p>
+                    <input type="file" id="avatar" name="avatar" accept="image/*" hidden>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
             <div class="d-grid mb-4">
                 <button class="btn btn-gradient btn-lg rounded-pill" type="submit">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    <i class="bi bi-person-plus me-2" ></i>Đăng ký
                 </button>
             </div>
 
-            <div class="d-grid mb-4">
-                <a href="/register" class="btn btn-outline-light btn-lg rounded-pill">
-                    <i class="bi bi-person-plus me-2"></i>Register
-                </a>
-            </div>
-
-            <!-- Links -->
-            <div class="d-flex justify-content-between">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rememberMe">
-                    <label class="form-check-label text-light" for="rememberMe">Remember Me</label>
-                </div>
-                <a href="/forgot-password" class="text-info text-decoration-none">Forgot Password?</a>
+            <!-- Go to Login -->
+            <div class="text-center mt-3">
+                <p class="text-light">Bạn đã có tài khoản? <a href="/login" class="text-info text-decoration-none">Đăng
+                    nhập</a></p>
             </div>
         </form>
 
@@ -171,6 +177,34 @@
     .btn-outline-light:hover {
         background-color: rgba(255, 255, 255, 0.1);
         color: white;
+    }
+    a.text-info {
+        transition: color 0.3s ease;
+    }
+
+    a.text-info:hover {
+        color: #ff758c;
+    }
+    .custom-file-upload {
+        border: 2px dashed rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .custom-file-upload:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .upload-icon i {
+        transition: transform 0.3s ease;
+    }
+
+    .custom-file-upload:hover .upload-icon i {
+        transform: scale(1.1);
     }
 </style>
 {% endblock %}

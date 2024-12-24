@@ -68,6 +68,9 @@ def logout():
     session.pop('logged_in', None)
     return redirect(request.referrer)
 
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 @app.route('/')
 def home():
