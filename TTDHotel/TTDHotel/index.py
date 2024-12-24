@@ -53,6 +53,7 @@ def login_my_user():
         password = request.form.get('password')
         user = dao.auth_user(username, password)
         if user:
+            session['user_name'] = user.name
             session['logged_in'] = True
             next_page = session.get('next')
             return redirect(next_page)
@@ -61,6 +62,12 @@ def login_my_user():
 
     return render_template('login.html')
 
+
+@app.context_processor
+def get_user():
+    user_name=session.get('user_name')
+    logged_in=session.get('logged_in')
+    return dict(user_name=user_name, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
