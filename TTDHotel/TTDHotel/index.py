@@ -93,10 +93,10 @@ def register():
             avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
 
         # Thêm người dùng vào cơ sở dữ liệu
-        dao.add_user(name=name, username=username, password=password, avatar=filename)
+        dao.add_user(name=name, username=username, password=password, avatar=avatar.filename)
 
         flash('Account created successfully!', 'success')
-        return render_template('login.html')  # Điều hướng đến trang đăng nhập
+        return redirect('/login')  # Điều hướng đến trang đăng nhập
 
     return render_template('register.html')  # Hiển thị form đăng ký
 
