@@ -87,6 +87,10 @@
     </div>
 </div>
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/loadImage.js') }}" defer></script>
+{% endblock %}
+
 <style>
     /* Logo Container */
     .logo-container {
