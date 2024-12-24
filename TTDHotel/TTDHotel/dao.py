@@ -46,9 +46,7 @@ def count_products(cate_id=None):
 
 
 def auth_user(username, password):
-
     password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
-
     return User.query.filter(User.username.__eq__(username), User.password.__eq__(password)).first()
 
 
@@ -75,10 +73,9 @@ def get_or_create_user(user_info):
     if not user:
         # Nếu người dùng chưa tồn tại, tạo mới
         user = User(
-            id=gg_id,  # Sử dụng id từ Google
+            id=gg_id,
             name=user_info['name'],
             username=user_info['email'],  # Sử dụng email làm username
-            password=str(gg_id),  # Chuyển đổi id thành chuỗi cho password (nên mã hóa)
             avatar=user_info['picture'],
             active=True
         )
@@ -86,3 +83,13 @@ def get_or_create_user(user_info):
         db.session.commit()
 
     return user
+
+def add_user(name, username, password, avatar):
+    password=hash(password)
+    new_user = User(name=name, username=username, password=password, avatar=avatar)
+    db.session.add(new_user)
+    db.session.commit()
+
+
+def hash(password):
+    return str(hashlib.md5(password.encode('utf-8')).hexdigest())

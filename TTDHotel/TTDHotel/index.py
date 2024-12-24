@@ -23,7 +23,6 @@ def index():
 
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
-    """Remove a key from the dictionary."""
     return {k: v for k, v in d.items() if k != key}
 
 
@@ -68,9 +67,38 @@ def logout():
     session.pop('logged_in', None)
     return redirect(request.referrer)
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    if request.method == 'POST':  # Phương thức POST
+        name = request.form.get('name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        confirm = request.form.get('confirm')
+        avatar = request.files.get('avatar')  # Lấy tệp ảnh tải lên
+
+        # Kiểm tra xác nhận mật khẩu
+        if password != confirm:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return render_template('register.html')
+
+        # Kiểm tra xem tài khoản đã tồn tại chưa
+        user = dao.auth_user(username,password)  # Hàm kiểm tra người dùng, bạn cần định nghĩa
+        if user:
+            flash('Username already exists. Please try a different username.', 'danger')
+            return render_template('register.html')
+
+        # Lưu hình ảnh vào thư mục 'static/images'
+        if avatar:
+            filename = avatar.filename  # Tạo tên tệp an toàn
+            avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
+
+        # Thêm người dùng vào cơ sở dữ liệu
+        dao.add_user(name=name, username=username, password=password, avatar=filename)
+
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('/login'))  # Điều hướng đến trang đăng nhập
+
+    return render_template('register.html')  # Hiển thị form đăng ký
 
 @app.route('/')
 def home():
@@ -128,7 +156,6 @@ def authorize():
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
     # Here you use the profile/user data that you got and query your database find/register the user
     user = dao.get_or_create_user({
-        'id': user_info['id'],
         'email': user_info.get('email'),
         'name': user_info.get('name'),
         'picture': user_info.get('picture')
@@ -174,7 +201,6 @@ def authorize_facebook():
 
     # Xử lý thông tin người dùng
     user = dao.get_or_create_user({
-        'id': user_info['id'],
         'email': user_info.get('email'),
         'name': user_info.get('name'),
         'picture': user_info.get('picture', {}).get('data', {}).get('url')
