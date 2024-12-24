@@ -96,7 +96,7 @@ def register():
         dao.add_user(name=name, username=username, password=password, avatar=filename)
 
         flash('Account created successfully!', 'success')
-        return redirect(url_for('/login'))  # Điều hướng đến trang đăng nhập
+        return render_template('login.html')  # Điều hướng đến trang đăng nhập
 
     return render_template('register.html')  # Hiển thị form đăng ký
 
