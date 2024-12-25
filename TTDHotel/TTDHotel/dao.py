@@ -35,11 +35,11 @@ def load_products(q=None, cate_id=None, page=None):
         query = query.slice(start, start + page_size)
     return query.all()
 
-def count_products():
-    return Product.query.count()
 
-def count_products(cate_id=None):
+def count_products(q=None,cate_id=None):
     query=Product.query
+    if q:
+        query = query.filter(Product.name.contains(q))
     if cate_id:
         query=query.filter(Product.category_id==cate_id)
     return query.count()
