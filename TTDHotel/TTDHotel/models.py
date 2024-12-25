@@ -10,6 +10,7 @@ from TTDHotel.TTDHotel import app, db
 class User(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
+    phone = Column(String(11), unique=True, nullable=False)
     username = Column(String(50), unique=True, nullable=False)
     password = Column(String(50), nullable=False)
     avatar = Column(String(200), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
@@ -57,7 +58,7 @@ if __name__ == "__main__":
         # db.session.commit()
         #
         # import hashlib
-        # u = User(name="KieuThanhDuc", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
+        # u = User(name="KieuThanhDuc", phone="0987654321", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
         # db.session.add(u)
         # db.session.commit()
         pass

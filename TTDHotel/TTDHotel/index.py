@@ -1,10 +1,11 @@
 import math
+import os
 
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
-import os
+
 import dao
-from TTDHotel.TTDHotel import app, admin
+from TTDHotel.TTDHotel import app
 
 
 @app.route('/home')
@@ -54,6 +55,7 @@ def login_my_user():
         user = dao.auth_user(username, password)
         if user:
             session['user_name'] = user.name
+            session['phone']=user.phone
             session['logged_in'] = True
             next_page = session.get('next')
             return redirect(next_page)
@@ -66,18 +68,35 @@ def login_my_user():
 @app.context_processor
 def get_user():
     user_name=session.get('user_name')
+    phone=session.get('phone')
     logged_in=session.get('logged_in')
-    return dict(user_name=user_name, logged_in=logged_in)
+    return dict(user_name=user_name, phone=phone, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     return redirect(request.referrer)
 
+
+@app.route('/info', methods=['GET', 'POST'])
+def change_info():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+
+        if len(phone) < 10:
+            flash('Số điện thoại không hợp lệ', 'danger')
+
+        if name == "" or phone == "":
+            flash('Không được để trống', 'danger')
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':  # Phương thức POST
         name = request.form.get('name')
+        phone = request.form.get('phone')
         username = request.form.get('username')
         password = request.form.get('password')
         confirm = request.form.get('confirm')
@@ -100,7 +119,7 @@ def register():
             avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
 
         # Thêm người dùng vào cơ sở dữ liệu
-        dao.add_user(name=name, username=username, password=password, avatar=avatar.filename)
+        dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar.filename)
 
         flash('Account created successfully!', 'success')
         return redirect('/login')  # Điều hướng đến trang đăng nhập

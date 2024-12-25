@@ -84,9 +84,9 @@ def get_or_create_user(user_info):
 
     return user
 
-def add_user(name, username, password, avatar):
+def add_user(name, phone, username, password, avatar):
     password=hash(password)
-    new_user = User(name=name, username=username, password=password, avatar=avatar)
+    new_user = User(name=name, phone=phone, username=username, password=password, avatar=avatar)
     db.session.add(new_user)
     db.session.commit()
 
