@@ -32,6 +32,7 @@ class Product(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     address = Column(String(100), nullable=False)
+
     price = Column(Float, default=0)
     image = Column(String(300), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
