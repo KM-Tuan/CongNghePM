@@ -67,15 +67,14 @@ def load_product_by_category_id(id):
 
 def get_or_create_user(user_info):
     # Kiểm tra xem người dùng đã tồn tại hay chưa
-    gg_id = f"{int(user_info['id']):06}"[:6]
-    user = User.query.filter_by(id=gg_id).first()
+    user = User.query.filter_by(username=user_info['email']).first()
 
     if not user:
         # Nếu người dùng chưa tồn tại, tạo mới
         user = User(
-            id=gg_id,
             name=user_info['name'],
             username=user_info['email'],  # Sử dụng email làm username
+            password=hash(user_info['email']),
             avatar=user_info['picture'],
             active=True
         )

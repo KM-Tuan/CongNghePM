@@ -5,7 +5,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
 from TTDHotel.TTDHotel import app, admin
-
+import  cloudinary.uploader
 
 @app.route('/home')
 def index():
@@ -75,6 +75,7 @@ def register():
         password = request.form.get('password')
         confirm = request.form.get('confirm')
         avatar = request.files.get('avatar')  # Lấy tệp ảnh tải lên
+        avatar_path=None
 
         # Kiểm tra xác nhận mật khẩu
         if password != confirm:
@@ -90,10 +91,14 @@ def register():
         # Lưu hình ảnh vào thư mục 'static/images'
         if avatar:
             filename = avatar.filename  # Tạo tên tệp an toàn
-            avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
+            if avatar:
+                res =cloudinary.uploader.upload(avatar)
+                avatar_path = res['secure_url']
+            # avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
 
         # Thêm người dùng vào cơ sở dữ liệu
-        dao.add_user(name=name, username=username, password=password, avatar=avatar.filename)
+
+        dao.add_user(name=name, username=username, password=password, avatar=avatar_path)
 
         flash('Account created successfully!', 'success')
         return redirect('/login')  # Điều hướng đến trang đăng nhập
@@ -119,8 +124,6 @@ def common_attributes():
 ###################
 
 # Truy xuất giá trị môi trường
-google_client_id = os.getenv('GOOGLE_CLIENT_ID')
-google_client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
 
 # oAuth Setup
 oauth = OAuth(app)

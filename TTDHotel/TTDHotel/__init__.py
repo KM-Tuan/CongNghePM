@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote
-
+import  cloudinary
 app = Flask(__name__, template_folder="templates")
 app.secret_key = 'secret_key'
 
@@ -13,3 +13,9 @@ app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 
 
 db = SQLAlchemy(app)
+
+cloudinary.config(
+    cloud_name= 'dqpoa9ukn',
+    api_key= '899116174815345',
+    api_secret= 'vIvSb9Qf-mMqCoopdkgEVgfRDMw',
+)
