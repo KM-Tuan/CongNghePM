@@ -35,11 +35,11 @@ def load_products(q=None, cate_id=None, page=None):
         query = query.slice(start, start + page_size)
     return query.all()
 
-def count_products():
-    return Product.query.count()
 
-def count_products(cate_id=None):
+def count_products(q=None,cate_id=None):
     query=Product.query
+    if q:
+        query = query.filter(Product.name.contains(q))
     if cate_id:
         query=query.filter(Product.category_id==cate_id)
     return query.count()
@@ -67,15 +67,14 @@ def load_product_by_category_id(id):
 
 def get_or_create_user(user_info):
     # Kiểm tra xem người dùng đã tồn tại hay chưa
-    gg_id = f"{int(user_info['id']):06}"[:6]
-    user = User.query.filter_by(id=gg_id).first()
+    user = User.query.filter_by(username=user_info['email']).first()
 
     if not user:
         # Nếu người dùng chưa tồn tại, tạo mới
         user = User(
-            id=gg_id,
             name=user_info['name'],
             username=user_info['email'],  # Sử dụng email làm username
+            password=hash(user_info['email']),
             avatar=user_info['picture'],
             active=True
         )

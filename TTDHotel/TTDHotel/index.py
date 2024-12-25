@@ -1,13 +1,11 @@
 import math
-import os
 
 from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
-
+import os
 import dao
-from TTDHotel.TTDHotel import app
-
-
+from TTDHotel.TTDHotel import app,oauth
+import  cloudinary.uploader
 @app.route('/home')
 def index():
     logged_in = session.get('logged_in', False)
@@ -16,7 +14,7 @@ def index():
     page = request.args.get("page",1)
 
     products = dao.load_products(q=q, cate_id=cate_id, page=page)
-    total = dao.count_products(cate_id)
+    total = dao.count_products(q=q,cate_id= cate_id)
     if not logged_in:
         session['next'] = request.url
     return render_template('index.html', products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
@@ -55,7 +53,6 @@ def login_my_user():
         user = dao.auth_user(username, password)
         if user:
             session['user_name'] = user.name
-            session['phone']=user.phone
             session['logged_in'] = True
             next_page = session.get('next')
             return redirect(next_page)
@@ -101,6 +98,7 @@ def register():
         password = request.form.get('password')
         confirm = request.form.get('confirm')
         avatar = request.files.get('avatar')  # Lấy tệp ảnh tải lên
+        avatar_path=None
 
         # Kiểm tra xác nhận mật khẩu
         if password != confirm:
@@ -116,7 +114,10 @@ def register():
         # Lưu hình ảnh vào thư mục 'static/images'
         if avatar:
             filename = avatar.filename  # Tạo tên tệp an toàn
-            avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
+            if avatar:
+                res =cloudinary.uploader.upload(avatar)
+                avatar_path = res['secure_url']
+            # avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
 
         # Thêm người dùng vào cơ sở dữ liệu
         dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar.filename)
@@ -144,26 +145,6 @@ def common_attributes():
 
 ###################
 
-# Truy xuất giá trị môi trường
-google_client_id = os.getenv('GOOGLE_CLIENT_ID')
-google_client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
-
-# oAuth Setup
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    client_id="294714413960-kceqf54eu6rrkh9af98pj9n5ehtmpf8q.apps.googleusercontent.com",
-    client_secret="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",
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    access_token_params=None,
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
-    # This is only needed if using openId to fetch user info
-    client_kwargs={'scope': 'email profile'},
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
-)
 
 
 @app.route('/login_google')
@@ -190,6 +171,7 @@ def authorize():
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
+    session['user_name'] = user.name
     next_page = session.get('next')
     return redirect(next_page)
 
@@ -201,16 +183,7 @@ def logout_google():
     return redirect('/')
 
 
-# Cấu hình Facebook OAuth
-facebook = oauth.register(
-    name='facebook',
-    client_id="962541772387140",
-    client_secret="1cb70175dd12e7c2ea950b26cd3fe684",
-    access_token_url='https://graph.facebook.com/v12.0/oauth/access_token',
-    authorize_url='https://www.facebook.com/v12.0/dialog/oauth',
-    api_base_url='https://graph.facebook.com/v12.0/',
-    client_kwargs={'scope': 'email'}
-)
+
 
 
 @app.route('/login_facebook')
@@ -235,6 +208,7 @@ def authorize_facebook():
     # Lưu thông tin vào session
     session['profile'] = user_info
     session['logged_in'] = True
+    session['user_name'] = user.name
     next_page = session.get('next')
     return redirect(next_page)
 
