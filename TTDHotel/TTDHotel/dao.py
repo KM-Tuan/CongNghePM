@@ -89,6 +89,15 @@ def add_user(name, phone, username, password, avatar):
     db.session.add(new_user)
     db.session.commit()
 
+def update_user(id, name, phone):
+    user = User.query.get(id)
+    if user:
+        user.name = name
+        user.phone = phone
+        db.session.commit()
+
+    return True
+
 
 def hash(password):
     return str(hashlib.md5(password.encode('utf-8')).hexdigest())

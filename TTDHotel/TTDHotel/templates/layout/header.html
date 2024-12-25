@@ -298,19 +298,22 @@
                         <span class="user-name ms-2">{{ user_name }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#bookingModal" style="cursor: pointer;">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                               style="cursor: pointer;">
                             <i class="bi bi-person-circle me-2"></i>Thông tin cá nhân
                         </a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                         <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal" style="cursor: pointer;">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                               style="cursor: pointer;">
                             <i class="bi bi-lock me-2"></i>Đổi mật khẩu
                         </a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}" style="cursor: pointer;">
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"
+                               style="cursor: pointer;">
                             <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                         </a></li>
                     </ul>
@@ -334,25 +337,29 @@
             <!-- Modal Header -->
             <div class="modal-header bg-dark text-white px-5 py-4">
                 <h5 class="modal-title fw-bold" id="bookingModalLabel">Thông tin cá nhân</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
             <!-- Modal Body -->
             <form method="post" action="/info">
                 <div class="modal-body bg-light px-5 py-4">
                     <!-- Full Name -->
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control rounded-pill shadow-sm" id="name" name="name" value="{{ user_name }}" required>
+                        <input type="text" class="form-control rounded-pill shadow-sm" id="name" name="name"
+                               value="{{ session['user_name'] }}" required>
                         <label for="name"><i class="bi bi-person-fill me-2"></i>Họ tên</label>
                     </div>
                     <!-- Phone -->
                     <div class="form-floating mb-4">
-                        <input type="tel" class="form-control rounded-pill shadow-sm" id="phone" name="phone" value="{{ phone }}" required>
+                        <input type="tel" class="form-control rounded-pill shadow-sm" id="phone" name="phone"
+                               value="{{ session['phone'] }}" required>
                         <label for="phone"><i class="bi bi-phone-fill me-2"></i>Số điện thoại</label>
                     </div>
                 </div>
                 <!-- Modal Footer -->
                 <div class="modal-footer bg-light px-5 py-3">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy
+                    </button>
                     <button type="submit" class="btn btn-primary rounded-pill px-4">Xác nhận</button>
                 </div>
             </form>
@@ -360,36 +367,42 @@
     </div>
 </div>
 
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
             <!-- Modal Header -->
             <div class="modal-header bg-dark text-white px-5 py-4">
                 <h5 class="modal-title fw-bold" id="changePasswordModalLabel">Đổi mật khẩu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
             <!-- Modal Body -->
             <form method="post" action="/changePassword">
                 <div class="modal-body bg-light px-5 py-4">
 
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control rounded-pill shadow-sm" id="oldPassword" name="oldPassword" placeholder="Nhập mật khẩu cũ" required>
+                        <input type="text" class="form-control rounded-pill shadow-sm" id="oldPassword"
+                               name="oldPassword" placeholder="Nhập mật khẩu cũ" required>
                         <label for="oldPassword"><i class="bi bi-key-fill me-2"></i>Mật khẩu cũ</label>
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control rounded-pill shadow-sm" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới" required>
+                        <input type="text" class="form-control rounded-pill shadow-sm" id="newPassword"
+                               name="newPassword" placeholder="Nhập mật khẩu mới" required>
                         <label for="newPassword"><i class="bi bi-key-fill me-2"></i>Mật khẩu mới</label>
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control rounded-pill shadow-sm" id="confirm" name="confirm" placeholder="Nhập lại mật khẩu mới" required>
+                        <input type="text" class="form-control rounded-pill shadow-sm" id="confirm" name="confirm"
+                               placeholder="Nhập lại mật khẩu mới" required>
                         <label for="confirm"><i class="bi bi-key-fill me-2"></i>Nhập lại mật khẩu mới</label>
                     </div>
                 </div>
                 <!-- Modal Footer -->
                 <div class="modal-footer bg-light px-5 py-3">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy
+                    </button>
                     <button type="submit" class="btn btn-primary rounded-pill px-4">Xác nhận</button>
                 </div>
             </form>

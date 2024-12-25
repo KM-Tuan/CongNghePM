@@ -52,8 +52,10 @@ def login_my_user():
         password = request.form.get('password')
         user = dao.auth_user(username, password)
         if user:
+            session['user_id'] = user.id
             session['user_name'] = user.name
             session['logged_in'] = True
+            session['phone'] = user.phone
             next_page = session.get('next')
             return redirect(next_page)
         else:
@@ -64,10 +66,11 @@ def login_my_user():
 
 @app.context_processor
 def get_user():
+    user_id=session.get('user_id')
     user_name=session.get('user_name')
     phone=session.get('phone')
     logged_in=session.get('logged_in')
-    return dict(user_name=user_name, phone=phone, logged_in=logged_in)
+    return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
@@ -76,16 +79,31 @@ def logout():
 
 
 @app.route('/info', methods=['GET', 'POST'])
-def change_info():
+def update_user():
     if request.method == 'POST':
+        id = session.get('user_id')
         name = request.form.get('name')
         phone = request.form.get('phone')
 
-        if len(phone) < 10:
-            flash('Số điện thoại không hợp lệ', 'danger')
+        if len(phone) < 10 or not phone.isdigit():
+            # flash('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại gồm ít nhất 10 chữ số.', 'danger')
+            return redirect(request.referrer)
 
-        if name == "" or phone == "":
-            flash('Không được để trống', 'danger')
+        if not name or not phone:
+            # flash('Tên và số điện thoại không được để trống.', 'danger')
+            return redirect(request.referrer)
+
+        success = dao.update_user(id, name=name, phone=phone)
+        if success:
+            session['user_name'] = name
+            session['phone'] = phone
+            # flash('Cập nhật thông tin thành công.', 'success')
+        else:
+            pass
+            # flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
+
+        return redirect(request.referrer)
+
 
 
 
