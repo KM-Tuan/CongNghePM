@@ -4,6 +4,19 @@
 
 <section class="container py-5">
     <div class="row">
+        {% for p in products %}
+        <div class="col-md-3 col-12" style="padding:0.7rem">
+            <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image"
+                                                     style="height: 250px; object-fit: cover;"></a>
+                <div class="card-body">
+                    <h5 class="card-title text-dark">{{ p.name }}</h5>
+                    <p class="card-text text-muted">{{ p.address }}</p>
+                    <p class="card-text text-dark font-weight-bold">{{ p.price }}đ</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
         {% if pages > 1 %}
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
@@ -36,19 +49,6 @@
             </ul>
         </nav>
         {% endif %}
-        {% for p in products %}
-        <div class="col-md-3 col-12" style="padding:0.7rem">
-            <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
-                <a href="/products/{{ p.id }}"> <img class="card-img-top img-fluid" src="{{p.image}}" alt="Card image"
-                                                     style="height: 250px; object-fit: cover;"></a>
-                <div class="card-body">
-                    <h5 class="card-title text-dark">{{ p.name }}</h5>
-                    <p class="card-text text-muted">{{ p.address }}</p>
-                    <p class="card-text text-dark font-weight-bold">{{ p.price }}đ</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </section>
 
