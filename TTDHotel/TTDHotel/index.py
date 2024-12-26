@@ -97,7 +97,7 @@ def update_user():
         if success:
             session['user_name'] = name
             session['phone'] = phone
-            # flash('Cập nhật thông tin thành công.', 'success')
+            flash('Cập nhật thông tin thành công.', 'success')
         else:
             pass
             # flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
