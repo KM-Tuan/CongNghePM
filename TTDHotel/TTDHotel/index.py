@@ -10,12 +10,16 @@ import  cloudinary.uploader
 def index():
     logged_in = session.get('logged_in', False)
     q = request.args.get("q")
-    cate_id = request.args.get("category_id")
+    cate_id = request.args.get("category_id", '').strip()
+    location_id = request.args.get('location', '').strip()
+    price=request.args.get('price','').strip()
     page = request.args.get("page",1)
+
     categories=dao.load_categories()
     locations=dao.load_locations()
-    products = dao.load_products(q=q, cate_id=cate_id, page=page)
-    total = dao.count_products(q=q,cate_id= cate_id)
+
+    total = dao.count_products(q=q, cate_id=cate_id, price=price, location_id=location_id)
+    products = dao.load_products(q=q, cate_id=cate_id, page=page, price=price, location_id=location_id)
     if not logged_in:
         session['next'] = request.url
     return render_template('index.html',locations=locations,categories=categories, products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
