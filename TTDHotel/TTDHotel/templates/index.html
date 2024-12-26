@@ -29,9 +29,9 @@
                     </span>
                     <select id="category" name="category" class="form-select">
                         <option value="">Tất cả</option>
-                        <option value="1">Danh mục 1</option>
-                        <option value="2">Danh mục 2</option>
-                        <option value="3">Danh mục 3</option>
+                        {%for i in  categories%}
+                        <option value="1">{{i.name}}</option>
+                        {%endfor%}
                     </select>
                 </div>
             </div>
@@ -43,9 +43,9 @@
                     </span>
                     <select id="location" name="location" class="form-select">
                         <option value="">Tất cả</option>
-                        <option value="1">Hà Nội</option>
-                        <option value="2">TP. Hồ Chí Minh</option>
-                        <option value="3">Đà Nẵng</option>
+                        {%for i in locations%}
+                        <option value="1">{{i.name}}</option>
+                        {%endfor%}
                     </select>
                 </div>
             </div>
