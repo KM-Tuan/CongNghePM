@@ -4,9 +4,8 @@ from authlib.integrations.flask_client import OAuth
 from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
-from TTDHotel.TTDHotel import app, admin
+from TTDHotel.TTDHotel import app, oauth, facebook
 import  cloudinary.uploader
-
 @app.route('/home')
 def index():
     logged_in = session.get('logged_in', False)
@@ -53,8 +52,10 @@ def login_my_user():
         password = request.form.get('password')
         user = dao.auth_user(username, password)
         if user:
+            session['user_id'] = user.id
             session['user_name'] = user.name
             session['logged_in'] = True
+            session['phone'] = user.phone
             next_page = session.get('next')
             return redirect(next_page)
         else:
@@ -65,19 +66,52 @@ def login_my_user():
 
 @app.context_processor
 def get_user():
+    user_id=session.get('user_id')
     user_name=session.get('user_name')
+    phone=session.get('phone')
     logged_in=session.get('logged_in')
-    return dict(user_name=user_name, logged_in=logged_in)
+    return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     return redirect(request.referrer)
 
+
+@app.route('/info', methods=['GET', 'POST'])
+def update_user():
+    if request.method == 'POST':
+        id = session.get('user_id')
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+
+        if len(phone) < 10 or not phone.isdigit():
+            # flash('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại gồm ít nhất 10 chữ số.', 'danger')
+            return redirect(request.referrer)
+
+        if not name or not phone:
+            # flash('Tên và số điện thoại không được để trống.', 'danger')
+            return redirect(request.referrer)
+
+        success = dao.update_user(id, name=name, phone=phone)
+        if success:
+            session['user_name'] = name
+            session['phone'] = phone
+            # flash('Cập nhật thông tin thành công.', 'success')
+        else:
+            pass
+            # flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
+
+        return redirect(request.referrer)
+
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':  # Phương thức POST
         name = request.form.get('name')
+        phone = request.form.get('phone')
         username = request.form.get('username')
         password = request.form.get('password')
         confirm = request.form.get('confirm')
@@ -104,8 +138,7 @@ def register():
             # avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
 
         # Thêm người dùng vào cơ sở dữ liệu
-
-        dao.add_user(name=name, username=username, password=password, avatar=avatar_path)
+        dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar.filename)
 
         flash('Account created successfully!', 'success')
         return redirect('/login')  # Điều hướng đến trang đăng nhập
@@ -130,24 +163,6 @@ def common_attributes():
 
 ###################
 
-# Truy xuất giá trị môi trường
-
-# oAuth Setup
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    client_id="294714413960-kceqf54eu6rrkh9af98pj9n5ehtmpf8q.apps.googleusercontent.com",
-    client_secret="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",
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    access_token_params=None,
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
-    # This is only needed if using openId to fetch user info
-    client_kwargs={'scope': 'email profile'},
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
-)
 
 
 @app.route('/login_google')
@@ -186,16 +201,7 @@ def logout_google():
     return redirect('/')
 
 
-# Cấu hình Facebook OAuth
-facebook = oauth.register(
-    name='facebook',
-    client_id="962541772387140",
-    client_secret="1cb70175dd12e7c2ea950b26cd3fe684",
-    access_token_url='https://graph.facebook.com/v12.0/oauth/access_token',
-    authorize_url='https://www.facebook.com/v12.0/dialog/oauth',
-    api_base_url='https://graph.facebook.com/v12.0/',
-    client_kwargs={'scope': 'email'}
-)
+
 
 
 @app.route('/login_facebook')
