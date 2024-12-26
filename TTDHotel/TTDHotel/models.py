@@ -71,9 +71,9 @@ if __name__ == "__main__":
         c1 = Category(name="Phòng VIP")
         c2 = Category(name="Phòng Đôi")
         c3 = Category(name="Phòng Đơn")
-        l1 = Category(name="TP Hồ Chí Minh")
-        l2 = Category(name="Hà Nội")
-        l3 = Category(name="Vũng Tàu")
+        l1 = Location(name="TP Hồ Chí Minh")
+        l2 = Location(name="Hà Nội")
+        l3 = Location(name="Vũng Tàu")
         db.session.add_all([c1, c2, c3, l1, l2, l3])
         db.session.commit()
         import json
