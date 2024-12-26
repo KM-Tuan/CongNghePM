@@ -44,16 +44,14 @@ class Product(db.Model):
     address = Column(String(100), nullable=False)
     distance = Column(String(10), nullable=False)
     description = Column(String(100), nullable=False)
+    rating = Column(Integer, nullable=False)
     price = Column(String(50), default=0)
     image = Column(String(300), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     location_id = Column(Integer, ForeignKey(Location.id), nullable=False)
-    rating=Column(Integer, nullable=False)
 
     def __str__(self):
         return self.name
-
-
 
 
 if __name__ == "__main__":
@@ -68,23 +66,10 @@ if __name__ == "__main__":
         # db.session.add_all([c1, c2, c3, l1, l2, l3])
         # db.session.commit()
         # import json
-        # # Lấy category và location bằng cách sử dụng session.get() thay vì query.get()
         # with open('data/products.json', encoding='utf-8') as f:
         #     products = json.load(f)
         #     for p in products:
-        #         category = db.session.get(Category, p['category_id'])  # Sử dụng session.get()
-        #         location = db.session.get(Location, p['location_id'])  # Sử dụng session.get()
-        #         prod = Product(
-        #             name=p['name'],
-        #             address=p['address'],
-        #             distance=p['distance'],
-        #             description=p['description'],
-        #             price=p['price'],
-        #             image=p['image'],
-        #             rating=p['rating'],
-        #             category=category,  # Sử dụng đối tượng Category thay vì ID
-        #             location=location  # Sử dụng đối tượng Location thay vì ID
-        #         )
+        #         prod = Product(**p)
         #         db.session.add(prod)
         #
         # db.session.commit()
