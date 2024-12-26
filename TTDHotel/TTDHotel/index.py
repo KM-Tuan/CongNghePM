@@ -1,6 +1,7 @@
 import math
 
 from authlib.integrations.flask_client import OAuth
+from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
@@ -80,6 +81,8 @@ def get_user():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
+    for key in list(session.keys()):
+        session.pop(key)
     return redirect(request.referrer)
 
 
@@ -109,7 +112,35 @@ def update_user():
 
         return redirect(request.referrer)
 
+@app.route('/changePassword', methods=['GET', 'POST'])
+def update_password():
+    global success
+    if request.method == 'POST':
+        id = session.get('user_id')
+        oldPassword = request.form.get('oldPassword')
+        newPassword = request.form.get('newPassword')
+        confirm = request.form.get('confirm')
 
+
+        if newPassword != confirm:
+            flash('Không trùng khớp.', 'danger')
+            redirect(request.referrer)
+
+        user= dao.get_user_by_id(id)
+        if user:
+            if user.password == dao.hash(oldPassword):
+                success = dao.update_user(id,  password=newPassword)
+            else:
+                flash('Mật khẩu không hợp lệ. Vui lòng thử lại.', 'danger')
+                success=False
+
+            if success:
+                flash('Cập nhật thông tin thành công.', 'success')
+            else:
+                flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
+
+
+        return redirect(request.referrer)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -136,7 +167,7 @@ def register():
 
         # Lưu hình ảnh vào thư mục 'static/images'
         if avatar:
-            filename = avatar.filename  # Tạo tên tệp an toàn
+            filename = avatar.filename
             if avatar:
                 res =cloudinary.uploader.upload(avatar)
                 avatar_path = res['secure_url']

@@ -1,6 +1,6 @@
 import hashlib
 import json
-from sqlalchemy import func, cast
+from sqlalchemy import func, cast, false
 from itertools import product
 
 from dns.e164 import query
@@ -113,12 +113,22 @@ def add_user(name, phone, username, password, avatar):
     db.session.add(new_user)
     db.session.commit()
 
-def update_user(id, name, phone):
+def get_user_by_id(id):
+    user = User.query.filter(User.id == id).first()
+    return user
+
+def update_user(id, name=None, phone=None, password=None):
     user = User.query.get(id)
     if user:
-        user.name = name
-        user.phone = phone
+        if name:
+            user.name = name
+        if phone:
+            user.phone = phone
+        if password:
+            user.password = hash(password)
         db.session.commit()
+    else:
+        return False
 
     return True
 
