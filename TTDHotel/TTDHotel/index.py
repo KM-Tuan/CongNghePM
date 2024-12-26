@@ -12,12 +12,13 @@ def index():
     q = request.args.get("q")
     cate_id = request.args.get("category_id")
     page = request.args.get("page",1)
-
+    categories=dao.load_categories()
+    locations=dao.load_locations()
     products = dao.load_products(q=q, cate_id=cate_id, page=page)
     total = dao.count_products(q=q,cate_id= cate_id)
     if not logged_in:
         session['next'] = request.url
-    return render_template('index.html', products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
+    return render_template('index.html',locations=locations,categories=categories, products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
 
 
 @app.template_filter('dict_without_key')

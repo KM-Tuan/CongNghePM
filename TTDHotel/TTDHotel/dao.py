@@ -13,6 +13,11 @@ def load_categories():
     #     return json.load(f)
     return Category.query.all()
 
+def load_locations():
+    # with open('data/categories.json', encoding='utf-8') as f:
+    #     return json.load(f)
+    return Location.query.all()
+
 
 def load_products(q=None, cate_id=None, page=None):
     # with open('data/products.json', encoding='utf-8') as f:
