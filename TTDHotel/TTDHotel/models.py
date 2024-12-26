@@ -71,17 +71,30 @@ if __name__ == "__main__":
         c1 = Category(name="Phòng VIP")
         c2 = Category(name="Phòng Đôi")
         c3 = Category(name="Phòng Đơn")
-        l1 = Category(name="TP Hồ Chí Minh")
-        l2 = Category(name="Hà Nội")
-        l3 = Category(name="Vũng Tàu")
+        l1 = Location(name="TP Hồ Chí Minh")
+        l2 = Location(name="Hà Nội")
+        l3 = Location(name="Vũng Tàu")
         db.session.add_all([c1, c2, c3, l1, l2, l3])
         db.session.commit()
         import json
+        # Lấy category và location bằng cách sử dụng session.get() thay vì query.get()
         with open('data/products.json', encoding='utf-8') as f:
             products = json.load(f)
             for p in products:
-                prod = Product(**p)
+                category = db.session.get(Category, p['category_id'])  # Sử dụng session.get()
+                location = db.session.get(Location, p['location_id'])  # Sử dụng session.get()
+                prod = Product(
+                    name=p['name'],
+                    address=p['address'],
+                    distance=p['distance'],
+                    description=p['description'],
+                    price=p['price'],
+                    image=p['image'],
+                    category=category,  # Sử dụng đối tượng Category thay vì ID
+                    location=location  # Sử dụng đối tượng Location thay vì ID
+                )
                 db.session.add(prod)
+
         db.session.commit()
 
         import hashlib
