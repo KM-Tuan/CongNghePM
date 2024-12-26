@@ -15,23 +15,23 @@
                     </span>
                     <select id="priceRange" name="price" class="form-select">
                         <option value="">Tất cả</option>
-                        <option value="1">Dưới 1 triệu</option>
-                        <option value="2">1 triệu - 5 triệu</option>
-                        <option value="3">Trên 5 triệu</option>
+                        <option value="10" {% if request.args.get('price') == '10' %}selected{% endif %} >Dưới 10 triệu</option>
+                        <option value="10-20" {% if request.args.get('price') == '10-20' %}selected{% endif %}>10 triệu - 20 triệu</option>
+                        <option value="20" {% if request.args.get('price') == '20' %}selected{% endif %}>Trên 20 triệu</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="category" class="form-label">Danh mục</label>
+                <label for="category_id" class="form-label">Danh mục</label>
                 <div class="input-group">
                     <span class="input-group-text">
                         <i class="bi bi-list-task"></i>
                     </span>
-                    <select id="category" name="category" class="form-select">
+                    <select id="category_id" name="category_id" class="form-select">
                         <option value="">Tất cả</option>
-                        {%for i in  categories%}
-                        <option value="1">{{i.name}}</option>
-                        {%endfor%}
+                        {% for i in categories %}
+                        <option value="{{ i.id }}" {% if request.args.get('category_id') == i.id|string %}selected{% endif %}>{{ i.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -43,9 +43,9 @@
                     </span>
                     <select id="location" name="location" class="form-select">
                         <option value="">Tất cả</option>
-                        {%for i in locations%}
-                        <option value="1">{{i.name}}</option>
-                        {%endfor%}
+                        {% for i in locations %}
+                        <option value="{{ i.id }}" {% if request.args.get('location') == i.id|string %}selected{% endif %}>{{ i.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
                 <a href="/products/{{ p.id }}">
                     <img class="card-img-top img-fluid" src="{{ p.image }}" alt="{{ p.name }}"
-                         style="height: 250px; object-fit: cover;">
+                         style="width: 100%; height: 300px; object-fit: cover;">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
@@ -112,18 +112,19 @@
 </section>
 
 <style>
+    /* General Card and Content Styling */
     .card {
         display: flex;
-        flex-direction: column; /* Giúp card có thể mở rộng theo chiều dọc */
+        flex-direction: column;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        height: 100%; /* Đảm bảo chiều cao của thẻ card là bằng nhau */
+        height: 100%;
     }
 
     .card-body {
-        flex-grow: 1; /* Giúp phần nội dung của card chiếm toàn bộ không gian còn lại */
+        flex-grow: 1;
         padding: 20px;
         display: flex;
         flex-direction: column;
@@ -131,8 +132,9 @@
     }
 
     .card-img-top {
-        height: 250px; /* Cố định chiều cao ảnh để tất cả các card có chiều cao ảnh đồng đều */
-        object-fit: cover; /* Đảm bảo ảnh không bị vỡ và cắt theo tỷ lệ phù hợp */
+        height: auto;
+        width: 100%;
+        object-fit: cover; /* Đảm bảo ảnh không bị méo */
         border-bottom: 2px solid #f1f1f1;
         border-radius: 10px;
         transition: transform 0.3s ease-in-out;
@@ -143,7 +145,7 @@
     }
 
     .card-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #343a40;
         margin-bottom: 10px;
@@ -159,71 +161,8 @@
         line-height: 1.5;
     }
 
-    .card-price {
+    .card-title.text-info {
         font-size: 1.2rem;
-        font-weight: bold;
-        color: #007bff;
-    }
-
-    .card-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .btn {
-        transition: transform 0.2s ease, background-color 0.3s ease;
-        border-radius: 30px;
-        font-weight: 600;
-        padding: 10px 15px;
-    }
-
-    .btn:hover {
-        transform: scale(1.05);
-    }
-
-    .btn-outline-primary {
-        border: 2px solid #007bff;
-        color: #007bff;
-    }
-
-    .btn-outline-primary:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .btn-danger {
-        background-color: #ff5733;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background-color: #c13c21;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .card {
-            margin-bottom: 1.5rem;
-            box-shadow: none; /* Giảm độ bóng trên thiết bị di động */
-        }
-
-        .card-title {
-            font-size: 1rem;
-        }
-
-        .card-price {
-            font-size: 1rem;
-        }
-
-        .btn {
-            padding: 8px 12px;
-        }
-    }
-
-    .pagination {
-        margin-top: 20px;
-        padding: 0;
     }
 
     .pagination .page-link {
@@ -253,71 +192,46 @@
         color: #6c757d;
     }
 
-    .pagination .page-link i {
-        vertical-align: middle;
-        margin-right: 3px;
+    .btn {
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 10px 15px;
     }
-    form .form-select, form .btn {
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-outline-primary {
+        border: 2px solid #007bff;
+        color: #007bff;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .form-select, .btn {
         height: 45px;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    form label {
-        font-weight: bold;
-        margin-bottom: 8px;
+    .card-body .card-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
 
-    form .btn {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        color: white;
-        font-size: 1rem;
-        font-weight: bold;
-        transition: transform 0.2s ease-in-out;
-    }
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 10px;
+        }
 
-    form .btn:hover {
-        transform: scale(1.05);
-    }
-
-    .card {
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        height: 100%;
-    }
-
-    .card:hover {
-        transform: scale(1.05);
-    }
-
-    .card-title:hover {
-        color: #ff5733;
-    }
-
-    .pagination .page-link {
-        color: #007bff;
-        background: linear-gradient(90deg, #e3f2fd, #e0f7fa);
-        border: none;
-        border-radius: 5px;
-        margin: 0 5px;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .pagination .page-link:hover {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        color: white;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .pagination .page-item.active .page-link {
-        background: linear-gradient(90deg, #42a5f5, #1e88e5);
-        color: white;
-        font-weight: bold;
-        border: none;
+        .card-title {
+            font-size: 1rem;
+        }
     }
 </style>
 
