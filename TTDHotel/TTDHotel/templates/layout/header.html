@@ -282,6 +282,23 @@
             </ul>
 
             <!-- Search Form -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050; max-width: 400px; margin-top: 75px; margin-right: 200px">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show shadow-lg rounded-3" role="alert"
+                     style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: #fff; border: none;">
+                    <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+
             <form class="d-flex me-3" role="search">
                 <input class="form-control me-2" name="q" type="search" placeholder="Nhập từ khóa" aria-label="Search">
                 <button class="btn" type="submit">Tìm</button>
@@ -301,6 +318,13 @@
                         <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#bookingModal"
                                style="cursor: pointer;">
                             <i class="bi bi-person-circle me-2"></i>Thông tin cá nhân
+                        </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                         <li><a class="dropdown-item" href="/history"
+                               style="cursor: pointer;">
+                            <i class="bi bi-clock-history me-2"></i>Lịch sử đặt phòng
                         </a></li>
                         <li>
                             <hr class="dropdown-divider">
