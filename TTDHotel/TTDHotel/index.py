@@ -86,11 +86,11 @@ def update_user():
         phone = request.form.get('phone')
 
         if len(phone) < 10 or not phone.isdigit():
-            # flash('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại gồm ít nhất 10 chữ số.', 'danger')
+            flash('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại gồm ít nhất 10 chữ số.', 'danger')
             return redirect(request.referrer)
 
         if not name or not phone:
-            # flash('Tên và số điện thoại không được để trống.', 'danger')
+            flash('Tên và số điện thoại không được để trống.', 'danger')
             return redirect(request.referrer)
 
         success = dao.update_user(id, name=name, phone=phone)
@@ -100,7 +100,7 @@ def update_user():
             flash('Cập nhật thông tin thành công.', 'success')
         else:
             pass
-            # flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
+            flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
 
         return redirect(request.referrer)
 
