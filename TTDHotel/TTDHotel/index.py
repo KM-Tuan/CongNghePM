@@ -238,8 +238,6 @@ def logout_google():
 
 
 
-
-
 @app.route('/login_facebook')
 def login_facebook():
     redirect_uri = url_for('authorize_facebook', _external=True)
