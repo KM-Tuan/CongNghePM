@@ -56,26 +56,26 @@ class Product(db.Model):
 
 if __name__ == "__main__":
     with app.app_context():
-        # db.create_all()
-        # c1 = Category(name="Phòng VIP")
-        # c2 = Category(name="Phòng Đôi")
-        # c3 = Category(name="Phòng Đơn")
-        # l1 = Location(name="TP Hồ Chí Minh")
-        # l2 = Location(name="Hà Nội")
-        # l3 = Location(name="Vũng Tàu")
-        # db.session.add_all([c1, c2, c3, l1, l2, l3])
-        # db.session.commit()
-        # import json
-        # with open('data/products.json', encoding='utf-8') as f:
-        #     products = json.load(f)
-        #     for p in products:
-        #         prod = Product(**p)
-        #         db.session.add(prod)
-        #
-        # db.session.commit()
-        #
-        # import hashlib
-        # u = User(name="KieuThanhDuc", phone="0987654321", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
-        # db.session.add(u)
-        # db.session.commit()
+        db.create_all()
+        c1 = Category(name="Phòng VIP")
+        c2 = Category(name="Phòng Đôi")
+        c3 = Category(name="Phòng Đơn")
+        l1 = Location(name="TP Hồ Chí Minh")
+        l2 = Location(name="Hà Nội")
+        l3 = Location(name="Vũng Tàu")
+        db.session.add_all([c1, c2, c3, l1, l2, l3])
+        db.session.commit()
+        import json
+        with open('data/products.json', encoding='utf-8') as f:
+            products = json.load(f)
+            for p in products:
+                prod = Product(**p)
+                db.session.add(prod)
+
+        db.session.commit()
+
+        import hashlib
+        u = User(name="KieuThanhDuc", phone="0987654321", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
+        db.session.add(u)
+        db.session.commit()
         pass

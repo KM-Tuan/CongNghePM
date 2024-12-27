@@ -5,7 +5,7 @@ from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
-from TTDHotel.TTDHotel import app, oauth, facebook
+from TTDHotel.TTDHotel import app, oauth, facebook, admin
 import  cloudinary.uploader
 @app.route('/home')
 def index():
@@ -273,6 +273,16 @@ def logout_facebook():
     session.pop('profile', None)
     return redirect('/')
 
+
+@app.route('/routes')
+def list_routes():
+    import urllib
+    output = []
+    for rule in app.url_map.iter_rules():
+        methods = ','.join(rule.methods)
+        url = urllib.parse.unquote(f"{rule}")
+        output.append(f"{rule.endpoint}: {url} [{methods}]")
+    return "<br>".join(output)
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)
