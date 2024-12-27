@@ -45,7 +45,7 @@ class Product(db.Model):
     distance = Column(String(10), nullable=False)
     description = Column(String(100), nullable=False)
     rating = Column(Integer, nullable=False)
-    price = Column(String(50), default=0)
+    price = Column(Integer, default=0)
     image = Column(String(300), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     location_id = Column(Integer, ForeignKey(Location.id), nullable=False)
