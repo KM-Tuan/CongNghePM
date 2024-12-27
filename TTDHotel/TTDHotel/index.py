@@ -5,7 +5,7 @@ from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
-from TTDHotel.TTDHotel import app, oauth, facebook
+from TTDHotel.TTDHotel import app, oauth, facebook, admin
 import  cloudinary.uploader
 @app.route('/home')
 def index():
@@ -235,8 +235,6 @@ def logout_google():
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')
-
-
 
 
 
