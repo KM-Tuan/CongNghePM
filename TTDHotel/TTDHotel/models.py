@@ -5,7 +5,8 @@ from sqlalchemy.orm import relationship, backref
 from TTDHotel.TTDHotel import app, db
 
 # import  dao
-from TTDHotel.TTDHotel.dao import hash_password
+from TTDHotel.TTDHotel.utils import hash_password
+
 
 
 class RoomStatus(db.Model):

@@ -23,7 +23,7 @@ def dict_without_key(d, key):
 
 @app.route('/booking')
 def show_product():
-    products = dao.load_products()
+    products = dao.get_all_categories()
     return render_template('index.html',products=products, logged_in=check_login())
 
 @app.route('/rules')
@@ -39,10 +39,10 @@ def contacts():
 
 @app.route('/products/<int:id>')
 def details(id):
-    product = dao.load_product_by_id(id)
+    product = dao.get_category_by_id(id)
     return render_template('product-details.html', product=product, logged_in=check_login())
 
-@app.route('/login', methods=['get', 'post'])
+@app.route('/login', methods=['GET', 'POST'])
 def login_my_user():
     if request.method.__eq__('POST'):
         username = request.form.get('username')
@@ -50,7 +50,7 @@ def login_my_user():
         user = dao.auth_user(username, password)
         if user:
             set_user_session(user)
-            next_page = session.get('next')
+            next_page = session.get('next', '/')
             return redirect(next_page)
         else:
             flash('Invalid username or password. Please try again.', 'danger')
@@ -59,27 +59,22 @@ def login_my_user():
 
 def set_user_session(user):
     session['user_id'] = user.id
-    session['user_name'] = user.name
+    session['user_name'] = user.customer.name if user.customer else user.employee.name
     session['logged_in'] = True
-    session['phone'] = user.phone
-    # session['address'] = user.address
-    # session['cmnd'] = user.cmnd
+    session['phone'] = user.customer.phone if user.customer else None
 
 @app.context_processor
 def get_user():
-    user_id=session.get('user_id')
-    user_name=session.get('user_name')
-    phone=session.get('phone')
-    logged_in=session.get('logged_in')
+    user_id = session.get('user_id')
+    user_name = session.get('user_name')
+    phone = session.get('phone')
+    logged_in = session.get('logged_in')
     return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
-    session.pop('logged_in', None)
-    for key in list(session.keys()):
-        session.pop(key)
-    return redirect(request.referrer)
-
+    session.clear()
+    return redirect(request.referrer or '/')
 
 @app.route('/info', methods=['GET', 'POST'])
 def update_user():
@@ -102,79 +97,67 @@ def update_user():
             session['phone'] = phone
             flash('Cập nhật thông tin thành công.', 'success')
         else:
-            pass
             flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
 
-        return redirect(request.referrer)
+    return redirect(request.referrer)
 
 @app.route('/changePassword', methods=['GET', 'POST'])
 def update_password():
-    global success
     if request.method == 'POST':
         id = session.get('user_id')
-        oldPassword = request.form.get('oldPassword')
-        newPassword = request.form.get('newPassword')
+        old_password = request.form.get('oldPassword')
+        new_password = request.form.get('newPassword')
         confirm = request.form.get('confirm')
 
-
-        if newPassword != confirm:
+        if new_password != confirm:
             flash('Không trùng khớp.', 'danger')
-            redirect(request.referrer)
+            return redirect(request.referrer)
 
-        user= dao.get_user_by_id(id)
+        user = dao.get_user_by_id(id)
         if user:
-            if user.password == dao.hash(oldPassword):
-                success = dao.update_user(id,  password=newPassword)
+            if user.password == dao.hash(old_password):
+                success = dao.update_user(id, password=new_password)
+                if success:
+                    flash('Cập nhật mật khẩu thành công.', 'success')
+                else:
+                    flash('Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.', 'danger')
             else:
-                flash('Mật khẩu không hợp lệ. Vui lòng thử lại.', 'danger')
-                success=False
-
-            if success:
-                flash('Cập nhật thông tin thành công.', 'success')
-            else:
-                flash('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.', 'danger')
-
-
+                flash('Mật khẩu hiện tại không đúng.', 'danger')
         return redirect(request.referrer)
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':  # Phương thức POST
+    if request.method == 'POST':
         name = request.form.get('name')
         phone = request.form.get('phone')
         username = request.form.get('username')
         password = request.form.get('password')
         confirm = request.form.get('confirm')
-        avatar = request.files.get('avatar')  # Lấy tệp ảnh tải lên
-        avatar_path=None
+        avatar = request.files.get('avatar')
+        avatar_path = None
+        role = request.form.get('role')  # Nhận role từ form
 
-        # Kiểm tra xác nhận mật khẩu
         if password != confirm:
             flash('Passwords do not match. Please try again.', 'danger')
             return render_template('register.html')
 
-        # Kiểm tra xem tài khoản đã tồn tại chưa
-        user = dao.auth_user(username,password)  # Hàm kiểm tra người dùng, bạn cần định nghĩa
-        if user:
+        if dao.auth_user(username, password):
             flash('Username already exists. Please try a different username.', 'danger')
             return render_template('register.html')
 
-        # Lưu hình ảnh vào thư mục 'static/images'
         if avatar:
-            filename = avatar.filename
-            if avatar:
-                res =cloudinary.uploader.upload(avatar)
-                avatar_path = res['secure_url']
-            # avatar.save(os.path.join('static/images/', filename))  # Lưu tệp
+            res = cloudinary.uploader.upload(avatar)
+            avatar_path = res['secure_url']
 
-        # Thêm người dùng vào cơ sở dữ liệu
-        dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar.filename)
+        success = dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar_path, role=role)
+        if success:
+            flash('Account created successfully!', 'success')
+            return redirect('/login')
+        else:
+            flash('An error occurred while creating the account. Please try again.', 'danger')
 
-        flash('Account created successfully!', 'success')
-        return redirect('/login')  # Điều hướng đến trang đăng nhập
+    return render_template('register.html')
 
-    return render_template('register.html')  # Hiển thị form đăng ký
 
 @app.route('/')
 def home():
