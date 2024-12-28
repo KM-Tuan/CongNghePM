@@ -22,9 +22,9 @@ def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
 @app.route('/booking')
-def show_product():
-    products = dao.get_all_categories()
-    return render_template('index.html',products=products, logged_in=check_login())
+def show_categories():
+    category = dao.get_all_categories()
+    return render_template('index.html',category=category, logged_in=check_login())
 
 @app.route('/rules')
 def rules():
@@ -59,7 +59,11 @@ def login_my_user():
 
 def set_user_session(user):
     session['user_id'] = user.id
-    session['user_name'] = user.customer.name if user.customer else user.employee.name
+    session['user_name'] = (
+        user.customer.name if user.customer else
+        user.employee.name if user.employee else
+        "Admin"
+    )
     session['logged_in'] = True
     session['phone'] = user.customer.phone if user.customer else None
 

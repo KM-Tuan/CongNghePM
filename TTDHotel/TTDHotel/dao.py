@@ -3,14 +3,20 @@ import json
 from sqlalchemy import cast, func, Integer
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
-from TTDHotel.TTDHotel.models import Category, Account, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
+from models import Category, Account, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
 
 
 # from models import Category
 def auth_user(username, password):
-    """Xác thực người dùng với mật khẩu đã mã hóa."""
     password_hash = hash_password(password)
-    return Account.query.filter_by(username=username, password=password_hash).first()
+    return (
+        Account.query.options(
+            db.joinedload(Account.customer),
+            db.joinedload(Account.employee)
+        )
+        .filter_by(username=username, password=password_hash)
+        .first()
+    )
 
 
 def get_or_create_user(user_info):
