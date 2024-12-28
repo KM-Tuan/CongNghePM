@@ -29,7 +29,6 @@ class AuthenticatedView(ModelView):
     #     return current_user.is_authenticated and current_user.role == 1
     pass
 
-
 admin.add_view(AuthenticatedView(Account, db.session, category='Quản lý tài khoản'))
 admin.add_view(AuthenticatedView(Customer, db.session, category='Quản lý khách hàng'))
 admin.add_view(AuthenticatedView(RoomStatus, db.session, category='Quản lý phòng'))
@@ -44,7 +43,6 @@ admin.add_view(AuthenticatedView(BookingDetail, db.session, category='Quản lý
 admin.add_view(AuthenticatedView(RoomRented, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(RentingDetail, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(Bill, db.session, category='Quản lý hóa đơn'))
-
 
 
 
