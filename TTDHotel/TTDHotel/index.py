@@ -3,12 +3,12 @@ from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
 import os
+
+from flask_login import login_user
+
 import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin
-import cloudinary.uploader
-
-from TTDHotel.TTDHotel.dao import get_category_by_id
-
+import  cloudinary.uploader
 
 def check_login():
     logged_in = session.get('logged_in', False)
@@ -16,16 +16,13 @@ def check_login():
         session['next'] = request.url
     return logged_in
 
-
 @app.route('/home')
 def index():
     return render_template('welcome.html', logged_in=check_login())
 
-
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
-
 
 @app.route('/booking')
 def show_categories():
@@ -54,7 +51,6 @@ def rules():
     rules = dao.load_rules()
     return render_template('rules.html', logged_in=check_login(), rules=rules)
 
-
 @app.route('/contacts')
 def contacts():
     contacts = dao.load_contacts()
@@ -66,6 +62,16 @@ def details(id):
     category = dao.get_category_by_id(id)
     return render_template('product-details.html', category=category, logged_in=check_login())
 
+
+@app.route('/admin-login', methods=['GET', 'POST'])
+def process_admin_login():
+    if request.method.__eq__('POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = dao.auth_user(username, password)
+        if user:
+            set_user_session(user)
+        return redirect('/admin')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_my_user():
@@ -82,7 +88,6 @@ def login_my_user():
 
     return render_template('login.html')
 
-
 def set_user_session(user):
     session['user_id'] = user.id
     session['user_name'] = (
@@ -94,6 +99,18 @@ def set_user_session(user):
     session['phone'] = user.customer.phone if user.customer else user.employee.phone if user.employee else "None"
 
 
+
+@app.route('/admin-login', methods=['POST'])
+def login_admin():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    u = dao.auth_user(username=username, password=password)
+    if u:
+        login_user(u)
+        return redirect('/admin')
+
+
 @app.context_processor
 def get_user():
     user_id = session.get('user_id')
@@ -102,12 +119,10 @@ def get_user():
     logged_in = session.get('logged_in')
     return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
 
-
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(request.referrer or '/')
-
 
 @app.route('/info', methods=['GET', 'POST'])
 def update_user():
@@ -134,7 +149,6 @@ def update_user():
 
     return redirect(request.referrer)
 
-
 @app.route('/changePassword', methods=['GET', 'POST'])
 def update_password():
     if request.method == 'POST':
@@ -159,7 +173,6 @@ def update_password():
                 flash('Mật khẩu hiện tại không đúng.', 'danger')
         return redirect(request.referrer)
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -169,6 +182,9 @@ def register():
         password = request.form.get('password')
         confirm = request.form.get('confirm')
         avatar = request.files.get('avatar')
+        address = request.form.get('address')
+        cmnd= request.form.get('cmnd')
+        customer_type = request.form.get('customer_type')
         avatar_path = None
         role = request.form.get('role')  # Nhận role từ form
 
@@ -184,8 +200,8 @@ def register():
             res = cloudinary.uploader.upload(avatar)
             avatar_path = res['secure_url']
 
-        success = dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar_path,
-                               role=role)
+        success = dao.add_user(name=name, phone=phone, username=username, password=password,
+                               customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
         if success:
             flash('Account created successfully!', 'success')
             return redirect('/login')
@@ -204,6 +220,7 @@ def home():
 
 
 ###################
+
 
 
 @app.route('/login_google')
@@ -240,6 +257,7 @@ def logout_google():
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')
+
 
 
 @app.route('/login_facebook')
@@ -285,7 +303,6 @@ def list_routes():
         url = urllib.parse.unquote(f"{rule}")
         output.append(f"{rule.endpoint}: {url} [{methods}]")
     return "<br>".join(output)
-
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)

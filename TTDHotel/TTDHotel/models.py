@@ -49,7 +49,7 @@ class Category(db.Model):
 class Employee(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    cmnd = Column(String(20), unique=True, nullable=False)
+    cmnd = Column(String(20), unique=True, nullable=True)
     address = Column(String(255))
     account_id = Column(Integer, ForeignKey('account.id'), nullable = True)
     room_rented = relationship('RoomRented', backref=backref('employee', lazy=True))
@@ -59,8 +59,8 @@ class Employee(db.Model):
 class Customer(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
-    cmnd = Column(String(20), nullable=False)
-    address = Column(String(255), nullable=False)
+    cmnd = Column(String(20), nullable=True)
+    address = Column(String(255), nullable=True)
     phone = Column(String(11), unique=True, nullable=True)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
@@ -136,7 +136,7 @@ class Account(db.Model, UserMixin):
     username = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     status = Column(Integer, ForeignKey('status_account.id'), nullable=False)
-    role = Column(Integer, ForeignKey('role.id'), nullable=False)
+    role = Column(Integer, ForeignKey('role.id'), nullable=False, default=3)
     customer = relationship("Customer", backref=backref("account", lazy="joined"), uselist=False)
     employee = relationship("Employee", backref=backref("account", lazy="joined"), uselist=False)
 
