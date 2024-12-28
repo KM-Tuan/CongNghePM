@@ -24,8 +24,8 @@ def show_product():
     logged_in = session.get('logged_in', False)
     if not logged_in:
         session['next'] = request.url
-    products = dao.load_products()
-    return render_template('index.html',products=products, logged_in=logged_in)
+    category = dao.load_categories()
+    return render_template('index.html',category=category, logged_in=logged_in)
 
 
 @app.route('/rules')
