@@ -42,6 +42,16 @@ def details(id):
     product = dao.get_category_by_id(id)
     return render_template('product-details.html', product=product, logged_in=check_login())
 
+@app.route('/admin-login', methods=['GET', 'POST'])
+def process_admin_login():
+    if request.method.__eq__('POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = dao.auth_user(username, password)
+        if user:
+            set_user_session(user)
+        return redirect('/admin')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_my_user():
     if request.method.__eq__('POST'):
