@@ -4,19 +4,19 @@ import json
 from sqlalchemy import cast, func, Integer
 
 from TTDHotel.TTDHotel import app
-from models import db, User, Product
+from models import *
 
 def hash_password(password):
     """Mã hóa mật khẩu bằng cách sử dụng MD5."""
     return hashlib.md5(password.encode('utf-8')).hexdigest()
 
 
-def load_products(q=None):
+def load_categories(q=None):
     """Tải các sản phẩm từ cơ sở dữ liệu với các bộ lọc."""
-    query = Product.query
+    query = Category.query
 
     if q:
-        query = query.filter(Product.name.contains(q))
+        query = query.filter(Category.name.contains(q))
 
     return query.all()
 
@@ -32,7 +32,7 @@ def count_products(q=None):
 def auth_user(username, password):
     """Xác thực người dùng với mật khẩu đã mã hóa."""
     password_hash = hash_password(password)
-    return User.query.filter_by(username=username, password=password_hash).first()
+    return Account.query.filter_by(username=username, password=password_hash).first()
 
 def load_product_by_id(id):
     """Tải sản phẩm theo ID từ cơ sở dữ liệu."""
