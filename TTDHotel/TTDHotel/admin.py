@@ -1,4 +1,5 @@
-from urllib import request
+# from urllib import request
+from flask import request
 
 from flask import redirect, flash
 from flask_admin import Admin, BaseView, expose, AdminIndexView
@@ -9,9 +10,6 @@ import dao
 from flask_login import current_user, login_user, logout_user
 
 
-# class MyCategoryView(ModelView):
-#     column_searchable_list = ['id','name']
-#     column_filters = ['id','name']
 
 class MyAdminIndex(AdminIndexView):
     @expose('/')
@@ -20,14 +18,11 @@ class MyAdminIndex(AdminIndexView):
 
 
 admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
-# admin.add_view(MyCategoryView(Category, db.session))
-
-
 
 class AuthenticatedView(ModelView):
-    # def is_visible(self):
-    #     return current_user.is_authenticated and current_user.role == 1
-    pass
+    def is_visible(self):
+        return current_user.is_authenticated and current_user.role == 1
+
 
 admin.add_view(AuthenticatedView(Account, db.session, category='Quản lý tài khoản'))
 admin.add_view(AuthenticatedView(Customer, db.session, category='Quản lý khách hàng'))
@@ -52,6 +47,7 @@ class LogoutView(BaseView):
         logout_user()
         return redirect('/admin')
 
+
 class StatsView(BaseView):
     @expose('/')
     def index(self):
@@ -72,10 +68,11 @@ class StatsView(BaseView):
         return self.render('admin/stats.html', stats = stats)
 
 
-    # def is_accessible(self):
-    #     return current_user.is_authenticated and current_user.vaiTro == 1
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == 1
 
 admin.add_view(StatsView(name = "Doanh thu",category='Thống kê' ))
+
 admin.add_view(LogoutView(name='Đăng xuất'))
 
 
@@ -84,7 +81,6 @@ class TanSuatView(BaseView):
     def index(self):
         selected_month = request.args.get('months')
         selected_year = request.args.get('years')
-        stats = dao.doanh_thu_theo_thang(thang=selected_month, nam = selected_year)
         stats = dao.tan_suat_theo_thang(selected_month, selected_year)
         if f"Không có dữ liệu doanh thu cho tháng {selected_month}, năm {selected_year}." == stats:
             stats = ''
@@ -98,8 +94,8 @@ class TanSuatView(BaseView):
 
         return self.render('admin/tanSuat.html', stats = stats)
 
-    # def is_accessible(self):
-    #     return current_user.is_authenticated and current_user.vaiTro == 1
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == 1
 admin.add_view(TanSuatView(name = "Tần suất",category='Thống kê' ))
 
 class QuyDinhView(BaseView):
@@ -119,9 +115,11 @@ class QuyDinhView(BaseView):
                 flash(f"Đã xảy ra lỗi: {str(e)}", 'danger')
         return self.render('admin/rules.html', rules = rules)
 
-    # def is_accessible(self):
-    #     return current_user.is_authenticated and current_user.vaiTro == 1
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == 1
 
 admin.add_view(QuyDinhView(name = "Quy định", endpoint='update-rules' ))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

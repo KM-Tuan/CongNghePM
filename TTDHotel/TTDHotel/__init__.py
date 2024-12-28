@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote
 import  cloudinary, os
 from authlib.integrations.flask_client import OAuth
-
+from flask_login import LoginManager
 
 
 app = Flask(__name__, template_folder="templates")
@@ -17,7 +17,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 
 db = SQLAlchemy(app)
-
+login = LoginManager(app)
 
 cloudinary.config(
     cloud_name= 'dqpoa9ukn',
