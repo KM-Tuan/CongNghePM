@@ -53,6 +53,7 @@ def process_admin_login():
         user = dao.auth_user(username, password)
         if user:
             set_user_session(user)
+            login_user(user)
         return redirect('/admin')
 
 
@@ -88,15 +89,6 @@ def set_user_session(user):
     session['phone'] = user.customer.phone if user.customer else None
 
 
-@app.route('/admin-login', methods=['POST'])
-def login_admin():
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    u = dao.auth_user(username=username, password=password)
-    if u:
-        login_user(u)
-        return redirect('/admin')
 
 
 @app.context_processor

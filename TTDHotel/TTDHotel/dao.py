@@ -1,12 +1,14 @@
 import json
-
-from sqlalchemy import cast, func, Integer
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import cast, func, Integer, and_, exists,  extract
+from datetime import datetime
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
-from models import Category, Account, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
+from models import Category, Account, RentingDetail,RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
 
 
-# from models import Category
+
+
 def auth_user(username, password):
     password_hash = hash_password(password)
     return (
@@ -298,3 +300,72 @@ def read_json(path):
 def save_rules(rules):
     with open('data/rules.json', 'w') as f:
         json.dump(rules, f, indent=4)
+
+
+def doanh_thu_theo_thang(thang: int = None, nam: int = None):
+    try:
+        if thang is None or nam is None:
+            today = datetime.today()
+            thang = thang or today.month
+            nam = nam or today.year
+
+        doanh_thu = (
+            db.session.query(
+                Room.id.label("maPhong"),
+                Category.name.label("tenLoaiPhong"),
+                func.coalesce(func.sum(Bill.total + Bill.charge), 0).label("doanhThu")  # Sử dụng coalesce để thay 0 cho phòng không có doanh thu
+            )
+            .join(Category, Category.id == Room.room_type_id)  # Liên kết đến bảng Loại Phòng
+            .outerjoin(RentingDetail, RentingDetail.room_id == Room.id)  # Sử dụng outerjoin
+            .outerjoin(RoomRented, RoomRented.id == RentingDetail.room_rented_id)  # Sử dụng outerjoin
+            .outerjoin(Bill, Bill.room_rented_id == RoomRented.id)  # Sử dụng outerjoin
+            .filter(
+                extract('month', Bill.create_date) == thang,
+                extract('year', Bill.create_date) == nam
+            )
+            .group_by(Room.id, Category.name)
+            .order_by(Room.id)
+            .all()
+        )
+
+        if not doanh_thu:
+            return f"Không có dữ liệu doanh thu cho tháng {thang}, năm {nam}."
+
+        return doanh_thu
+
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Rollback nếu xảy ra lỗi
+        return f"Đã xảy ra lỗi khi truy vấn dữ liệu: {str(e)}"
+
+def tan_suat_theo_thang(thang: int = None, nam: int = None):
+    try:
+        if thang is None or nam is None:
+            today = datetime.today()
+            thang = thang or today.month
+            nam = nam or today.year
+
+        tan_suat = (
+            db.session.query(
+                Category.id.label("maLoaiPhong"),
+                Category.name.label("tenLoaiPhong"),
+                func.coalesce(func.count(RentingDetail.room_id), 0).label("soLanSuDung")
+            )
+            .outerjoin(Room, Category.id == Room.room_type_id)
+            .outerjoin(RentingDetail, RentingDetail.room_id == Room.id)
+            .outerjoin(RoomRented, RoomRented.id == RentingDetail.room_rented_id)
+            .filter(
+                (extract('month', RoomRented.check_in_date) == thang) | (RoomRented.check_in_date == None),
+                extract('year', RoomRented.check_in_date) == nam
+            )
+            .group_by(Category.id, Category.name)
+            .order_by(func.count(RentingDetail.room_id).desc())
+            .all()
+        )
+
+        if not tan_suat:
+            return f"Không có dữ liệu sử dụng phòng cho tháng {thang}, năm {nam}."
+
+        return tan_suat
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return f"Đã xảy ra lỗi khi truy vấn dữ liệu: {str(e)}"
