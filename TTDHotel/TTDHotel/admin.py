@@ -17,7 +17,7 @@ admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
 # admin.add_view(MyCategoryView(Category, db.session))
 
 class AuthenticatedView(ModelView):
-    def is_accessible(self):
+    def is_visible(self):
         return current_user.is_authenticated and current_user.role == 1
 
 
