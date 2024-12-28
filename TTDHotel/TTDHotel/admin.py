@@ -1,3 +1,6 @@
+from urllib import request
+
+from flask import redirect, flash
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from TTDHotel.TTDHotel import app, db
@@ -77,8 +80,8 @@ class StatsView(BaseView):
         return self.render('admin/stats.html', stats = stats)
 
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 
 admin.add_view(StatsView(name = "Doanh thu",category='Thống kê' ))
 admin.add_view(LogoutView(name='Đăng xuất'))
@@ -89,8 +92,8 @@ class TanSuatView(BaseView):
     def index(self):
         selected_month = request.args.get('months')
         selected_year = request.args.get('years')
-        stats = hotelapp.dao.doanh_thu_theo_thang(thang=selected_month, nam = selected_year)
-        stats = hotelapp.dao.tan_suat_theo_thang(selected_month, selected_year)
+        stats = dao.doanh_thu_theo_thang(thang=selected_month, nam = selected_year)
+        stats = dao.tan_suat_theo_thang(selected_month, selected_year)
         if f"Không có dữ liệu doanh thu cho tháng {selected_month}, năm {selected_year}." == stats:
             stats = ''
         # total = 0
@@ -103,14 +106,14 @@ class TanSuatView(BaseView):
 
         return self.render('admin/tanSuat.html', stats = stats)
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 admin.add_view(TanSuatView(name = "Tần suất",category='Thống kê' ))
 
 class QuyDinhView(BaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-        rules = hotelapp.dao.load_rules()
+        rules = dao.load_rules()
         if request.method == 'POST':
             try:
                 rules['dat_phong_khach_san']['thoi_gian_nhan_phong_toi_da'] = int(request.form['thoi_gian_nhan_phong_toi_da'])
@@ -118,14 +121,14 @@ class QuyDinhView(BaseView):
                 rules['gia_phong']['so_khach_co_ban'] = int(request.form['so_khach_co_ban'])
                 rules['gia_phong']['phu_phi_khach_them'] = float(request.form['phu_phi_khach_them'])
                 rules['gia_phong']['he_so_khach_nuoc_ngoai'] = float(request.form['he_so_khach_nuoc_ngoai'])
-                hotelapp.dao.save_rules(rules)
+                dao.save_rules(rules)
                 flash('Quy định đã được cập nhật thành công!', 'success')
             except Exception as e:
                 flash(f"Đã xảy ra lỗi: {str(e)}", 'danger')
         return self.render('admin/rules.html', rules = rules)
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 
 admin.add_view(QuyDinhView(name = "Quy định", endpoint='update-rules' ))
 if __name__ == "__main__":
