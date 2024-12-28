@@ -23,18 +23,11 @@ admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
 # admin.add_view(MyCategoryView(Category, db.session))
 
 
-class MyStatsView(BaseView):
-    @expose('/')
-    def index(self):
-        return self.render('admin/stats.html')
-
-
 
 class AuthenticatedView(ModelView):
     # def is_visible(self):
     #     return current_user.is_authenticated and current_user.role == 1
     pass
-
 
 admin.add_view(AuthenticatedView(Account, db.session, category='Quản lý tài khoản'))
 admin.add_view(AuthenticatedView(Customer, db.session, category='Quản lý khách hàng'))
@@ -50,7 +43,6 @@ admin.add_view(AuthenticatedView(BookingDetail, db.session, category='Quản lý
 admin.add_view(AuthenticatedView(RoomRented, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(RentingDetail, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(Bill, db.session, category='Quản lý hóa đơn'))
-admin.add_view(MyStatsView("Thống kê"))
 
 
 
