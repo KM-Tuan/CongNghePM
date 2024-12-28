@@ -69,8 +69,8 @@ class StatsView(BaseView):
         return self.render('admin/stats.html', stats = stats)
 
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 
 admin.add_view(StatsView(name = "Doanh thu",category='Thống kê' ))
 admin.add_view(LogoutView(name='Đăng xuất'))
@@ -95,8 +95,8 @@ class TanSuatView(BaseView):
 
         return self.render('admin/tanSuat.html', stats = stats)
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 admin.add_view(TanSuatView(name = "Tần suất",category='Thống kê' ))
 
 class QuyDinhView(BaseView):
@@ -116,8 +116,8 @@ class QuyDinhView(BaseView):
                 flash(f"Đã xảy ra lỗi: {str(e)}", 'danger')
         return self.render('admin/rules.html', rules = rules)
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.vaiTro == 1
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.vaiTro == 1
 
 admin.add_view(QuyDinhView(name = "Quy định", endpoint='update-rules' ))
 if __name__ == "__main__":
