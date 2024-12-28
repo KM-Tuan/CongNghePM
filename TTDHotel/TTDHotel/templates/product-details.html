@@ -22,7 +22,9 @@
             <div>
                 <h3 class="product-price">{{ category.price }}đ</h3>
                 {% if logged_in %}
-                <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng ngay</button>
+                <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng
+                    ngay
+                </button>
                 {% else %}
                 <a href="/login" class="btn btn-secondary mt-4">Đăng nhập để đặt phòng</a>
                 {% endif %}
@@ -48,21 +50,44 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Đặt phòng ngay</h5>
+                <h5 class="modal-title" id="bookingModalLabel">Thông tin đặt phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="/booking">
                 <div class="modal-body">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Họ và Tên" required>
+                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Họ và Tên"
+                               required>
                         <label for="fullname">Họ và Tên</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Số Điện Thoại" required>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Số Điện Thoại"
+                               required>
                         <label for="phone">Số Điện Thoại</label>
                     </div>
+                    <div class="form-floating mb-3">
+                        <input type="tel" class="form-control" id="cmnd" name="cmnd"
+                               placeholder="Căn cước/chứng minh thư" required>
+                        <label for="cmnd">Số Điện Thoại</label>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label" style="color: #ffffff"><i class="bi bi-check-circle me-2"></i>Loại
+                            khách hàng</label>
+                        <div class="custom-radio-container">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="option" id="option1" value="1"
+                                       required>
+                                <label class="form-check-label" for="option1">Da trắng</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="option" id="option2" value="2">
+                                <label class="form-check-label" for="option2">Da đen</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-floating">
-                        <textarea class="form-control" id="note" name="note" placeholder="Ghi chú (không bắt buộc)" style="height: 100px;"></textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="Ghi chú (không bắt buộc)"
+                                  style="height: 100px;"></textarea>
                         <label for="note">Ghi chú (không bắt buộc)</label>
                     </div>
                 </div>
@@ -230,20 +255,20 @@
 
 </style>
 <script>
-// Function to toggle between showing short or full description
-function toggleDescription() {
-    var description = document.getElementById('description-text');
-    var link = document.getElementById('toggle-description');
+    // Function to toggle between showing short or full description
+    function toggleDescription() {
+        var description = document.getElementById('description-text');
+        var link = document.getElementById('toggle-description');
 
-    if (description.classList.contains('description-short')) {
-        // Show full description
-        description.classList.remove('description-short');
-        link.textContent = 'Thu gọn'; // Change link text
-    } else {
-        // Hide the extra part of description
-        description.classList.add('description-short');
-        link.textContent = 'Xem thêm'; // Reset link text
+        if (description.classList.contains('description-short')) {
+            // Show full description
+            description.classList.remove('description-short');
+            link.textContent = 'Thu gọn'; // Change link text
+        } else {
+            // Hide the extra part of description
+            description.classList.add('description-short');
+            link.textContent = 'Xem thêm'; // Reset link text
+        }
     }
-}
 </script>
 {% endblock %}

@@ -295,6 +295,7 @@ def load_categories():
         ) for category in data]
         return categories
 
+
 def load_contacts():
     return read_json('data/contacts.json')
 
@@ -303,10 +304,14 @@ def load_rules():
 
 
 def read_json(path):
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
 def save_rules(rules):
     with open('data/rules.json', 'w') as f:
         json.dump(rules, f, indent=4)
+
+def save_contacts(contacts):
+    with open('data/contacts.json', 'w') as f:
+        json.dump(contacts, f, indent=3)
