@@ -136,7 +136,7 @@ class Account(db.Model, UserMixin):
     username = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     status = Column(Integer, ForeignKey('status_account.id'), nullable=False)
-    role = Column(Integer, ForeignKey('role.id'), nullable=False)
+    role = Column(Integer, ForeignKey('role.id'), nullable=False, default=3)
     customer = relationship("Customer", backref=backref("account", lazy="joined"), uselist=False)
     employee = relationship("Employee", backref=backref("account", lazy="joined"), uselist=False)
 

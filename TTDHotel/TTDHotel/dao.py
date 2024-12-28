@@ -3,7 +3,8 @@ import json
 from sqlalchemy import cast, func, Integer
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
-from TTDHotel.TTDHotel.models import Category, Account, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
+from models import (Category, Account, RoomStatus, CustomerType, StatusAccount
+, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill)
 
 
 # from models import Category
