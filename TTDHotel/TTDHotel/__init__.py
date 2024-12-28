@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote
 import  cloudinary, os
 from authlib.integrations.flask_client import OAuth
+
+
+
 app = Flask(__name__, template_folder="templates")
 
 app.secret_key = 'secret_key'
@@ -14,6 +17,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 
 db = SQLAlchemy(app)
+
 
 cloudinary.config(
     cloud_name= 'dqpoa9ukn',
