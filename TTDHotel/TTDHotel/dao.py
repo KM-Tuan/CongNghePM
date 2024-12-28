@@ -82,13 +82,22 @@ def update_user(id, name=None, phone=None, password=None):
 
     return True
 
+def read_json(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
 def load_rules():
     return read_json('data/rules.json')
 
-def read_json(path):
-    with open(path, 'r') as f:
-        return json.load(f)
+def load_contacts():
+    return read_json('data/contacts.json')
+
+def save_contacts(contacts):
+    with open('data/contacts.json','w') as f:
+        json.dump(contacts, f, indent=3)
 
 def save_rules(rules):
     with open('data/rules.json', 'w') as f:
         json.dump(rules, f, indent=4)
+
+

@@ -6,46 +6,41 @@ import os
 import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin
 import  cloudinary.uploader
-@app.route('/home')
-def index():
+
+def check_login():
     logged_in = session.get('logged_in', False)
     if not logged_in:
         session['next'] = request.url
-    return render_template('welcome.html', logged_in=logged_in)
+    return logged_in
 
+@app.route('/home')
+def index():
+    return render_template('welcome.html', logged_in=check_login())
 
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
-
 @app.route('/booking')
 def show_product():
-    logged_in = session.get('logged_in', False)
-    if not logged_in:
-        session['next'] = request.url
     products = dao.load_products()
-    return render_template('index.html',products=products, logged_in=logged_in)
-
+    return render_template('index.html',products=products, logged_in=check_login())
 
 @app.route('/rules')
 def rules():
-    logged_in = session.get('logged_in', False)
-    if not logged_in:
-        session['next'] = request.url
-
     rules = dao.load_rules()
-    return render_template('rules.html', logged_in=logged_in, rules=rules)
+    return render_template('rules.html', logged_in=check_login(), rules=rules)
+
+@app.route('/contacts')
+def contacts():
+    contacts = dao.load_contacts()
+    return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
 
 
 @app.route('/products/<int:id>')
 def details(id):
     product = dao.load_product_by_id(id)
-    logged_in = session.get('logged_in', False)
-    if not logged_in:
-        session['next'] = request.url
-
-    return render_template('product-details.html', product=product, logged_in=logged_in)
+    return render_template('product-details.html', product=product, logged_in=check_login())
 
 @app.route('/login', methods=['get', 'post'])
 def login_my_user():
@@ -54,10 +49,7 @@ def login_my_user():
         password = request.form.get('password')
         user = dao.auth_user(username, password)
         if user:
-            session['user_id'] = user.id
-            session['user_name'] = user.name
-            session['logged_in'] = True
-            session['phone'] = user.phone
+            set_user_session(user)
             next_page = session.get('next')
             return redirect(next_page)
         else:
@@ -65,6 +57,13 @@ def login_my_user():
 
     return render_template('login.html')
 
+def set_user_session(user):
+    session['user_id'] = user.id
+    session['user_name'] = user.name
+    session['logged_in'] = True
+    session['phone'] = user.phone
+    # session['address'] = user.address
+    # session['cmnd'] = user.cmnd
 
 @app.context_processor
 def get_user():

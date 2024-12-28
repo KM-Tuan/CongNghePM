@@ -59,7 +59,13 @@ body {
 .footer__col p:hover {
   color: var(--text-white);
 }
-
+.no-underline {
+    text-decoration: none;
+    color: inherit;
+}
+.no-underline:hover{
+    color: var(--text-white)
+}
 .footer__bar {
   position: relative;
   max-width: var(--max-width);
