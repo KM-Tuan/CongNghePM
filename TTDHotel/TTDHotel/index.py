@@ -67,6 +67,18 @@ def set_user_session(user):
     session['logged_in'] = True
     session['phone'] = user.customer.phone if user.customer else None
 
+
+@app.route('/admin-login', methods=['POST'])
+def login_admin():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    u = dao.auth_user(username=username, password=password)
+    if u:
+        login_user(u)
+        return redirect('/admin')
+
+
 @app.context_processor
 def get_user():
     user_id = session.get('user_id')
@@ -138,8 +150,11 @@ def register():
         password = request.form.get('password')
         confirm = request.form.get('confirm')
         avatar = request.files.get('avatar')
+        address = request.form.get('address')
+        cmnd= request.form.get('cmnd')
+        customer_type = request.form.get('customer_type')
         avatar_path = None
-        role = request.form.get('role')  # Nhận role từ form
+
 
         if password != confirm:
             flash('Passwords do not match. Please try again.', 'danger')
@@ -153,7 +168,8 @@ def register():
             res = cloudinary.uploader.upload(avatar)
             avatar_path = res['secure_url']
 
-        success = dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar_path, role=role)
+        success = dao.add_user(name=name, phone=phone, username=username, password=password,
+                               customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
         if success:
             flash('Account created successfully!', 'success')
             return redirect('/login')

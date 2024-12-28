@@ -36,6 +36,19 @@ def get_or_create_user(user_info):
 
     return user
 
+def add_user(name,phone, username  , password ,address, customer_type_id ,cmnd =None,avatar=None):
+    password = hash_password(password)
+    tk = Account(username=username, password=password, status=1, role=3)
+    db.session.add(tk)
+    db.session.commit()
+
+    kh = Customer(name = name, address = address ,phone=phone ,cmnd=cmnd,
+                  customer_type_id = customer_type_id, account_id = tk.id,avatar=avatar) #cần giao diện để nhập thông tin
+    if avatar:
+        kh.avatar = avatar
+    db.session.add(kh)
+    db.session.commit()
+
 
 def update_user(id, name=None, phone=None, password=None):
     """Cập nhật thông tin người dùng."""
