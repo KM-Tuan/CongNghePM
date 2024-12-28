@@ -25,8 +25,8 @@ admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
 
 
 class AuthenticatedView(ModelView):
-    # def is_visible(self):
-    #     return current_user.is_authenticated and current_user.role == 1
+    def is_visible(self):
+        return current_user.is_authenticated and current_user.role == 1
     pass
 
 admin.add_view(AuthenticatedView(Account, db.session, category='Quản lý tài khoản'))

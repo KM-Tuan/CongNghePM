@@ -3,11 +3,11 @@ from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
 import os
-
-from flask_login import login_user
+import unicodedata
+from flask_login import login_user, logout_user, current_user, login_required
 
 import dao
-from TTDHotel.TTDHotel import app, oauth, facebook, admin
+from TTDHotel.TTDHotel import app, oauth, facebook, admin,login
 import  cloudinary.uploader
 
 def check_login():
@@ -55,6 +55,12 @@ def process_admin_login():
             set_user_session(user)
         return redirect('/admin')
 
+
+@login.user_loader
+def get_user_by_id(user_id):
+    return dao.get_user_by_id(int(user_id))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_my_user():
     if request.method.__eq__('POST'):
@@ -63,6 +69,7 @@ def login_my_user():
         user = dao.auth_user(username, password)
         if user:
             set_user_session(user)
+            login_user(user)
             next_page = session.get('next', '/')
             return redirect(next_page)
         else:

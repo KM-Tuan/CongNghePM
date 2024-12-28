@@ -78,6 +78,8 @@ def update_user(id, name=None, phone=None, password=None):
 
     return True
 
+def get_user_by_id(user_id):
+    return Account.query.get(user_id)
 
 def get_room_status_by_id(room_status_id):
     return RoomStatus.query.get(room_status_id)
