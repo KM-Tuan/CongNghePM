@@ -4,7 +4,7 @@ import json
 from sqlalchemy import cast, func, Integer
 
 from TTDHotel.TTDHotel import app
-from models import *
+from models import Category
 
 def hash_password(password):
     """Mã hóa mật khẩu bằng cách sử dụng MD5."""
