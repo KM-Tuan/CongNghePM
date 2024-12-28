@@ -1,51 +1,46 @@
 {% extends 'layout/base.html' %}
 
-{% block title %}PRODUCT DETAIL{% endblock %}
+{% block title %}Product Detail{% endblock %}
 
 {% block content %}
 
 <div class="container py-5">
-    <div class="row align-items-center">
-        <!-- Product Title Above Image -->
+    <div class="row">
         <div class="col-12">
-            <h1 class="product-title">{{ category.name }}</h1>
+            <h1 class="product-title text-center">{{ category.name }}</h1>
         </div>
     </div>
 
-    <div class="row align-items-center">
-        <div class="col-md-6">
+    <div class="row align-items-center mt-4">
+        <div class="col-md-6 text-center">
             <div class="product-image-container">
                 <img src="{{ category.image }}" class="img-fluid product-image" alt="Product Image"/>
             </div>
         </div>
         <div class="col-md-6">
-            <div>
-                <h3 class="product-price">{{ category.price }}đ</h3>
+            <h3 class="product-price text-center mb-4">{{ "{:,}".format(category.price)}} VNĐ</h3>
+            <div class="text-center">
                 {% if logged_in %}
-                <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng
                     ngay
                 </button>
                 {% else %}
-                <a href="/login" class="btn btn-secondary mt-4">Đăng nhập để đặt phòng</a>
+                <a href="/login" class="btn btn-secondary btn-lg">Đăng nhập để đặt phòng</a>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    <!-- Description Section spanning the entire width -->
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-12">
             <div class="product-description">
-                <!-- Short description, initially visible -->
                 <p id="description-text" class="description-short">{{ category.description }}</p>
-                <!-- Link to toggle description visibility -->
                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Xem thêm</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal for Booking -->
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -55,36 +50,45 @@
             </div>
             <form method="post" action="/booking">
                 <div class="modal-body">
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Họ và Tên"
-                               required>
-                        <label for="fullname">Họ và Tên</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Số Điện Thoại"
-                               required>
-                        <label for="phone">Số Điện Thoại</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="tel" class="form-control" id="cmnd" name="cmnd"
-                               placeholder="Căn cước/chứng minh thư" required>
-                        <label for="cmnd">Số Điện Thoại</label>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label" style="color: #ffffff"><i class="bi bi-check-circle me-2"></i>Loại
-                            khách hàng</label>
-                        <div class="custom-radio-container">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="option" id="option1" value="1"
-                                       required>
-                                <label class="form-check-label" for="option1">Da trắng</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="option" id="option2" value="2">
-                                <label class="form-check-label" for="option2">Da đen</label>
+                    <div id="customer-fields">
+                        <div class="card mb-3" id="customer-1">
+                            <div class="card-header bg-gradient-primary text-black">Khách hàng 1</div>
+                            <div class="card-body">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="fullname-1" name="fullname[]"
+                                           placeholder="Họ và Tên" required>
+                                    <label for="fullname-1">Họ và Tên</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="tel" class="form-control" id="phone-1" name="phone[]"
+                                           placeholder="Số Điện Thoại" required>
+                                    <label for="phone-1">Số Điện Thoại</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="cmnd-1" name="cmnd[]"
+                                           placeholder="Căn cước/chứng minh thư" required>
+                                    <label for="cmnd-1">Căn cước/chứng minh thư</label>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Loại khách hàng</label>
+                                    <div class="custom-radio-container">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="option" id="option1"
+                                                   value="1"
+                                                   required>
+                                            <label class="form-check-label" for="option1">Da trắng</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="option" id="option2"
+                                                   value="2">
+                                            <label class="form-check-label" for="option2">Da đen</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <button type="button" class="btn btn-info mt-2" id="add-customer-btn">Thêm khách hàng</button>
                     <div class="form-floating">
                         <textarea class="form-control" id="note" name="note" placeholder="Ghi chú (không bắt buộc)"
                                   style="height: 100px;"></textarea>
@@ -99,33 +103,28 @@
         </div>
     </div>
 </div>
+
+<div class="loader" id="loader"></div>
+
 <style>
-    body {
-    background-color: #f4f4f9;
+body {
+    background-color: #f8f9fa;
     color: #333;
     line-height: 1.6;
 }
 
-.container {
-    max-width: 1200px;
-}
-
-/* Product Title */
 .product-title {
     font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: bold;
     color: #4E54C8;
-    margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Product Image Container */
 .product-image-container {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transform: scale(1);
     transition: transform 0.3s ease;
 }
 
@@ -133,142 +132,45 @@
     transform: scale(1.05);
 }
 
-.product-image {
-    width: 100%;
-    height: auto;
-    transition: opacity 0.3s ease;
-}
-
-/* Price and Button Styles */
 .product-price {
-    font-size: 2.2rem;
-    color: #FF6B6B;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
+    background: linear-gradient(135deg, #ff6b6b, #ffcc33);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 2rem;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #6a11cb, #2575fc);
     border: none;
     border-radius: 50px;
-    font-size: 1.2rem;
-    font-weight: 600;
     padding: 12px 30px;
-    transition: all 0.3s;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.btn-secondary {
-    background: #ddd;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 12px 30px;
-    transition: all 0.3s;
-}
-
-.btn-secondary:hover {
-    background: #bbb;
-    transform: translateY(-3px);
-}
-
-/* Product Description Styles */
 .product-description {
-    font-size: 1.2rem;
-    color: #555;
-    margin-top: 2rem;
-    max-width: 100%;
-    word-wrap: break-word;
-    background-color: #fff;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
-
 .description-short {
-    display: inline-block;
     max-height: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 100%;
 }
-
-.product-description a {
-    color: #2575fc;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.product-description a:hover {
-    text-decoration: underline;
-}
-
-/* Modal Styles */
-.modal-header {
-    background: linear-gradient(135deg, #ff6b6b, #ff9472);
-    color: #fff;
-    text-align: center;
-    padding: 1.5rem;
-    border-radius: 20px 20px 0 0;
-}
-
-.modal-content {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
-}
-
-.modal-footer {
-    border-top: none;
-    padding: 1.5rem;
-    justify-content: center;
-}
-
-/* Form Input Styles */
-.form-floating .form-control {
-    border-radius: 10px;
-    padding: 1.25rem;
-    border: 1px solid #ddd;
-    transition: all 0.3s;
-}
-
-.form-floating .form-control:focus {
-    border-color: #2575fc;
-    box-shadow: 0 0 8px rgba(37, 117, 252, 0.5);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .product-title {
-        font-size: 2rem;
-    }
-    .product-price {
-        font-size: 1.8rem;
-    }
-}
-
 </style>
-<script>
-    // Function to toggle between showing short or full description
-    function toggleDescription() {
-        var description = document.getElementById('description-text');
-        var link = document.getElementById('toggle-description');
 
-        if (description.classList.contains('description-short')) {
-            // Show full description
-            description.classList.remove('description-short');
-            link.textContent = 'Thu gọn'; // Change link text
-        } else {
-            // Hide the extra part of description
-            description.classList.add('description-short');
-            link.textContent = 'Xem thêm'; // Reset link text
-        }
-    }
-</script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/details.js') }}" defer></script>
+{% endblock %}
 {% endblock %}
