@@ -1,0 +1,130 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Quy Định Khách Sạn</h1>
+
+    <!-- Quy định đặt phòng -->
+    <div class="card shadow-lg border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <h3 class="card-title text-primary d-flex align-items-center">
+                <i class="ri-calendar-check-line mr-2"></i> Đặt Phòng Khách Sạn
+            </h3>
+            <ul class="list-unstyled">
+                <li>Thời gian nhận phòng tối đa: <span class="highlight text-danger">{{ rules["dat_phong_khach_san"]["thoi_gian_nhan_phong_toi_da"] }} ngày</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Quy định sức chứa phòng -->
+    <div class="card shadow-lg border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <h3 class="card-title text-primary d-flex align-items-center">
+                <i class="ri-group-line mr-2"></i> Sức Chứa Phòng
+            </h3>
+            <ul class="list-unstyled">
+                <li>Số khách tối đa mỗi phòng: <span class="highlight text-danger">{{ rules["suc_chua_phong"]["so_khach_toi_da"] }} khách</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Quy định giá phòng -->
+    <div class="card shadow-lg border-0 rounded-lg mb-4">
+        <div class="card-body">
+            <h3 class="card-title text-primary d-flex align-items-center">
+                <i class="ri-money-dollar-circle-line mr-2"></i> Giá Phòng
+            </h3>
+            <ul class="list-unstyled">
+                <li>Số khách cơ bản: <span class="highlight text-danger">{{ rules["gia_phong"]["so_khach_co_ban"] }} khách</span></li>
+                <li>Phụ phí khách thêm: <span class="highlight text-danger">{{ rules["gia_phong"]["phu_phi_khach_them"] }} %</span></li>
+                <li>Hệ số khách nước ngoài: <span class="highlight text-danger">{{ rules["gia_phong"]["he_so_khach_nuoc_ngoai"] }}</span></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* General Layout */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Main Title */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Card Titles */
+    h3.card-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #007bff;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    /* Card Style */
+    .card {
+        border-radius: 12px;
+        background-color: #f9f9f9;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body {
+        padding: 40px;
+    }
+
+    /* Highlighted Text */
+    .highlight {
+        font-weight: bold;
+        color: #e74c3c;
+    }
+
+    /* Icons */
+    i {
+        font-size: 1.6rem;
+        color: #007bff;
+    }
+
+    /* List Styling */
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    /* Hover Effects for Icon */
+    i:hover {
+        color: #e74c3c;
+        transform: scale(1.1);
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2rem;
+        }
+
+        h3.card-title {
+            font-size: 1.4rem;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+    }
+</style>
+
+{% endblock %}

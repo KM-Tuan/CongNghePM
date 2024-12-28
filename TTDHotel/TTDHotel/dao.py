@@ -1,104 +1,52 @@
 import hashlib
 import json
-from sqlalchemy import func, cast, false
-from itertools import product
 
-from dns.e164 import query
-from sqlalchemy.dialects.postgresql.pg_catalog import quote_ident
+from sqlalchemy import cast, func, Integer
 
-from models import *
+from TTDHotel.TTDHotel import app
+from models import db, User, Product
 
-
-def load_categories():
-    # with open('data/categories.json', encoding='utf-8') as f:
-    #     return json.load(f)
-    return Category.query.all()
-
-def load_locations():
-    # with open('data/categories.json', encoding='utf-8') as f:
-    #     return json.load(f)
-    return Location.query.all()
+def hash_password(password):
+    """Mã hóa mật khẩu bằng cách sử dụng MD5."""
+    return hashlib.md5(password.encode('utf-8')).hexdigest()
 
 
-def load_products(q=None, cate_id=None, page=None, price=None, location_id=None):
+def load_products(q=None):
+    """Tải các sản phẩm từ cơ sở dữ liệu với các bộ lọc."""
     query = Product.query
 
     if q:
         query = query.filter(Product.name.contains(q))
-    if cate_id:
-        query = query.filter(Product.category_id == cate_id)
-    if price:
-        # Chuyển đổi `price` từ chuỗi sang số để so sánh
-        price_column = cast(func.replace(Product.price, ',', ''), Integer)
-        if price == '10':  # Dưới 1 triệu
-            query = query.filter(price_column < 10000000)
-        elif price == '10-20':  # Từ 1 triệu đến 5 triệu
-            query = query.filter(price_column.between(10000000, 20000000))
-        elif price == '20':  # Trên 5 triệu
-            query = query.filter(price_column > 20000000)
-    if location_id:
-        query = query.filter(Product.location_id == location_id)
-
-    # Phân trang
-    if page:
-        page_size = app.config['PAGE_SIZE']
-        offset = (int(page) - 1) * page_size
-        query = query.offset(offset).limit(page_size)
 
     return query.all()
 
-def count_products(q=None, cate_id=None, price=None, location_id=None):
+def count_products(q=None):
+    """Đếm số lượng sản phẩm với các bộ lọc."""
     query = Product.query
 
     if q:
         query = query.filter(Product.name.contains(q))
-    if cate_id:
-        query = query.filter(Product.category_id == cate_id)
-    if price:
-        # Chuyển đổi `price` từ chuỗi sang số để so sánh
-        price_column = cast(func.replace(Product.price, ',', ''), Integer)
-        if price == '10':  # Dưới 1 triệu
-            query = query.filter(price_column < 10000000)
-        elif price == '10-20':  # Từ 1 triệu đến 5 triệu
-            query = query.filter(price_column.between(10000000, 20000000))
-        elif price == '20':  # Trên 5 triệu
-            query = query.filter(price_column > 20000000)
-    if location_id:
-        query = query.filter(Product.location_id == location_id)
 
     return query.count()
 
-
 def auth_user(username, password):
-    password = str(hashlib.md5(password.encode('utf-8')).hexdigest())
-    return User.query.filter(User.username.__eq__(username), User.password.__eq__(password)).first()
-
+    """Xác thực người dùng với mật khẩu đã mã hóa."""
+    password_hash = hash_password(password)
+    return User.query.filter_by(username=username, password=password_hash).first()
 
 def load_product_by_id(id):
-    with open('data/products.json', encoding='utf-8') as f:
-        products = json.load(f)
-        for p in products:
-            if p["id"] == id:
-                return p
-
-def load_product_by_category_id(id):
-    query = Product.query
-    if id:
-        query = query.filter(Product.category_id.__eq__(id))
-
-    return query.all()
-
+    """Tải sản phẩm theo ID từ cơ sở dữ liệu."""
+    return Product.query.get(id)
 
 def get_or_create_user(user_info):
-    # Kiểm tra xem người dùng đã tồn tại hay chưa
+    """Tạo mới người dùng nếu chưa tồn tại."""
     user = User.query.filter_by(username=user_info['email']).first()
 
     if not user:
-        # Nếu người dùng chưa tồn tại, tạo mới
         user = User(
             name=user_info['name'],
-            username=user_info['email'],  # Sử dụng email làm username
-            password=hash(user_info['email']),
+            username=user_info['email'],
+            password=hash_password(user_info['email']),
             avatar=user_info['picture'],
             active=True
         )
@@ -108,16 +56,18 @@ def get_or_create_user(user_info):
     return user
 
 def add_user(name, phone, username, password, avatar):
-    password=hash(password)
-    new_user = User(name=name, phone=phone, username=username, password=password, avatar=avatar)
+    """Thêm người dùng mới."""
+    password_hash = hash_password(password)
+    new_user = User(name=name, phone=phone, username=username, password=password_hash, avatar=avatar)
     db.session.add(new_user)
     db.session.commit()
 
 def get_user_by_id(id):
-    user = User.query.filter(User.id == id).first()
-    return user
+    """Lấy người dùng theo ID."""
+    return User.query.get(id)
 
 def update_user(id, name=None, phone=None, password=None):
+    """Cập nhật thông tin người dùng."""
     user = User.query.get(id)
     if user:
         if name:
@@ -125,13 +75,20 @@ def update_user(id, name=None, phone=None, password=None):
         if phone:
             user.phone = phone
         if password:
-            user.password = hash(password)
+            user.password = hash_password(password)
         db.session.commit()
     else:
         return False
 
     return True
 
+def load_rules():
+    return read_json('data/rules.json')
 
-def hash(password):
-    return str(hashlib.md5(password.encode('utf-8')).hexdigest())
+def read_json(path):
+    with open(path, 'r') as f:
+        return json.load(f)
+
+def save_rules(rules):
+    with open('data/rules.json', 'w') as f:
+        json.dump(rules, f, indent=4)

@@ -6,33 +6,14 @@ from sqlalchemy.testing.suite.test_reflection import users
 
 from TTDHotel.TTDHotel import app, db
 
-
 class User(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     phone = Column(String(11), unique=True, nullable=True)
     username = Column(String(50), unique=True, nullable=False)
     password = Column(String(50), nullable=False)
-    avatar = Column(String(200), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
+    avatar = Column(String(200), default="https://example.com/avatar_default.jpg")
     active = Column(Boolean, default=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Category(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    products = relationship('Product', backref='category', lazy=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Location(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    products = relationship('Product', backref='location', lazy=True)
 
     def __str__(self):
         return self.name
@@ -41,14 +22,9 @@ class Location(db.Model):
 class Product(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    address = Column(String(100), nullable=False)
-    distance = Column(String(10), nullable=False)
-    description = Column(String(100), nullable=False)
-    rating = Column(Integer, nullable=False)
+    description = Column(String(1000), nullable=False)
     price = Column(Integer, default=0)
-    image = Column(String(300), default="https://th.bing.com/th/id/OIP.TD3qZlPaZtEM3dkXOP7f2gHaE7?rs=1&pid=ImgDetMain")
-    category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
-    location_id = Column(Integer, ForeignKey(Location.id), nullable=False)
+    image = Column(String(300), default="https://example.com/product_default.jpg")
 
     def __str__(self):
         return self.name
@@ -57,14 +33,6 @@ class Product(db.Model):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        c1 = Category(name="Phòng VIP")
-        c2 = Category(name="Phòng Đôi")
-        c3 = Category(name="Phòng Đơn")
-        l1 = Location(name="TP Hồ Chí Minh")
-        l2 = Location(name="Hà Nội")
-        l3 = Location(name="Vũng Tàu")
-        db.session.add_all([c1, c2, c3, l1, l2, l3])
-        db.session.commit()
         import json
         with open('data/products.json', encoding='utf-8') as f:
             products = json.load(f)

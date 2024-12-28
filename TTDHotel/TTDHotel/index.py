@@ -1,5 +1,4 @@
 import math
-
 from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
@@ -10,25 +9,33 @@ import  cloudinary.uploader
 @app.route('/home')
 def index():
     logged_in = session.get('logged_in', False)
-    q = request.args.get("q")
-    cate_id = request.args.get("category_id", '').strip()
-    location_id = request.args.get('location', '').strip()
-    price=request.args.get('price','').strip()
-    page = request.args.get("page",1)
-
-    categories=dao.load_categories()
-    locations=dao.load_locations()
-
-    total = dao.count_products(q=q, cate_id=cate_id, price=price, location_id=location_id)
-    products = dao.load_products(q=q, cate_id=cate_id, page=page, price=price, location_id=location_id)
     if not logged_in:
         session['next'] = request.url
-    return render_template('index.html',locations=locations,categories=categories, products=products, logged_in=logged_in, pages = math.ceil(total/app.config['PAGE_SIZE']))
+    return render_template('welcome.html', logged_in=logged_in)
 
 
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
+
+
+@app.route('/booking')
+def show_product():
+    logged_in = session.get('logged_in', False)
+    if not logged_in:
+        session['next'] = request.url
+    products = dao.load_products()
+    return render_template('index.html',products=products, logged_in=logged_in)
+
+
+@app.route('/rules')
+def rules():
+    logged_in = session.get('logged_in', False)
+    if not logged_in:
+        session['next'] = request.url
+
+    rules = dao.load_rules()
+    return render_template('rules.html', logged_in=logged_in, rules=rules)
 
 
 @app.route('/products/<int:id>')
@@ -39,17 +46,6 @@ def details(id):
         session['next'] = request.url
 
     return render_template('product-details.html', product=product, logged_in=logged_in)
-
-
-@app.route('/categories')
-def categories():
-    logged_in = session.get('logged_in', False)
-    category_id = request.args.get('category_id')
-    products = dao.load_product_by_category_id(category_id)
-    if not logged_in:
-        session['next'] = request.url
-    return render_template('index.html', products=products, logged_in=logged_in)
-
 
 @app.route('/login', methods=['get', 'post'])
 def login_my_user():
@@ -184,17 +180,9 @@ def register():
 @app.route('/')
 def home():
     logged_in = session.get('logged_in', False)
-    categories = dao.load_categories()
     if not logged_in:
         session['next'] = request.url
-    return render_template('welcome.html', categories=categories, logged_in=logged_in)
-
-
-@app.context_processor
-def common_attributes():
-    return {
-        "categories": dao.load_categories()
-    }
+    return render_template('welcome.html', logged_in=logged_in)
 
 
 ###################

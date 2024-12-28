@@ -4,159 +4,96 @@
 
 <section class="container py-4">
     <!-- Bộ lọc -->
-    <div class="card shadow-sm border-0 rounded-lg p-4 mb-5">
-        <h5 class="card-title mb-3 text-center font-weight-bold">Lọc khách sạn</h5>
-        <form method="get" action="" class="row g-3 align-items-center">
-            <div class="col-md-4">
-                <label for="priceRange" class="form-label">Giá</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-currency-dollar"></i>
-                    </span>
-                    <select id="priceRange" name="price" class="form-select">
-                        <option value="">Tất cả</option>
-                        <option value="10" {% if request.args.get(
-                        'price') == '10' %}selected{% endif %} >Dưới 10 triệu</option>
-                        <option value="10-20" {% if request.args.get(
-                        'price') == '10-20' %}selected{% endif %}>10 triệu - 20 triệu</option>
-                        <option value="20" {% if request.args.get(
-                        'price') == '20' %}selected{% endif %}>Trên 20 triệu</option>
-                    </select>
+    <div class="booking__container mt-5"
+         style="position: static; transform:none; margin: auto; width: 30%; padding: 0 30px; border-radius: 50px;">
+        <form action="" method="GET" class="d-flex justify-content-between">
+            <!-- Loại phòng -->
+            <div class="form__group" style="width: 28%; margin: 15px;">
+                <div class="input__group">
+                    <label>Loại phòng</label>
                 </div>
+                <select name="loai_phong" class="form-select">
+                    <option value="">-- Chọn loại phòng --</option>
+                </select>
             </div>
-            <div class="col-md-4">
-                <label for="category_id" class="form-label">Danh mục</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-list-task"></i>
-                    </span>
-                    <select id="category_id" name="category_id" class="form-select">
-                        <option value="">Tất cả</option>
-                        {% for i in categories %}
-                        <option value="{{ i.id }}" {% if request.args.get(
-                        'category_id') == i.id|string %}selected{% endif %}>{{ i.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <label for="location" class="form-label">Khu vực</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-geo-alt"></i>
-                    </span>
-                    <select id="location" name="location" class="form-select">
-                        <option value="">Tất cả</option>
-                        {% for i in locations %}
-                        <option value="{{ i.id }}" {% if request.args.get(
-                        'location') == i.id|string %}selected{% endif %}>{{ i.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="col-12 text-center">
-                <button type="submit" class="btn btn-primary px-4 py-2 mt-3">Áp dụng</button>
+            <!-- Nút tìm kiếm -->
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="submit" class="btn"><i class="ri-search-line"></i></button>
             </div>
         </form>
     </div>
 </section>
 
-<section class="container py-5">
-    <!-- Sản phẩm -->
-    <div class="row">
+<!-- Product Section -->
+<section class="container py-4">
+    <div class="row justify-content-center">
         {% for p in products %}
-        <div class="col-md-3 col-12" style="padding:0.7rem">
-            <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+        <div class="col-md-3 col-12 mb-4">
+            <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
                 <a href="/products/{{ p.id }}">
                     <img class="card-img-top img-fluid" src="{{ p.image }}" alt="{{ p.name }}"
-                         style="width: 100%; height: 300px; object-fit: cover;">
+                         style="height: 300px; object-fit: cover; transition: transform 0.3s ease-in-out;">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
-                    <p class="card-text text-muted">{{ p.address }}</p>
-                    <p class="card-text text-muted">Cách trung tâm {{ p.distance }}</p>
                     <p class="card-text text-muted">{{ p.description }}</p>
-                    <p class="card-title text-info font-weight-bold">{{ p.rating }}</p>
                     <p class="card-title text-danger font-weight-bold">{{ "{:,}".format(p.price)}} VNĐ</p>
                 </div>
             </div>
         </div>
+        {% else %}
+        <p class="col-12 text-center">Không có sản phẩm nào.</p>
         {% endfor %}
     </div>
-
-    <!-- Phân trang -->
-    {% if pages > 1 %}
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <!-- Nút Trước -->
-            <li class="page-item {% if request.args.get('page', 1)|int == 1 %}disabled{% endif %}">
-                <a class="page-link"
-                   href="?{{ request.args.to_dict() | dict_without_key('page') | urlencode }}&page={{ request.args.get('page', 1)|int - 1 if request.args.get('page', 1)|int > 1 else 1 }}">
-                    <i class="bi bi-chevron-left"></i> Trước
-                </a>
-            </li>
-
-            <!-- Số trang -->
-            {% for i in range(1, pages + 1) %}
-            <li class="page-item {% if i == request.args.get('page', 1)|int %}active{% endif %}">
-                <a class="page-link"
-                   href="?{{ request.args.to_dict() | dict_without_key('page') | urlencode }}&page={{ i }}">
-                    {{ i }}
-                </a>
-            </li>
-            {% endfor %}
-
-            <!-- Nút Tiếp -->
-            <li class="page-item {% if request.args.get('page', 1)|int == pages %}disabled{% endif %}">
-                <a class="page-link"
-                   href="?{{ request.args.to_dict() | dict_without_key('page') | urlencode }}&page={{ request.args.get('page', 1)|int + 1 if request.args.get('page', 1)|int < pages else pages }}">
-                    Tiếp <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-        </ul>
-
-    </nav>
-    {% endif %}
 </section>
 
 <style>
-    /* General Card and Content Styling */
+    /* Cập nhật layout của các sản phẩm */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    /* Cập nhật card để chiếm 100% chiều rộng của col */
     .card {
         display: flex;
         flex-direction: column;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         height: 100%;
+        background-color: #fff;
     }
 
     .card-body {
         flex-grow: 1;
-        padding: 20px;
+        padding: 25px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
     .card-img-top {
-        height: auto;
         width: 100%;
-        object-fit: cover; /* Đảm bảo ảnh không bị méo */
+        height: 300px;
+        object-fit: cover;
         border-bottom: 2px solid #f1f1f1;
-        border-radius: 10px;
         transition: transform 0.3s ease-in-out;
     }
 
     .card:hover {
         transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
     }
 
     .card-title {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         font-weight: 700;
         color: #343a40;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         transition: color 0.3s ease;
     }
 
@@ -165,12 +102,8 @@
     }
 
     .card-text {
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    .card-title.text-info {
-        font-size: 1.2rem;
+        font-size: 1rem;
+        line-height: 1.6;
     }
 
     .pagination .page-link {
@@ -201,44 +134,108 @@
     }
 
     .btn {
-        transition: transform 0.2s ease, background-color 0.3s ease;
-        border-radius: 30px;
+        transition: transform 0.3s ease, background-color 0.4s ease, box-shadow 0.3s ease;
+        border-radius: 50%; /* Perfectly circular */
         font-weight: 600;
-        padding: 10px 15px;
+        padding: 20px;
+        width: 70px; /* Increased size for more prominence */
+        height: 70px; /* Equal height and width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(45deg, #42a5f5, #1e88e5); /* Gradient for more visual appeal */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+        border: none;
     }
 
     .btn:hover {
-        transform: scale(1.05);
-    }
-
-    .btn-outline-primary {
-        border: 2px solid #007bff;
-        color: #007bff;
-    }
-
-    .btn-outline-primary:hover {
-        background-color: #007bff;
-        color: white;
+        transform: scale(1.15); /* Increased scaling effect on hover */
+        background: linear-gradient(45deg, #1e88e5, #42a5f5); /* Inverted gradient */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
     }
 
     .form-select, .btn {
-        height: 45px;
+        height: 50px;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .card-body .card-text {
-        font-size: 0.9rem;
-        line-height: 1.5;
+    .booking__container {
+        background-color: #f9f9f9;
+        border-radius: 20px; /* Rounded edges for filter section */
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .booking__container .form__group {
+        margin-bottom: 20px;
+    }
+
+    .booking__container label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .booking__container .form-select,
+    .booking__container input[type="date"],
+    .booking__container button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 50px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .booking__container .form-select:focus,
+    .booking__container input[type="date"]:focus {
+        border-color: #42a5f5;
+        outline: none;
+    }
+
+    .booking__container button {
+        background-color: #42a5f5;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .booking__container button:hover {
+        background-color: #1e88e5;
+        transform: scale(1.05);
+    }
+
+    .booking__container button i {
+        font-size: 1.5rem;
+    }
+
+    .booking__container .form__group {
+        flex: 1;
+    }
+
+    .booking__container .form__group label {
+        display: block;
+        margin-bottom: 8px;
     }
 
     @media (max-width: 768px) {
-        .card-body {
-            padding: 10px;
+        .booking__container {
+            width: 100%;
+            padding: 15px;
         }
 
-        .card-title {
-            font-size: 1rem;
+        .booking__container form {
+            flex-direction: column;
+        }
+
+        .booking__container .form__group {
+            width: 100%;
         }
     }
 </style>
