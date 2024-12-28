@@ -1,36 +1,39 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Date, Numeric
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.testing.suite.test_reflection import users
-import dao
-from TTDHotel.TTDHotel import app, db
 from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Numeric
+from sqlalchemy.orm import relationship, backref
+
+from TTDHotel.TTDHotel import app, db
+
+# import  dao
+from TTDHotel.TTDHotel.dao import hash_password
+
 
 class RoomStatus(db.Model):
-    __tablename__ = 'room_status'  # Tên bảng cho RoomStatus
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    room = relationship('Room', backref=backref('room_status', lazy=True))
+    room = relationship('Room', backref=backref('status', lazy=True))
 
 class CustomerType(db.Model):
-    __tablename__ = 'customer_type'  # Tên bảng cho CustomerType
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     customer = relationship('Customer', backref=backref('customer_type', lazy=True))
 
+
+
 class StatusAccount(db.Model):
-    __tablename__ = 'status_account'  # Tên bảng cho StatusAccount
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     account = relationship('Account', backref=backref('status_account', lazy=True))
 
+
+
 class Role(db.Model):
-    __tablename__ = 'role'  # Tên bảng cho Role
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     account = relationship('Account', backref=backref('account_role', lazy=True))
 
+
 class Category(db.Model):
-    __tablename__ = 'category'  # Tên bảng cho Category
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     description = Column(String(1000), nullable=False)
@@ -40,17 +43,19 @@ class Category(db.Model):
     def __str__(self):
         return self.name
 
+
+
 class Employee(db.Model):
-    __tablename__ = 'employee'  # Tên bảng cho Employee
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     cmnd = Column(String(20), unique=True, nullable=False)
     address = Column(String(255))
-    account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
+    account_id = Column(Integer, ForeignKey('account.id'), nullable = True)
     room_rented = relationship('RoomRented', backref=backref('employee', lazy=True))
 
+
+
 class Customer(db.Model):
-    __tablename__ = 'customer'  # Tên bảng cho Customer
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     cmnd = Column(String(20), nullable=False)
@@ -69,16 +74,21 @@ class Customer(db.Model):
     def __str__(self):
         return self.name
 
+
+
+
+
 class Room(db.Model):
-    __tablename__ = 'room'  # Tên bảng cho Room
     id = db.Column(Integer, primary_key=True, autoincrement=True)
     status_room = Column(Integer, ForeignKey('room_status.id'), nullable=False)
     room_type_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     booking_detail = relationship('BookingDetail', backref=backref('room', lazy=True))
     renting_detail = relationship('RentingDetail', backref=backref('room', lazy=True))
 
+
+
+
 class RoomBooked(db.Model):
-    __tablename__ = 'room_booked'  # Tên bảng cho RoomBooked
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
     booking_date = Column(Date, nullable=False)
@@ -88,14 +98,14 @@ class RoomBooked(db.Model):
     renting_detail = relationship('RoomRented', backref=backref('room_rented', lazy=True))
 
 class BookingDetail(db.Model):
-    __tablename__ = 'booking_detail'  # Tên bảng cho BookingDetail
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_booked_id = Column(Integer, ForeignKey('room_booked.id'), nullable=False)
     room_id = Column(Integer, ForeignKey('room.id'), nullable=False)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
 
+
+
 class RoomRented(db.Model):
-    __tablename__ = 'room_rented'  # Tên bảng cho RoomRented
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_booked_id = Column(Integer, ForeignKey('room_booked.id'))
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
@@ -106,22 +116,21 @@ class RoomRented(db.Model):
     bill = relationship('Bill', backref=backref('room_rented', lazy=True))
 
 class RentingDetail(db.Model):
-    __tablename__ = 'renting_detail'  # Tên bảng cho RentingDetail
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_rented_id = Column(Integer, ForeignKey('room_rented.id'), nullable=False)
     room_id = Column(Integer, ForeignKey('room.id'), nullable=False)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
 
+
 class Bill(db.Model):
-    __tablename__ = 'bill'  # Tên bảng cho Bill
     id = Column(Integer, primary_key=True, autoincrement=True)
     create_date = Column(Date)
     charge = Column(Numeric(10, 2), nullable=False)
     total = Column(Numeric(10, 2), nullable=False)
     room_rented_id = Column(Integer, ForeignKey('room_rented.id'), nullable=False)
 
+
 class Account(db.Model, UserMixin):
-    __tablename__ = 'account'  # Tên bảng cho Account
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
@@ -135,10 +144,26 @@ class Account(db.Model, UserMixin):
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
+    #     import json
+    #     with open('data/products.json', encoding='utf-8') as f:
+    #         products = json.load(f)
+    #         for p in products:
+    #             prod = Product(**p)
+    #             db.session.add(prod)
+    #
+    #     db.session.commit()
+    #
+    #     import hashlib
+    #     u = User(name="KieuThanhDuc", phone="0987654321", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
+    #     db.session.add(u)
+    #     db.session.commit()
+    #     pass
 
-        import hashlib
+    with app.app_context():
+        db.drop_all()  # Xóa tất cả bảng cũ
+        db.create_all()
 
         trang_thai_phong = [
             RoomStatus(id=1, name="Trống"),
@@ -185,6 +210,7 @@ if __name__ == "__main__":
                       account_id=5),
             Customer(id=3, name="Trần Văn E", cmnd="140936674321", address="Phú Yên", customer_type_id=1),
             Customer(id=4, name="Nguyễn Tấn L", cmnd="760987654321", address="Sài Gòn", customer_type_id=2),
+
         ]
 
         phong = [
@@ -221,15 +247,15 @@ if __name__ == "__main__":
         ]
 
         tai_khoan = [
-            Account(id=1, username="admin", password=dao.hash_password("123"),status=1,
+            Account(id=1, username="admin", password=hash_password("123"),status=1,
                      role=1),
-            Account(id=2, username="nhanvien1", password=dao.hash_password("123"), status=1,
+            Account(id=2, username="nhanvien1", password=hash_password("123"), status=1,
                      role=2),
-            Account(id=3, username="nhanvien2", password=dao.hash_password("123"), status=1,
+            Account(id=3, username="nhanvien2", password=hash_password("123"), status=1,
                      role=2),
-            Account(id=4, username="khachhang1", password=dao.hash_password("123"),  status=1,
+            Account(id=4, username="khachhang1", password=hash_password("123"),  status=1,
                      role=3),
-            Account(id=5, username="khachhang2", password=dao.hash_password("123"), status=1,
+            Account(id=5, username="khachhang2", password=hash_password("123"), status=1,
                      role=3),
         ]
 

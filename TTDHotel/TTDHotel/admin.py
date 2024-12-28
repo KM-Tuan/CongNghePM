@@ -1,7 +1,7 @@
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from TTDHotel.TTDHotel import app, db
-from models import *
+from models import Category
 
 
 class MyCategoryView(ModelView):
