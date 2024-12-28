@@ -1,19 +1,17 @@
-from tkinter.font import names
-
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Date, Numeric
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.testing.suite.test_reflection import users
-import  dao
-from TTDHotel.TTDHotel import app, db
 from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Numeric
+from sqlalchemy.orm import relationship, backref
 
-# from TTDHotel.TTDHotel.dao import hash_password
+from TTDHotel.TTDHotel import app, db
+
+# import  dao
+from TTDHotel.TTDHotel.dao import hash_password
 
 
 class RoomStatus(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    room = relationship('Room', backref=backref('room_status', lazy=True))
+    room = relationship('Room', backref=backref('status', lazy=True))
 
 class CustomerType(db.Model):
     id = Column(Integer, primary_key=True)
@@ -164,9 +162,8 @@ if __name__ == "__main__":
     #     pass
 
     with app.app_context():
+        db.drop_all()  # Xóa tất cả bảng cũ
         db.create_all()
-
-        import hashlib
 
         trang_thai_phong = [
             RoomStatus(id=1, name="Trống"),
@@ -250,15 +247,15 @@ if __name__ == "__main__":
         ]
 
         tai_khoan = [
-            Account(id=1, username="admin", password=dao.hash_password("123"),status=1,
+            Account(id=1, username="admin", password=hash_password("123"),status=1,
                      role=1),
-            Account(id=2, username="nhanvien1", password=dao.hash_password("123"), status=1,
+            Account(id=2, username="nhanvien1", password=hash_password("123"), status=1,
                      role=2),
-            Account(id=3, username="nhanvien2", password=dao.hash_password("123"), status=1,
+            Account(id=3, username="nhanvien2", password=hash_password("123"), status=1,
                      role=2),
-            Account(id=4, username="khachhang1", password=dao.hash_password("123"),  status=1,
+            Account(id=4, username="khachhang1", password=hash_password("123"),  status=1,
                      role=3),
-            Account(id=5, username="khachhang2", password=dao.hash_password("123"), status=1,
+            Account(id=5, username="khachhang2", password=hash_password("123"), status=1,
                      role=3),
         ]
 
