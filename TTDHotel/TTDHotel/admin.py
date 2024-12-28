@@ -1,4 +1,4 @@
-from flask_admin import Admin
+from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from TTDHotel.TTDHotel import app, db
 from models import Category, Account, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill, BookingDetail, RentingDetail
@@ -6,10 +6,14 @@ from models import Category, Account, RoomStatus, CustomerType, StatusAccount, R
 from flask_login import current_user, login_user, logout_user
 
 
-class MyCategoryView(ModelView):
-    column_searchable_list = ['id','name']
-    column_filters = ['id','name']
+# class MyCategoryView(ModelView):
+#     column_searchable_list = ['id','name']
+#     column_filters = ['id','name']
 
+class MyAdminIndex(AdminIndexView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/index.html', msg = "Hello")
 
 
 admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
@@ -17,8 +21,9 @@ admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
 # admin.add_view(MyCategoryView(Category, db.session))
 
 class AuthenticatedView(ModelView):
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == 1
+    # def is_visible(self):
+    #     return current_user.is_authenticated and current_user.role == 1
+    pass
 
 
 admin.add_view(AuthenticatedView(Account, db.session, category='Quản lý tài khoản'))
