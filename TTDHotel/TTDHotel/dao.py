@@ -100,6 +100,8 @@ def get_all_roles():
 def get_category_by_id(category_id):
     return Category.query.get(category_id)
 
+def get_category_by_name(p):
+    return Category.query.filter_by(name=p).first()
 
 def get_all_categories():
     return Category.query.all()
@@ -266,6 +268,18 @@ def set_account(username, password, status, role):
 
     return account
 
+def load_categories():
+    # Đọc dữ liệu từ file categories.json
+    with open('categories.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        categories = [Category(
+            id=category['id'],
+            name=category['name'],
+            price=category['price'],
+            description=category['description'],
+            image=category['image']
+        ) for category in data]
+        return categories
 
 def load_contacts():
     return read_json('data/contacts.json')

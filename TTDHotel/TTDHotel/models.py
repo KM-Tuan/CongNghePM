@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Numeric
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Numeric, Text
 from sqlalchemy.orm import relationship, backref
 
 from TTDHotel.TTDHotel import app, db
@@ -37,7 +37,7 @@ class Role(db.Model):
 class Category(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    description = Column(String(1000), nullable=False)
+    description = Column(Text, nullable=False)
     price = Column(Integer, default=0)
     image = Column(String(300), default="https://example.com/product_default.jpg")
 
@@ -145,23 +145,6 @@ class Account(db.Model, UserMixin):
 
 
 if __name__ == "__main__":
-    # with app.app_context():
-    #     db.create_all()
-    #     import json
-    #     with open('data/products.json', encoding='utf-8') as f:
-    #         products = json.load(f)
-    #         for p in products:
-    #             prod = Product(**p)
-    #             db.session.add(prod)
-    #
-    #     db.session.commit()
-    #
-    #     import hashlib
-    #     u = User(name="KieuThanhDuc", phone="0987654321", username="admin", password= str(hashlib.md5("123".encode('utf-8')).hexdigest()))
-    #     db.session.add(u)
-    #     db.session.commit()
-    #     pass
-
     with app.app_context():
         db.drop_all()  # Xóa tất cả bảng cũ
         db.create_all()
@@ -189,13 +172,41 @@ if __name__ == "__main__":
         ]
 
         loai_phong = [
-            Category(id=1, name="Standard", price=500000,
-                      description="Phòng đơn giản, gia đình, không ban công, không sofa", image=""),
-            Category(id=2, name="Delux", price=1000000,
-                      description="Phòng sang trọng, cặp đôi, không ban công, sofa êm đẹp", image=""),
-            Category(id=3, name="VIP", price=2000000,
-                      description="Phòng cao cấp, ban công thoáng mát view thành phố, sofa êm ái đẹp",
-                      image=""),
+            Category(
+                id=1,
+                name="Standard",
+                price=500000,
+                description="""
+                    Phòng tại khách sạn này đơn giản, tiện nghi, phù hợp cho cá nhân hoặc gia đình nhỏ. Phòng không có ban công nhưng có cửa sổ lớn, giúp không 
+                    gian thoáng đãng và dễ chịu. Nội thất gồm giường ngủ thoải mái, tivi, bàn làm việc nhỏ, tủ quần áo và tủ lạnh mini. Phòng tắm hiện đại và 
+                    sạch sẽ. Ưu điểm của phòng là giá cả phải chăng, thiết kế tiện nghi và không gian thoáng đãng. Tuy nhiên, phòng thiếu sofa và không gian có 
+                    thể cảm thấy hạn chế đối với những người yêu thích không gian rộng. Phòng phù hợp cho khách du lịch tiết kiệm, gia đình nhỏ và công tác ngắn hạn.
+                """,
+                image="https://q-xx.bstatic.com/xdata/images/hotel/840x460/483207820.jpg?k=d8955cd0981eea6cb5dcb5d749f370745f6393b6c86d85ffc643599318e0c49b&o="
+            ),
+            Category(
+                id=2,
+                name="Deluxe",
+                price=1000000,
+                description="""
+                    Phòng khách sạn này thiết kế đơn giản, phù hợp cho cá nhân hoặc gia đình nhỏ, mang lại sự thoải mái và tiện nghi mà không quá xa hoa. Với cửa sổ 
+                    lớn, không gian phòng thoáng đãng và dễ chịu, dù không có ban công. Nội thất gồm giường ngủ thoải mái, tivi, bàn làm việc, tủ quần áo và tủ lạnh 
+                    mini, không gian rộng rãi nhưng không có sofa. Phòng tắm hiện đại, sạch sẽ. Phòng có giá cả phải chăng, thiết kế tiện nghi, phù hợp cho khách du 
+                    lịch tiết kiệm, gia đình nhỏ và công tác ngắn hạn. Tuy nhiên, thiếu ban công và sofa có thể là nhược điểm cho những ai yêu thích không gian rộng 
+                    rãi hơn.
+                """,
+                image="https://www.vietnambooking.com/wp-content/uploads/2021/02/khach-san-ho-chi-minh-14.jpg"),
+            Category(
+                id=3,
+                name="VIP",
+                price=2000000,
+                description="""
+                    Phòng VIP tại khách sạn này là lựa chọn lý tưởng cho những ai tìm kiếm sự sang trọng và tiện nghi bậc nhất. Phòng rộng rãi, với nội thất cao cấp, 
+                    cửa sổ lớn mang đến tầm nhìn tuyệt đẹp ra thành phố. Nội thất phòng gồm giường lớn, tivi màn hình phẳng, minibar cao cấp, khu vực tiếp khách riêng 
+                    biệt và phòng tắm với bồn tắm Jacuzzi. Các tiện ích bổ sung như máy pha cà phê, hệ thống chiếu sáng tự động và điều hòa thông minh hoàn thiện không 
+                    gian.
+                    """,
+                      image="https://hoanghaihotel.vn/Data/images/tintuc/10032021170917-gioi-thieu-ve-khach-san-hoang-hai.jpg"),
         ]
 
         # Thêm dữ liệu mẫu vào bảng chính

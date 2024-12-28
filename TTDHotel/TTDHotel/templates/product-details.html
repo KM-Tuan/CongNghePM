@@ -8,19 +8,19 @@
     <div class="row align-items-center">
         <!-- Product Title Above Image -->
         <div class="col-12">
-            <h1 class="product-title">{{ product.name }}</h1>
+            <h1 class="product-title">{{ category.name }}</h1>
         </div>
     </div>
 
     <div class="row align-items-center">
         <div class="col-md-6">
             <div class="product-image-container">
-                <img src="{{ product.image }}" class="img-fluid product-image" alt="Product Image"/>
+                <img src="{{ category.image }}" class="img-fluid product-image" alt="Product Image"/>
             </div>
         </div>
         <div class="col-md-6">
             <div>
-                <h3 class="product-price">{{ product.price }}đ</h3>
+                <h3 class="product-price">{{ category.price }}đ</h3>
                 {% if logged_in %}
                 <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng ngay</button>
                 {% else %}
@@ -35,7 +35,7 @@
         <div class="col-12">
             <div class="product-description">
                 <!-- Short description, initially visible -->
-                <p id="description-text" class="description-short">{{ product.description }}</p>
+                <p id="description-text" class="description-short">{{ category.description }}</p>
                 <!-- Link to toggle description visibility -->
                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Xem thêm</a>
             </div>
@@ -43,6 +43,7 @@
     </div>
 </div>
 
+<!-- Modal for Booking -->
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -73,10 +74,8 @@
         </div>
     </div>
 </div>
-
 <style>
-body {
-    font-family: 'Inter', sans-serif;
+    body {
     background-color: #f4f4f9;
     color: #333;
     line-height: 1.6;
@@ -86,6 +85,17 @@ body {
     max-width: 1200px;
 }
 
+/* Product Title */
+.product-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4E54C8;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Product Image Container */
 .product-image-container {
     border-radius: 20px;
     overflow: hidden;
@@ -104,47 +114,12 @@ body {
     transition: opacity 0.3s ease;
 }
 
-.product-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #4E54C8;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-}
-
+/* Price and Button Styles */
 .product-price {
     font-size: 2.2rem;
     color: #FF6B6B;
     margin-bottom: 1.5rem;
     font-weight: 600;
-}
-
-.product-description {
-    font-size: 1.2rem;
-    color: #555;
-    margin-top: 2rem;
-    max-width: 100%; /* Ensure it takes full width */
-    word-wrap: break-word; /* Break words if needed */
-}
-
-/* Short description styles */
-.description-short {
-    display: inline-block;
-    max-height: 50px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%; /* Limit the width of description */
-}
-
-.product-description a {
-    color: #2575fc;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.product-description a:hover {
-    text-decoration: underline;
 }
 
 .btn-primary {
@@ -177,6 +152,39 @@ body {
     transform: translateY(-3px);
 }
 
+/* Product Description Styles */
+.product-description {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 2rem;
+    max-width: 100%;
+    word-wrap: break-word;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.description-short {
+    display: inline-block;
+    max-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.product-description a {
+    color: #2575fc;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.product-description a:hover {
+    text-decoration: underline;
+}
+
+/* Modal Styles */
 .modal-header {
     background: linear-gradient(135deg, #ff6b6b, #ff9472);
     color: #fff;
@@ -197,6 +205,7 @@ body {
     justify-content: center;
 }
 
+/* Form Input Styles */
 .form-floating .form-control {
     border-radius: 10px;
     padding: 1.25rem;
@@ -209,6 +218,7 @@ body {
     box-shadow: 0 0 8px rgba(37, 117, 252, 0.5);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
     .product-title {
         font-size: 2rem;
@@ -217,8 +227,8 @@ body {
         font-size: 1.8rem;
     }
 }
-</style>
 
+</style>
 <script>
 // Function to toggle between showing short or full description
 function toggleDescription() {
@@ -236,5 +246,4 @@ function toggleDescription() {
     }
 }
 </script>
-
 {% endblock %}

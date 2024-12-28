@@ -6,7 +6,7 @@
     <!-- Bộ lọc -->
     <div class="booking__container mt-5"
          style="position: static; transform:none; margin: auto; width: 30%; padding: 0 30px; border-radius: 50px;">
-        <form action="" method="GET" class="d-flex justify-content-between">
+        <form action="/filter_category" method="POST" class="d-flex justify-content-between">
             <!-- Loại phòng -->
             <div class="form__group" style="width: 28%; margin: 15px;">
                 <div class="input__group">
@@ -14,8 +14,12 @@
                 </div>
                 <select name="loai_phong" class="form-select">
                     <option value="">-- Chọn loại phòng --</option>
+                    {% for p in list_category %}
+                    <option value="{{ p.id }}" {% if p.id == selected_value %}selected{% endif %}>{{ p.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
+
             <!-- Nút tìm kiếm -->
             <div class="d-flex justify-content-center align-items-center">
                 <button type="submit" class="btn"><i class="ri-search-line"></i></button>
@@ -24,19 +28,19 @@
     </div>
 </section>
 
+
 <!-- Product Section -->
 <section class="container py-4">
-    <div class="row justify-content-center">
-        {% for p in category %}
-        <div class="col-md-3 col-12 mb-4">
+    <div class="row justify-content-center flex-row flex-wrap">
+        {% for p in categories %}
+        <div class="col-md-4 col-12 mb-4">
             <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
-                <a href="/products/{{ p.id }}">
+                <a href="/category/{{ p.id }}">
                     <img class="card-img-top img-fluid" src="{{ p.image }}" alt="{{ p.name }}"
                          style="height: 300px; object-fit: cover; transition: transform 0.3s ease-in-out;">
                 </a>
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
-                    <p class="card-text text-muted">{{ p.description }}</p>
                     <p class="card-title text-danger font-weight-bold">{{ "{:,}".format(p.price)}} VNĐ</p>
                 </div>
             </div>
@@ -52,8 +56,14 @@
     .row {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
+        justify-content: space-between;  /* Cách đều các thẻ card */
+        gap: 20px;  /* Khoảng cách giữa các thẻ card */
+    }
+
+    /* Cập nhật card để chiếm 1/3 chiều rộng của col */
+    .col-md-4 {
+        flex: 0 0 calc(33.333% - 20px); /* Mỗi card chiếm 1/3 chiều rộng với khoảng cách */
+        margin-bottom: 20px;  /* Khoảng cách dưới mỗi thẻ card */
     }
 
     /* Cập nhật card để chiếm 100% chiều rộng của col */

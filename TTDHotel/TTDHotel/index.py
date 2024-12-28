@@ -5,7 +5,10 @@ from flask import render_template, request, redirect, url_for, session, flash
 import os
 import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin
-import  cloudinary.uploader
+import cloudinary.uploader
+
+from TTDHotel.TTDHotel.dao import get_category_by_id
+
 
 def check_login():
     logged_in = session.get('logged_in', False)
@@ -13,23 +16,44 @@ def check_login():
         session['next'] = request.url
     return logged_in
 
+
 @app.route('/home')
 def index():
     return render_template('welcome.html', logged_in=check_login())
+
 
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
+
 @app.route('/booking')
 def show_categories():
+    categories = dao.get_all_categories()
+    list_category = dao.get_all_categories()
+    return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
+
+
+@app.route('/filter_category', methods=['POST'])
+def filter_category():
+    selected_value = request.form.get('loai_phong')  # Get selected category ID
+    list_category = dao.get_all_categories()
     category = dao.get_all_categories()
-    return render_template('index.html',category=category, logged_in=check_login())
+    if selected_value:
+        categories = dao.get_category_by_id(selected_value)
+        categories = [categories] if categories else []
+    else:
+        categories = dao.get_all_categories()
+
+    return render_template('index.html', list_category=list_category,categories=categories, category=category, selected_value=selected_value,
+                           logged_in=check_login())
+
 
 @app.route('/rules')
 def rules():
     rules = dao.load_rules()
     return render_template('rules.html', logged_in=check_login(), rules=rules)
+
 
 @app.route('/contacts')
 def contacts():
@@ -37,10 +61,11 @@ def contacts():
     return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
 
 
-@app.route('/products/<int:id>')
+@app.route('/category/<int:id>')
 def details(id):
-    product = dao.get_category_by_id(id)
-    return render_template('product-details.html', product=product, logged_in=check_login())
+    category = dao.get_category_by_id(id)
+    return render_template('product-details.html', category=category, logged_in=check_login())
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_my_user():
@@ -57,6 +82,7 @@ def login_my_user():
 
     return render_template('login.html')
 
+
 def set_user_session(user):
     session['user_id'] = user.id
     session['user_name'] = (
@@ -65,7 +91,8 @@ def set_user_session(user):
         "Admin"
     )
     session['logged_in'] = True
-    session['phone'] = user.customer.phone if user.customer else None
+    session['phone'] = user.customer.phone if user.customer else user.employee.phone if user.employee else "None"
+
 
 @app.context_processor
 def get_user():
@@ -75,10 +102,12 @@ def get_user():
     logged_in = session.get('logged_in')
     return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(request.referrer or '/')
+
 
 @app.route('/info', methods=['GET', 'POST'])
 def update_user():
@@ -105,6 +134,7 @@ def update_user():
 
     return redirect(request.referrer)
 
+
 @app.route('/changePassword', methods=['GET', 'POST'])
 def update_password():
     if request.method == 'POST':
@@ -128,6 +158,7 @@ def update_password():
             else:
                 flash('Mật khẩu hiện tại không đúng.', 'danger')
         return redirect(request.referrer)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -153,7 +184,8 @@ def register():
             res = cloudinary.uploader.upload(avatar)
             avatar_path = res['secure_url']
 
-        success = dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar_path, role=role)
+        success = dao.add_user(name=name, phone=phone, username=username, password=password, avatar=avatar_path,
+                               role=role)
         if success:
             flash('Account created successfully!', 'success')
             return redirect('/login')
@@ -172,7 +204,6 @@ def home():
 
 
 ###################
-
 
 
 @app.route('/login_google')
@@ -209,7 +240,6 @@ def logout_google():
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')
-
 
 
 @app.route('/login_facebook')
@@ -255,6 +285,7 @@ def list_routes():
         url = urllib.parse.unquote(f"{rule}")
         output.append(f"{rule.endpoint}: {url} [{methods}]")
     return "<br>".join(output)
+
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)
