@@ -12,7 +12,8 @@ def auth_user(username, password):
     return (
         Account.query.options(
             db.joinedload(Account.customer),
-            db.joinedload(Account.employee)
+            db.joinedload(Account.employee),
+
         )
         .filter_by(username=username, password=password_hash)
         .first()
