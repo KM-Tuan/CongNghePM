@@ -7,7 +7,6 @@ import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin
 import  cloudinary.uploader
 
-
 def check_login():
     logged_in = session.get('logged_in', False)
     if not logged_in:
@@ -23,7 +22,7 @@ def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
 @app.route('/booking')
-def show_category():
+def show_categories():
     category = dao.get_all_categories()
     return render_template('index.html',category=category, logged_in=check_login())
 
@@ -48,9 +47,9 @@ def login_my_user():
     if request.method.__eq__('POST'):
         username = request.form.get('username')
         password = request.form.get('password')
-        account = dao.auth_user(username, password)
-        if account:
-            set_user_session(account)
+        user = dao.auth_user(username, password)
+        if user:
+            set_user_session(user)
             next_page = session.get('next', '/')
             return redirect(next_page)
         else:
@@ -58,22 +57,15 @@ def login_my_user():
 
     return render_template('login.html')
 
-def set_user_session(account):
-    session['account_id'] = account.id
-    if account.role==3:
-        customer=dao.get_customer_by_id(account.id)
-        session['user_name'] = customer.name
-        session['phone'] = customer.phone
-    elif account.role==2:
-        employee= dao.get_employee_by_id(account.id)
-        session['user_name'] = employee.name
-    else:
-        session['user_name'] = "Admin"
-
+def set_user_session(user):
+    session['user_id'] = user.id
+    session['user_name'] = (
+        user.customer.name if user.customer else
+        user.employee.name if user.employee else
+        "Admin"
+    )
     session['logged_in'] = True
-
-
-
+    session['phone'] = user.customer.phone if user.customer else None
 
 @app.context_processor
 def get_user():
