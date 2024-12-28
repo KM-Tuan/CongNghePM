@@ -1,3 +1,6 @@
+from urllib import request
+
+from flask import redirect, flash
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from TTDHotel.TTDHotel import app, db
@@ -17,8 +20,15 @@ class MyAdminIndex(AdminIndexView):
 
 
 admin = Admin(app, name="TTDHotel", template_mode="bootstrap4")
-
 # admin.add_view(MyCategoryView(Category, db.session))
+
+
+class MyStatsView(BaseView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/stats.html')
+
+
 
 class AuthenticatedView(ModelView):
     # def is_visible(self):
@@ -40,6 +50,7 @@ admin.add_view(AuthenticatedView(BookingDetail, db.session, category='Quản lý
 admin.add_view(AuthenticatedView(RoomRented, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(RentingDetail, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(Bill, db.session, category='Quản lý hóa đơn'))
+admin.add_view(MyStatsView("Thống kê"))
 
 
 
@@ -81,8 +92,8 @@ class TanSuatView(BaseView):
     def index(self):
         selected_month = request.args.get('months')
         selected_year = request.args.get('years')
-        stats = hotelapp.dao.doanh_thu_theo_thang(thang=selected_month, nam = selected_year)
-        stats = hotelapp.dao.tan_suat_theo_thang(selected_month, selected_year)
+        stats = dao.doanh_thu_theo_thang(thang=selected_month, nam = selected_year)
+        stats = dao.tan_suat_theo_thang(selected_month, selected_year)
         if f"Không có dữ liệu doanh thu cho tháng {selected_month}, năm {selected_year}." == stats:
             stats = ''
         # total = 0
@@ -102,7 +113,7 @@ admin.add_view(TanSuatView(name = "Tần suất",category='Thống kê' ))
 class QuyDinhView(BaseView):
     @expose('/', methods=['GET', 'POST'])
     def index(self):
-        rules = hotelapp.dao.load_rules()
+        rules = dao.load_rules()
         if request.method == 'POST':
             try:
                 rules['dat_phong_khach_san']['thoi_gian_nhan_phong_toi_da'] = int(request.form['thoi_gian_nhan_phong_toi_da'])
@@ -110,7 +121,7 @@ class QuyDinhView(BaseView):
                 rules['gia_phong']['so_khach_co_ban'] = int(request.form['so_khach_co_ban'])
                 rules['gia_phong']['phu_phi_khach_them'] = float(request.form['phu_phi_khach_them'])
                 rules['gia_phong']['he_so_khach_nuoc_ngoai'] = float(request.form['he_so_khach_nuoc_ngoai'])
-                hotelapp.dao.save_rules(rules)
+                dao.save_rules(rules)
                 flash('Quy định đã được cập nhật thành công!', 'success')
             except Exception as e:
                 flash(f"Đã xảy ra lỗi: {str(e)}", 'danger')
