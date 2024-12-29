@@ -1,0 +1,143 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 2.2rem; color: #34495e;">Nhập mã thuê phòng</h2>
+    <div class="card shadow-lg rounded-4 p-4" style="background: #ffffff;">
+        <form id="bookingForm">
+            <div class="form-group mb-3">
+                <label for="bookingCode" class="form-label text-muted" style="font-weight: 500; font-size: 1rem;">Mã thuê phòng</label>
+                <input type="text" class="form-control form-control-lg border-0 shadow-sm rounded-3 p-3" id="bookingCode" placeholder="Nhập mã thuê phòng" required>
+            </div>
+            <button type="submit" class="btn btn-gradient btn-lg w-100 text-white py-3">Xác nhận</button>
+        </form>
+    </div>
+
+    <!-- Container to hold multiple booking tickets -->
+    <div id="ticketContainer" class="mt-4" style="margin-bottom:20px"></div>
+</div>
+
+<style>
+/* Modern and compact card style */
+.card {
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f5f6fa, #dcdde1);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    max-width: 500px;
+    margin: auto;
+}
+
+/* Ticket styling */
+.ticket {
+    margin-top: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, opacity 0.3s ease-in-out;
+}
+
+/* Header */
+.ticket-header {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #3498db;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Ticket content */
+.ticket p {
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+/* Booking Code styling */
+.ticket .text-info {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2980b9;
+}
+
+/* Button gradient style */
+.btn-gradient {
+    background: linear-gradient(135deg, #3498db, #9b59b6);
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Button hover effect */
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #9b59b6, #3498db);
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Ticket fade-in effect */
+.ticket {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.ticket.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+</style>
+
+{% block scripts %}
+<script>
+    document.getElementById('bookingForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the booking code value
+        var bookingCode = document.getElementById('bookingCode').value.trim();
+
+        // Check if the input is empty or if the booking code already exists
+        if (bookingCode === "") {
+            return; // Do nothing if the input is empty
+        }
+
+        // Check if the booking code already exists in the ticket container
+        var existingTickets = document.querySelectorAll('#ticketContainer .ticket');
+        for (var i = 0; i < existingTickets.length; i++) {
+            var ticketCode = existingTickets[i].querySelector('.text-info').textContent.trim();
+            if (ticketCode === bookingCode) {
+                // If the booking code exists, do not add a new ticket
+                alert('Mã thuê phòng này đã được nhập trước đó!');
+                return;
+            }
+        }
+
+        // Create a new ticket div dynamically
+        var ticketContainer = document.getElementById('ticketContainer');
+        var newTicket = document.createElement('div');
+        newTicket.classList.add('ticket'); // Add the 'ticket' class for styling
+
+        // Add ticket content (with the booking code)
+        newTicket.innerHTML = `
+            <div class="ticket-header">
+                <h3 class="text-primary">Phiếu Đặt Phòng</h3>
+            </div>
+            <p><strong>Mã thuê phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+        `;
+
+        // Append the new ticket to the ticket container
+        ticketContainer.appendChild(newTicket);
+
+        // Clear the input field after submission
+        document.getElementById('bookingCode').value = "";
+
+        // Apply fade-in effect
+        setTimeout(function () {
+            newTicket.classList.add('show');
+        }, 100); // Delay the fade-in effect for a smoother experience
+    });
+</script>
+{% endblock %}
+{% endblock %}

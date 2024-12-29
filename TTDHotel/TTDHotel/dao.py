@@ -3,7 +3,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import cast, func, Integer, and_, exists,  extract
 from datetime import datetime
 
-from TTDHotel.TTDHotel.models import BookingDetail
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
 from models import Category, Account, RentingDetail, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, \

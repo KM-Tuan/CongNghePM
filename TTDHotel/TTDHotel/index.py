@@ -81,6 +81,11 @@ def contacts():
     return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
 
 
+@app.route('/rents')
+def rents():
+    return render_template('rents.html',logged_in = check_login())
+
+
 @app.route('/category/<int:id>')
 def details(id):
     category = dao.get_category_by_id(id)
@@ -176,7 +181,6 @@ def set_user_session(user):
         "Admin"
     )
     session['logged_in'] = True
-    session['phone'] = user.customer.phone if user.customer else user.employee.phone if user.employee else "None"
     session['address'] = user.customer.address if user.customer else "None"
 
 
