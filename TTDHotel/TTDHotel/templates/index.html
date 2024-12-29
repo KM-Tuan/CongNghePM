@@ -15,7 +15,7 @@
                 <select name="loai_phong" class="form-select">
                     <option value="">-- Chọn loại phòng --</option>
                     {% for p in list_category %}
-                    <option value="{{ p.id }}" {% if p.id == selected_value %}selected{% endif %}>{{ p.name }}</option>
+                    <option value="{{ p.id }}" {% if p.id== selected_value %}selected{% endif %}>{{ p.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -42,6 +42,13 @@
                 <div class="card-body">
                     <h5 class="card-title text-dark">{{ p.name }}</h5>
                     <p class="card-title text-danger font-weight-bold">{{ "{:,}".format(p.price)}} VNĐ</p>
+                    {% if p.name == 'Standard' %}
+                    <h5 class="card-title text-dark">Phòng trống: {{ room_standard_available }}</h5>
+                    {% elif p.name == 'Deluxe' %}
+                    <h5 class="card-title text-dark">Phòng trống: {{ room_deluxe_available }}</h5>
+                    {% elif p.name == 'VIP' %}
+                    <h5 class="card-title text-dark">Phòng trống: {{ room_vip_available }}</h5>
+                    {% endif %}
                 </div>
             </div>
         </div>

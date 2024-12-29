@@ -12,8 +12,7 @@ import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin, login, db
 import  cloudinary.uploader
 
-from dao import set_room_booked
-from models import Customer
+from TTDHotel.TTDHotel.dao import set_customer, set_booking_details, set_room_booked
 
 
 def check_login():
@@ -34,6 +33,10 @@ def dict_without_key(d, key):
 def show_categories():
     categories = dao.get_all_categories()
     list_category = dao.get_all_categories()
+    room_standard_available = dao.get_available_room_standard()
+    room_deluxe_available = dao.get_available_room_deluxe()
+    room_vip_available = dao.get_available_room_vip()
+    print(room_standard_available)
     if request.method == "POST":
         name = request.form.get('name')
         phone = request.form.get('phone')
@@ -44,7 +47,8 @@ def show_categories():
         db.session.commit()
 
 
-    return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
+    return render_template('index.html', categories=categories, list_category=list_category, room_standard_available=room_standard_available,
+                           room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available, logged_in=check_login())
 
 #test
 @app.route('/booking_details', methods=['POST'])
@@ -124,6 +128,9 @@ def filter_category():
     selected_value = request.form.get('loai_phong')  # Get selected category ID
     list_category = dao.get_all_categories()
     category = dao.get_all_categories()
+    room_standard_available = dao.get_available_room_standard()
+    room_deluxe_available = dao.get_available_room_deluxe()
+    room_vip_available = dao.get_available_room_vip()
     if selected_value:
         categories = dao.get_category_by_id(selected_value)
         categories = [categories] if categories else []
@@ -131,7 +138,8 @@ def filter_category():
         categories = dao.get_all_categories()
 
     return render_template('index.html', list_category=list_category,categories=categories, category=category, selected_value=selected_value,
-                           logged_in=check_login())
+                           room_standard_available=room_standard_available, room_deluxe_available=room_deluxe_available,
+                           room_vip_available=room_vip_available, logged_in=check_login())
 
 
 @app.route('/rules')
@@ -143,6 +151,11 @@ def rules():
 def contacts():
     contacts = dao.load_contacts()
     return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
+
+
+@app.route('/rents')
+def rents():
+    return render_template('rents.html',logged_in = check_login())
 
 
 @app.route('/category/<int:id>')
@@ -177,10 +190,8 @@ def booked():
 
         # booking_details=set_booking_details(room_booked_id=room_booked.id, room_id=room)
 
-
 @app.route('/history')
 def history():
-    # Lấy danh sách booking
     bookings = dao.get_all_room_booked()
 
     # Tạo danh sách khách hàng liên quan đến từng booking
@@ -223,7 +234,6 @@ def login_my_user():
         username = request.form.get('username')
         password = request.form.get('password')
         user = dao.auth_user(username, password)
-        print(user)
         if user:
             set_user_session(user)
             login_user(user)
@@ -243,10 +253,7 @@ def set_user_session(user):
         "Admin"
     )
     session['logged_in'] = True
-    session['phone'] = user.customer.phone if user.customer else user.employee.phone if user.employee else "None"
-
-
-
+    session['address'] = user.customer.address if user.customer else "None"
 
 
 @app.context_processor
