@@ -81,6 +81,12 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control"
+                                           value="{{ customer.address if customer else ''}}" id="diachi-1" name="address[]"
+                                           placeholder="Địa chỉ" required>
+                                    <label for="diachi-1">Địa chỉ</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control"
                                            value="{{ customer.cmnd if customer else '' }}" id="cmnd-1" name="cmnd[]"
                                            placeholder="Căn cước/chứng minh thư" required>
                                     <label for="cmnd-1">Căn cước/chứng minh thư</label>

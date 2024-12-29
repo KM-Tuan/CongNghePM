@@ -129,6 +129,28 @@ def update_user(id, name=None, phone=None, password=None):
 
     return True
 
+def check_room_availability(ngay_nhan_phong, ngay_tra_phong, so_luong_phong, loai_phong_id):
+    """
+    Kiểm tra và trả về danh sách phòng trống cho một loại phòng cụ thể.
+    """
+    # Danh sách các phòng đã được đặt trong khoảng thời gian yêu cầu
+    booked_rooms = db.session.query(BookingDetail.room_id).join(RoomBooked).filter(
+        and_(
+            RoomBooked.check_in_date < ngay_tra_phong,
+            RoomBooked.check_out_date > ngay_nhan_phong
+        )
+    ).all()
+    booked_room_ids = [room[0] for room in booked_rooms]
+
+    # Lấy danh sách phòng trống
+    available_rooms = db.session.query(Room.id).filter(
+        Room.room_type_id == loai_phong_id,
+        Room.status_room.is_(True),
+        ~Room.id.in_(booked_room_ids)
+    ).order_by(Room.id).limit(so_luong_phong).all()
+
+    return [room[0] for room in available_rooms]  # Trả về danh sách mã phòng trống
+
 
 def get_available_room_standard():
     return Room.query.filter(Room.status_room==1 , Room.room_type_id==1).all()
