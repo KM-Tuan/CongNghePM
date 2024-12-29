@@ -45,11 +45,11 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="option" id="option1" value="1"
                                        required>
-                                <label class="form-check-label" for="option1">Da trắng</label>
+                                <label class="form-check-label" for="option1">Nội địa</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="option" id="option2" value="2">
-                                <label class="form-check-label" for="option2">Da đen</label>
+                                <label class="form-check-label" for="option2">Ngoại địa</label>
                             </div>
                         </div>
                     </div>
@@ -66,21 +66,21 @@
        // Reset customer fields to default
        customerFields.innerHTML = `
            <div class="card mb-3" id="customer-1">
-               <div class="card-header bg-primary text-white">
+               <div class="card-header bg-gradient-primary text-black">
                    Khách hàng 1
                </div>
                <div class="card-body">
                    <div class="form-floating mb-3">
-                       <input type="text" class="form-control" id="fullname-1" name="fullname[]" placeholder="Họ và Tên" required>
-                       <label for="fullname-1">Họ và Tên</label>
+                       <input type="text" class="form-control" id="fullname-${customerCount}" name="fullname[]" placeholder="Họ và Tên" required>
+                       <label for="fullname-${customerCount}">Họ và Tên</label>
                    </div>
                    <div class="form-floating mb-3">
-                       <input type="tel" class="form-control" id="phone-1" name="phone[]" placeholder="Số Điện Thoại" required>
-                       <label for="phone-1">Số Điện Thoại</label>
+                       <input type="tel" class="form-control" id="phone-${customerCount}" name="phone[]" placeholder="Số Điện Thoại" required>
+                       <label for="phone-${customerCount}">Số Điện Thoại</label>
                    </div>
                    <div class="form-floating mb-3">
-                       <input type="text" class="form-control" id="cmnd-1" name="cmnd[]" placeholder="Căn cước/chứng minh thư" required>
-                       <label for="cmnd-1">Căn cước/chứng minh thư</label>
+                       <input type="text" class="form-control" id="cmnd-${customerCount}" name="cmnd[]" placeholder="Căn cước/chứng minh thư" required>
+                       <label for="cmnd-${customerCount}">Căn cước/chứng minh thư</label>
                    </div>
                    <div class="mb-4">
                         <label class="form-label">Loại khách hàng</label>
@@ -88,11 +88,11 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="option" id="option1" value="1"
                                        required>
-                                <label class="form-check-label" for="option1">Da trắng</label>
+                                <label class="form-check-label" for="option1">Nội địa</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="option" id="option2" value="2">
-                                <label class="form-check-label" for="option2">Da đen</label>
+                                <label class="form-check-label" for="option2">Ngoại địa</label>
                             </div>
                         </div>
                     </div>

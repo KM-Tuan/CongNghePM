@@ -44,8 +44,6 @@ class Category(db.Model):
     def __str__(self):
         return self.name
 
-
-
 class Employee(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
@@ -53,8 +51,6 @@ class Employee(db.Model):
     address = Column(String(255))
     account_id = Column(Integer, ForeignKey('account.id'), nullable = True)
     room_rented = relationship('RoomRented', backref=backref('employee', lazy=True))
-
-
 
 class Customer(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -72,10 +68,6 @@ class Customer(db.Model):
     def __str__(self):
         return self.name
 
-
-
-
-
 class Room(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=True)
@@ -83,9 +75,6 @@ class Room(db.Model):
     room_type_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     booking_detail = relationship('BookingDetail', backref=backref('room', lazy=True))
     renting_detail = relationship('RentingDetail', backref=backref('room', lazy=True))
-
-
-
 
 class RoomBooked(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -101,7 +90,6 @@ class BookingDetail(db.Model):
     room_booked_id = Column(Integer, ForeignKey('room_booked.id'), nullable=False)
     room_id = Column(Integer, ForeignKey('room.id'), nullable=False)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
-
 
 
 class RoomRented(db.Model):
