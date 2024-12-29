@@ -35,12 +35,6 @@
                         Ngoại địa
                         {% endif %}
                     </td>
-                    <td>
-                        <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}"
-                           class="btn btn-danger btn-sm">Hủy</a>
-                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}"
-                           class="btn btn-info btn-sm">Chi tiết</a>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

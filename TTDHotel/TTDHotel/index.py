@@ -12,8 +12,7 @@ import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin, login, db
 import  cloudinary.uploader
 
-from TTDHotel.TTDHotel.dao import set_room_booked
-from models import Customer
+from TTDHotel.TTDHotel.dao import set_customer, set_booking_details, set_room_booked
 
 
 def check_login():
@@ -34,6 +33,10 @@ def dict_without_key(d, key):
 def show_categories():
     categories = dao.get_all_categories()
     list_category = dao.get_all_categories()
+    room_standard_available = dao.get_available_room_standard()
+    room_deluxe_available = dao.get_available_room_deluxe()
+    room_vip_available = dao.get_available_room_vip()
+    print(room_standard_available)
     if request.method == "POST":
         name = request.form.get('name')
         phone = request.form.get('phone')
@@ -42,9 +45,9 @@ def show_categories():
         customer= Customer(name=name, phone=phone, cmnd=cmnd, type_id=customer_type_id)
         db.session.add(customer)
         db.session.commit()
-        pass
 
-    return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
+    return render_template('index.html', categories=categories, list_category=list_category, room_standard_available=room_standard_available,
+                           room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available, logged_in=check_login())
 
 
 @app.route('/filter_category', methods=['POST'])
@@ -52,6 +55,9 @@ def filter_category():
     selected_value = request.form.get('loai_phong')  # Get selected category ID
     list_category = dao.get_all_categories()
     category = dao.get_all_categories()
+    room_standard_available = dao.get_available_room_standard()
+    room_deluxe_available = dao.get_available_room_deluxe()
+    room_vip_available = dao.get_available_room_vip()
     if selected_value:
         categories = dao.get_category_by_id(selected_value)
         categories = [categories] if categories else []
@@ -59,7 +65,8 @@ def filter_category():
         categories = dao.get_all_categories()
 
     return render_template('index.html', list_category=list_category,categories=categories, category=category, selected_value=selected_value,
-                           logged_in=check_login())
+                           room_standard_available=room_standard_available, room_deluxe_available=room_deluxe_available,
+                           room_vip_available=room_vip_available, logged_in=check_login())
 
 
 @app.route('/rules')
@@ -80,21 +87,7 @@ def details(id):
 
 @app.route('/booked', methods=['POST'])
 def booked():
-    role = session.get('user_role')
-    if role == 3:
-        customer_id=session.get('user_id')
-        customer_name = request.form['name']
-        customer_phone=request.form['phone']
-        customer_id_card=request.form['cmnd']
-        customer_type=request.form['option']
-        check_in_date=datetime.strptime(request.form['check_in_date'],'%Y-%m-%d')
-        check_out_date=datetime.strptime(request.form['check_out_date'],'%Y-%m-%d')
-
-        room_booked = set_room_booked(customer_id=customer_id,booking_date=datetime.now(),check_in_date=check_in_date,check_out_date=check_out_date)
-        db.session.add(room_booked)
-        db.session.flush()
-
-        # booking_details=set_booking_details(room_booked_id=room_booked.id, room_id=room)
+    pass
 
 @app.route('/history')
 def history():
@@ -145,9 +138,7 @@ def set_user_session(user):
     )
     session['logged_in'] = True
     session['phone'] = user.customer.phone if user.customer else user.employee.phone if user.employee else "None"
-
-
-
+    session['address'] = user.customer.address if user.customer else "None"
 
 
 @app.context_processor

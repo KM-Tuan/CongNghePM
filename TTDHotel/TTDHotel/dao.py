@@ -3,10 +3,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import cast, func, Integer, and_, exists,  extract
 from datetime import datetime
 
-from TTDHotel.TTDHotel.models import BookingDetail
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
-from models import Category, Account, RentingDetail,RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
+from models import Category, Account, RentingDetail, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, \
+    Room, RoomBooked, RoomRented, Bill, BookingDetail
 
 
 def auth_user(username, password):
@@ -82,6 +82,15 @@ def update_user(id, name=None, phone=None, password=None):
             db.session.commit()
 
     return True
+
+def get_available_room_standard():
+    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==1).all())
+
+def get_available_room_deluxe():
+    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==2).all())
+
+def get_available_room_vip():
+    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==3).all())
 
 def get_user_by_id(user_id):
     return Account.query.get(user_id)
