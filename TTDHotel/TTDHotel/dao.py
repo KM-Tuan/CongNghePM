@@ -2,11 +2,9 @@ import json
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import cast, func, Integer, and_, exists,  extract
 from datetime import datetime
-
-from TTDHotel.TTDHotel.models import BookingDetail
-from TTDHotel.TTDHotel.utils import hash_password
+from utils import hash_password
 from TTDHotel.TTDHotel import app, db
-from models import Category, Account, RentingDetail,RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
+from models import Category, Account, RentingDetail,RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill,BookingDetail
 
 
 def auth_user(username, password):
@@ -24,7 +22,7 @@ def auth_user(username, password):
 
 def get_or_create_user(user_info):
     """Tạo mới người dùng nếu chưa tồn tại."""
-    account = Account.query.filter_by(username=user_info['email']).first()
+    account = Account.query.filter(Account.username.__eq__(user_info['email'])).first()
 
     if not account:
         account = Account(
@@ -185,6 +183,9 @@ def get_account_by_username(username):
 
 def get_all_accounts():
     return Account.query.all()
+
+def get_customer_by_account_id(account_id):
+    return Customer.query.filter_by(account_id=account_id).first()
 
 
 # --- Set methods ---
