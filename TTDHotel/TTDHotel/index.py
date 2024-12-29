@@ -10,6 +10,9 @@ import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin,login
 import  cloudinary.uploader
 
+from models import Customer
+
+
 def check_login():
     logged_in = session.get('logged_in', False)
     if not logged_in:
@@ -24,11 +27,23 @@ def index():
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
-@app.route('/booking')
+@app.route('/booking',methods=['GET','POST'])
 def show_categories():
     categories = dao.get_all_categories()
     list_category = dao.get_all_categories()
+    if request.method == "POST":
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        cmnd = request.form.get('cmnd')
+        customer_type_id = request.form.get('option')
+
+        customer= Customer(name=name, phone=phone, cmnd=cmnd, type_id=customer_type_id)
+        db.session.add(customer)
+        db.session.commit()
+        pass
+
     return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
+
 
 
 @app.route('/filter_category', methods=['POST'])
@@ -246,7 +261,7 @@ def authorize():
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
-    session['user_name'] = user.name
+    session['user_name'] = user_info['name']
     next_page = session.get('next')
     return redirect(next_page)
 
@@ -281,7 +296,7 @@ def authorize_facebook():
     # Lưu thông tin vào session
     session['profile'] = user_info
     session['logged_in'] = True
-    session['user_name'] = user.name
+    session['user_name'] = user_info['name']
     next_page = session.get('next')
     return redirect(next_page)
 

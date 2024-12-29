@@ -55,17 +55,18 @@
                             <div class="card-header bg-gradient-primary text-black">Khách hàng 1</div>
                             <div class="card-body">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="fullname-1" name="fullname[]"
+                                    <input type="text" class="form-control" id="fullname-1" name="name"
                                            placeholder="Họ và Tên" required>
                                     <label for="fullname-1">Họ và Tên</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="tel" class="form-control" id="phone-1" name="phone[]"
+                                    <input type="tel" class="form-control" id="phone-1" name="phone"
                                            placeholder="Số Điện Thoại" required>
                                     <label for="phone-1">Số Điện Thoại</label>
                                 </div>
+
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cmnd-1" name="cmnd[]"
+                                    <input type="text" class="form-control" id="cmnd-1" name="cmnd"
                                            placeholder="Căn cước/chứng minh thư" required>
                                     <label for="cmnd-1">Căn cước/chứng minh thư</label>
                                 </div>
@@ -74,14 +75,14 @@
                                     <div class="custom-radio-container">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="option" id="option1"
-                                                   value="1"
+                                                   value="1" checked
                                                    required>
-                                            <label class="form-check-label" for="option1">Da trắng</label>
+                                            <label class="form-check-label" for="option1">Nội địa</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="option" id="option2"
                                                    value="2">
-                                            <label class="form-check-label" for="option2">Da đen</label>
+                                            <label class="form-check-label" for="option2">Ngoại địa</label>
                                         </div>
                                     </div>
                                 </div>
@@ -89,11 +90,17 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-info mt-2" id="add-customer-btn">Thêm khách hàng</button>
-                    <div class="form-floating">
-                        <textarea class="form-control" id="note" name="note" placeholder="Ghi chú (không bắt buộc)"
-                                  style="height: 100px;"></textarea>
-                        <label for="note">Ghi chú (không bắt buộc)</label>
+                    <div class="form-group">
+                        <label for="datepicker1">Chọn ngày nhận</label>
+                        <input type="text" class="form-control" id="datepicker1" placeholder="Chọn nhận nhận">
                     </div>
+
+                    <div class="form-group">
+                        <label for="datepicker2">Chọn ngày thuê</label>
+                        <input type="text" class="form-control" id="datepicker2" placeholder="Chọn ngày trả">
+                    </div>
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -106,68 +113,70 @@
 
 <div class="loader" id="loader"></div>
 
+
 <style>
-body {
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
-}
+    body {
+        background-color: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+    }
 
-.product-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #4E54C8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #4E54C8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
-.product-image-container {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
+    .product-image-container {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
 
-.product-image-container:hover {
-    transform: scale(1.05);
-}
+    .product-image-container:hover {
+        transform: scale(1.05);
+    }
 
-.product-price {
-    background: linear-gradient(135deg, #ff6b6b, #ffcc33);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 2rem;
-}
+    .product-price {
+        background: linear-gradient(135deg, #ff6b6b, #ffcc33);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 2rem;
+    }
 
-.btn-primary {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 30px;
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-}
+    .btn-primary {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
 
-.btn-primary:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+    .btn-primary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
 
-.product-description {
-    font-size: 1.1rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-.description-short {
-    max-height: 50px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+    .product-description {
+        font-size: 1.1rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .description-short {
+        max-height: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 </style>
 
 {% block scripts %}

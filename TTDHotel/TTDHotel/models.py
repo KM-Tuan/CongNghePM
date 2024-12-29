@@ -64,10 +64,7 @@ class Customer(db.Model):
     phone = Column(String(11), unique=True, nullable=True)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
-
     avatar = Column(String(200), default="https://example.com/avatar_default.jpg")
-    active = Column(Boolean, default=True)
-
     room_booked = relationship('RoomBooked', backref=backref('customer', lazy=True))
     booking_detail = relationship('BookingDetail', backref=backref('customer', lazy=True))
     renting_detail = relationship('RentingDetail', backref=backref('customer', lazy=True))
@@ -80,7 +77,8 @@ class Customer(db.Model):
 
 
 class Room(db.Model):
-    id = db.Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=True)
     status_room = Column(Integer, ForeignKey('room_status.id'), nullable=False)
     room_type_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     booking_detail = relationship('BookingDetail', backref=backref('room', lazy=True))
@@ -226,37 +224,37 @@ if __name__ == "__main__":
         ]
 
         phong = [
-            Room(id=1, status_room=1, room_type_id=1),
-            Room(id=2, status_room=2, room_type_id=1),
-            Room(id=3, status_room=3, room_type_id=3),
-            Room(id=4, status_room=1, room_type_id=2),
-            Room(id=5, status_room=1, room_type_id=2),
-            Room(id=6, status_room=1, room_type_id=3),
-            Room(id=7, status_room=1, room_type_id=1),
+            Room(id=1,name='101', status_room=1, room_type_id=1),
+            Room(id=2,name='102',  status_room=2, room_type_id=1),
+            Room(id=3,name='103', status_room=3, room_type_id=3),
+            Room(id=4,name='104',  status_room=1, room_type_id=2),
+            Room(id=5,name='105',  status_room=1, room_type_id=2),
+            Room(id=6,name='106',  status_room=1, room_type_id=3),
+            Room(id=7,name='107',  status_room=1, room_type_id=1),
         ]
 
-        phieu_dat_phong = [
-            RoomBooked(id=1, customer_id=1, booking_date="2024-12-01", check_in_date="2024-12-05",
-                          check_out_date="2024-12-10"),
-        ]
-
-        chi_tiet_dat_phong = [
-            BookingDetail(id=1, room_booked_id=1, room_id=1, customer_id=1),
-        ]
-
-        phieu_thue_phong = [
-            RoomRented(id=1, room_booked_id=1, customer_id=1, check_in_date="2024-12-05",
-                           check_out_date="2024-12-10",
-                           employee_id=1),
-        ]
-
-        chi_tiet_thue_phong = [
-            RentingDetail(id=1, room_rented_id=1, room_id=1, customer_id=1),
-        ]
-
-        hoa_don = [
-            Bill(id=1, create_date="2024-12-11", charge=50000, total=550000, room_rented_id=1),
-        ]
+        # phieu_dat_phong = [
+        #     RoomBooked(id=1, customer_id=1, booking_date="2024-12-01", check_in_date="2024-12-05",
+        #                   check_out_date="2024-12-10"),
+        # ]
+        #
+        # chi_tiet_dat_phong = [
+        #     BookingDetail(id=1, room_booked_id=1, room_id=1, customer_id=1),
+        # ]
+        #
+        # phieu_thue_phong = [
+        #     RoomRented(id=1, room_booked_id=1, customer_id=1, check_in_date="2024-12-05",
+        #                    check_out_date="2024-12-10",
+        #                    employee_id=1),
+        # ]
+        #
+        # chi_tiet_thue_phong = [
+        #     RentingDetail(id=1, room_rented_id=1, room_id=1, customer_id=1),
+        # ]
+        #
+        # hoa_don = [
+        #     Bill(id=1, create_date="2024-12-11", charge=50000, total=550000, room_rented_id=1),
+        # ]
 
         tai_khoan = [
             Account(id=1, username="admin", password=hash_password("123"),status=1,
@@ -282,13 +280,13 @@ if __name__ == "__main__":
         db.session.add_all(nhan_vien)
         db.session.add_all(khach_hang)
         db.session.add_all(phong)
-        db.session.add_all(phieu_dat_phong)
+        # db.session.add_all(phieu_dat_phong)
         # db.session.commit()
-        db.session.add_all(chi_tiet_dat_phong)
+        # db.session.add_all(chi_tiet_dat_phong)
         # db.session.commit()
-        db.session.add_all(phieu_thue_phong)
+        # db.session.add_all(phieu_thue_phong)
         # db.session.commit()
-        db.session.add_all(chi_tiet_thue_phong)
+        # db.session.add_all(chi_tiet_thue_phong)
         # db.session.commit()
-        db.session.add_all(hoa_don)
+        # db.session.add_all(hoa_don)
         db.session.commit()

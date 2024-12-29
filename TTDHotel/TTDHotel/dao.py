@@ -24,20 +24,23 @@ def auth_user(username, password):
 
 def get_or_create_user(user_info):
     """Tạo mới người dùng nếu chưa tồn tại."""
-    user = Account.query.filter_by(username=user_info['email']).first()
+    account = Account.query.filter_by(username=user_info['email']).first()
 
-    if not user:
-        user = Account(
-            name=user_info['name'],
+    if not account:
+        account = Account(
             username=user_info['email'],
             password=hash_password(user_info['email']),
-            avatar=user_info['picture'],
-            active=True
+            status=1,
+            role=3
         )
-        db.session.add(user)
+        db.session.add(account)
         db.session.commit()
 
-    return user
+        kh = Customer(name=user_info['name'], customer_type_id=1, account_id=account.id, avatar=user_info['picture'])
+        db.session.add(kh)
+        db.session.commit()
+
+    return account
 
 def add_user(name,phone, username  , password ,address, customer_type_id ,cmnd =None,avatar=None):
     password = hash_password(password)
@@ -344,7 +347,7 @@ def doanh_thu_theo_thang(thang: int = None, nam: int = None):
         )
 
         if not doanh_thu:
-            return f"Không có dữ liệu doanh thu cho tháng {thang}, năm {nam}."
+            return ""
 
         return doanh_thu
 
@@ -378,7 +381,7 @@ def tan_suat_theo_thang(thang: int = None, nam: int = None):
         )
 
         if not tan_suat:
-            return f"Không có dữ liệu sử dụng phòng cho tháng {thang}, năm {nam}."
+            return ""
 
         return tan_suat
     except SQLAlchemyError as e:
