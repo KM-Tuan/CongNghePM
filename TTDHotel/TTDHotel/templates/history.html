@@ -8,35 +8,38 @@
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Khách hàng</th>
-                    <th scope="col">Số điện thoại</th>
-                    <th scope="col">Phòng</th>
-                    <th scope="col">Ngày nhận</th>
-                    <th scope="col">Ngày trả</th>
-                    <th scope="col">Loại khách hàng</th>
-                    <th scope="col">Thao tác</th>
-                </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Khách hàng</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Ngày nhận</th>
+                <th scope="col">Ngày trả</th>
+                <th scope="col">Loại khách hàng</th>
+                <th scope="col">Số lượng người</th>
+            </tr>
             </thead>
             <tbody>
-                {% for booking in bookings %}
-                <tr>
-                    <th scope="row">{{ loop.index }}</th>
-                    <td>{{ booking.customer.name }}</td>
-                    <td>{{ booking.customer.phone }}</td>
-                    <td>{{ booking.room.name }}</td>
-                    <td>{{ booking.check_in_date.strftime('%d-%m-%Y') }}</td>
-                    <td>{{ booking.check_out_date.strftime('%d-%m-%Y') }}</td>
-                    <td>
-                        {% if booking.customer_type == 1 %}
-                        Nội địa
-                        {% else %}
-                        Ngoại địa
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
+            {% for booking in bookings %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ booking.customer_name }}</td>
+                <td>{{ booking.customer_phone }}</td>
+                <td>{{ booking.booking_date }}</td>
+                <td>{{ booking.check_in_date }}</td>
+                <td>{{ booking.check_out_date }}</td>
+                <td>
+                    {% if booking.customer_type == 1 %}
+                    Nội địa
+                    {% else %}
+                    Nước ngoài
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Thêm các nút hành động nếu cần -->
+                </td>
+            </tr>
+            {% endfor %}
+
             </tbody>
         </table>
     </div>
@@ -46,10 +49,12 @@
     body {
         background: #f8f9fa;
     }
+
     h1 {
         font-size: 2.5rem;
         font-weight: bold;
     }
+
     .table th, .table td {
         text-align: center;
         vertical-align: middle;

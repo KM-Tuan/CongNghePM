@@ -46,6 +46,7 @@ def show_categories():
         db.session.add(customer)
         db.session.commit()
 
+
     return render_template('index.html', categories=categories, list_category=list_category, room_standard_available=room_standard_available,
                            room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available, logged_in=check_login())
 
@@ -87,12 +88,50 @@ def details(id):
 
 @app.route('/booked', methods=['POST'])
 def booked():
-    pass
+    # role = session.get('user_role')
+    role=3
+    account_id = session.get('user_id')
+    customer =dao.get_customer_by_account_id(account_id)
+    print(account_id)
+    if request.method == "POST":
+        customer_name = request.form['name']
+        customer_phone=request.form['phone']
+        customer_id_card=request.form['cmnd']
+        customer_type=request.form['option']
+        check_in_date=datetime.strptime(request.form['check_in_date'],'%d/%m/%Y')
+        check_out_date=datetime.strptime(request.form['check_out_date'],'%d/%m/%Y')
+
+        new_customer=dao.set_customer(customer_name,customer_id_card,"fsfsfds",customer_phone,customer_type)
+
+
+        set_room_booked(customer_id=new_customer.id,booking_date=datetime.now(),check_in_date=check_in_date
+                                      ,check_out_date=check_out_date)
+        # db.session.add(room_booked)
+        # db.session.commit()
+        # db.session.flush()
+    return redirect(url_for('history'))
+
+        # booking_details=set_booking_details(room_booked_id=room_booked.id, room_id=room)
 
 @app.route('/history')
 def history():
     bookings = dao.get_all_room_booked()
-    return render_template('history.html', bookings=bookings, logged_in=check_login())
+
+    # Tạo danh sách khách hàng liên quan đến từng booking
+    enriched_bookings = []
+    for booking in bookings:
+        customer = Customer.query.filter_by(id=booking.customer_id).first()
+        enriched_bookings.append({
+            'id': booking.id,
+            'customer_name': customer.name,
+            'customer_phone': customer.phone,
+            'booking_date': booking.booking_date,
+            'check_in_date': booking.check_in_date,
+            'check_out_date': booking.check_out_date,
+            'customer_type': customer.customer_type_id
+        })
+
+    return render_template('history.html', bookings=enriched_bookings)
 
 
 @app.route('/admin-login', methods=['GET', 'POST'])
@@ -267,7 +306,7 @@ def authorize():
     token = google.authorize_access_token()  # Access token from Google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
-    user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
+    user = oauth.google.userinfo()   # uses openid endpoint to fetch user info
     # Here you use the profile/user data that you got and query your database find/register the user
     user = dao.get_or_create_user({
         'email': user_info.get('email'),
@@ -276,6 +315,7 @@ def authorize():
     })
     # and set ur own data in the session not the profile from Google
     session['profile'] = user_info
+    session['user_id']= user.id
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
     session['user_name'] = user_info['name']
@@ -312,6 +352,7 @@ def authorize_facebook():
 
     # Lưu thông tin vào session
     session['profile'] = user_info
+    session['user_id']= user.id
     session['logged_in'] = True
     session['user_name'] = user_info['name']
     next_page = session.get('next')
