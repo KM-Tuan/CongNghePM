@@ -2,11 +2,11 @@ import json
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import cast, func, Integer, and_, exists,  extract
 from datetime import datetime
+
+from TTDHotel.TTDHotel.models import BookingDetail
 from TTDHotel.TTDHotel.utils import hash_password
 from TTDHotel.TTDHotel import app, db
 from models import Category, Account, RentingDetail,RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, Room, RoomBooked, RoomRented, Bill
-
-
 
 
 def auth_user(username, password):
@@ -159,7 +159,6 @@ def get_room_booked_by_id(room_booked_id):
 def get_all_room_booked():
     return RoomBooked.query.all()
 
-
 def get_room_rented_by_id(room_rented_id):
     return RoomRented.query.get(room_rented_id)
 
@@ -264,6 +263,10 @@ def set_room_booked(customer_id, booking_date, check_in_date, check_out_date):
 
     return room_booked
 
+def set_booking_details(room_booked_id, room_id, customer_id):
+    booking_datails = BookingDetail(room_booked_id=room_booked_id, room_id=room_id, customer_id=customer_id)
+    db.session.add(booking_datails)
+    db.session.commit()
 
 def set_room_rented(room_booked_id, customer_id, check_in_date, check_out_date, employee_id):
     room_rented = RoomRented(room_booked_id=room_booked_id, customer_id=customer_id, check_in_date=check_in_date,

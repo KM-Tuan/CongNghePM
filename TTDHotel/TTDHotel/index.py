@@ -1,4 +1,6 @@
 import math
+from datetime import datetime
+
 from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash
@@ -7,9 +9,10 @@ import unicodedata
 from flask_login import login_user, logout_user, current_user, login_required
 
 import dao
-from TTDHotel.TTDHotel import app, oauth, facebook, admin,login
+from TTDHotel.TTDHotel import app, oauth, facebook, admin, login, db
 import  cloudinary.uploader
 
+from TTDHotel.TTDHotel.dao import set_room_booked
 from models import Customer
 
 
@@ -36,14 +39,12 @@ def show_categories():
         phone = request.form.get('phone')
         cmnd = request.form.get('cmnd')
         customer_type_id = request.form.get('option')
-
         customer= Customer(name=name, phone=phone, cmnd=cmnd, type_id=customer_type_id)
         db.session.add(customer)
         db.session.commit()
         pass
 
     return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
-
 
 
 @app.route('/filter_category', methods=['POST'])
@@ -76,6 +77,29 @@ def contacts():
 def details(id):
     category = dao.get_category_by_id(id)
     return render_template('product-details.html', category=category, logged_in=check_login())
+
+@app.route('/booked', methods=['POST'])
+def booked():
+    role = session.get('user_role')
+    if role == 3:
+        customer_id=session.get('user_id')
+        customer_name = request.form['name']
+        customer_phone=request.form['phone']
+        customer_id_card=request.form['cmnd']
+        customer_type=request.form['option']
+        check_in_date=datetime.strptime(request.form['check_in_date'],'%Y-%m-%d')
+        check_out_date=datetime.strptime(request.form['check_out_date'],'%Y-%m-%d')
+
+        room_booked = set_room_booked(customer_id=customer_id,booking_date=datetime.now(),check_in_date=check_in_date,check_out_date=check_out_date)
+        db.session.add(room_booked)
+        db.session.flush()
+
+        # booking_details=set_booking_details(room_booked_id=room_booked.id, room_id=room)
+
+@app.route('/history')
+def history():
+    bookings = dao.get_all_room_booked()
+    return render_template('history.html', bookings=bookings, logged_in=check_login())
 
 
 @app.route('/admin-login', methods=['GET', 'POST'])
@@ -113,6 +137,7 @@ def login_my_user():
 
 def set_user_session(user):
     session['user_id'] = user.id
+    session['user_role']=user.role
     session['user_name'] = (
         user.customer.name if user.customer else
         user.employee.name if user.employee else
@@ -130,8 +155,9 @@ def get_user():
     user_id = session.get('user_id')
     user_name = session.get('user_name')
     phone = session.get('phone')
+    role = session.get('user_role')
     logged_in = session.get('logged_in')
-    return dict(user_id=user_id, user_name=user_name, phone=phone, logged_in=logged_in)
+    return dict(user_id=user_id, user_name=user_name, phone=phone, role=role, logged_in=logged_in)
 
 @app.route('/logout')
 def logout():
