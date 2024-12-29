@@ -29,7 +29,7 @@ addCustomerBtn.addEventListener('click', function () {
             </div>
             <div class="card-body">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="fullname-${customerCount}" name="fullname[]" placeholder="Họ và Tên" required>
+                    <input type="text" class="form-control" id="fullname-${customerCount}" name="name[]" placeholder="Họ và Tên" required>
                     <label for="fullname-${customerCount}">Họ và Tên</label>
                 </div>
                 <div class="form-floating mb-3">
@@ -44,11 +44,11 @@ addCustomerBtn.addEventListener('click', function () {
                     <label class="form-label">Loại khách hàng</label>
                     <div class="custom-radio-container">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="option${customerCount}[]" id="option1-${customerCount}" value="1" required>
+                            <input class="form-check-input" type="radio" name="option_${customerCount}" id="option1-${customerCount}" value="1" required>
                             <label class="form-check-label" for="option1-${customerCount}">Nội địa</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="option${customerCount}[]" id="option2-${customerCount}" value="2">
+                            <input class="form-check-input" type="radio" name="option_${customerCount}" id="option2-${customerCount}" value="2">
                             <label class="form-check-label" for="option2-${customerCount}">Ngoại địa</label>
                         </div>
                     </div>
@@ -60,6 +60,7 @@ addCustomerBtn.addEventListener('click', function () {
         alert('Tối đa 3 khách hàng');
     }
 });
+
 
 function removeCustomer(customerId) {
     const customerElement = document.getElementById(`customer-${customerId}`);
@@ -79,26 +80,31 @@ bookingModal.addEventListener('hidden.bs.modal', function () {
             </div>
             <div class="card-body">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="fullname-1" name="name" placeholder="Họ và Tên" required>
+                    <input type="text" class="form-control" value="{{ customer.name if customer else ''}}" id="fullname-1" name="name[]"
+                           placeholder="Họ và Tên" required>
                     <label for="fullname-1">Họ và Tên</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="tel" class="form-control" id="phone-1" name="phone" placeholder="Số Điện Thoại" required>
+                    <input type="tel" class="form-control" value="{{ customer.phone if customer else '' }}" id="phone-1" name="phone[]"
+                           placeholder="Số Điện Thoại" required>
                     <label for="phone-1">Số Điện Thoại</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="cmnd-1" name="cmnd" placeholder="Căn cước/chứng minh thư" required>
+                    <input type="text" class="form-control" value="{{ customer.cmnd if customer else '' }}" id="cmnd-1" name="cmnd[]"
+                           placeholder="Căn cước/chứng minh thư" required>
                     <label for="cmnd-1">Căn cước/chứng minh thư</label>
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Loại khách hàng</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="option1" id="option1-1" value="1" checked>
-                        <label class="form-check-label" for="option1-1">Nội địa</label>
+                        <input class="form-check-input" type="radio" name="option" id="option1"
+                               value="1" checked>
+                        <label class="form-check-label" for="option1">Nội địa</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="option1" id="option2-1" value="2">
-                        <label class="form-check-label" for="option2-1">Ngoại địa</label>
+                        <input class="form-check-input" type="radio" name="option" id="option2"
+                               value="2">
+                        <label class="form-check-label" for="option2">Ngoại địa</label>
                     </div>
                 </div>
             </div>
@@ -119,3 +125,31 @@ document.getElementById('bookingModal').addEventListener('show.bs.modal', functi
         document.getElementById('loader').style.display = 'none';
     }, 1000);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+        const decreaseRoom = document.getElementById('decrease-room');
+        const increaseRoom = document.getElementById('increase-room');
+        const roomQuantity = document.getElementById('room-quantity');
+
+        decreaseRoom.addEventListener('click', function () {
+            let quantity = parseInt(roomQuantity.value);
+            if (quantity > 1) {
+                roomQuantity.value = quantity - 1;
+            }
+        });
+
+        increaseRoom.addEventListener('click', function () {
+            let quantity = parseInt(roomQuantity.value);
+            if (quantity < 5) {
+                roomQuantity.value = quantity + 1;
+            }
+        });
+    });
+
+    const bookingButton = document.querySelector('[data-bs-target="#bookingModal"]');
+    const roomQuantityModal = document.getElementById('room-quantity-modal');
+
+    bookingButton.addEventListener('click', function () {
+        const roomQuantity = document.getElementById('room-quantity').value;
+        roomQuantityModal.value = roomQuantity;
+    });

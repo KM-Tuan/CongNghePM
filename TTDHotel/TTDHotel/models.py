@@ -202,12 +202,12 @@ if __name__ == "__main__":
         ]
 
         khach_hang = [
-            Customer(id=1, name="Lê Văn C", cmnd="123456789012", address="Đà Nẵng", customer_type_id=1,
+            Customer(id=1, name="Lê Văn C", cmnd="123456789012", address="Đà Nẵng", customer_type_id=1, phone="0987654321",
                       account_id=4),
-            Customer(id=2, name="Phạm Thị D", cmnd="210987654321", address="Huế", customer_type_id=2,
+            Customer(id=2, name="Phạm Thị D", cmnd="210987654321", address="Huế", customer_type_id=2, phone="0987654321",
                       account_id=5),
-            Customer(id=3, name="Trần Văn E", cmnd="140936674321", address="Phú Yên", customer_type_id=1),
-            Customer(id=4, name="Nguyễn Tấn L", cmnd="760987654321", address="Sài Gòn", customer_type_id=2),
+            Customer(id=3, name="Trần Văn E", cmnd="140936674321", address="Phú Yên", customer_type_id=1, phone="0987654321"),
+            Customer(id=4, name="Nguyễn Tấn L", cmnd="760987654321", address="Sài Gòn", customer_type_id=2, phone="0987654321"),
 
         ]
 

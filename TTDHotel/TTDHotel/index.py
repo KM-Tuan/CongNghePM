@@ -3,7 +3,7 @@ from datetime import datetime
 
 from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import unicodedata
 from flask_login import login_user, logout_user, current_user, login_required
@@ -29,98 +29,16 @@ def index():
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
 
-@app.route('/booking',methods=['GET','POST'])
+@app.route('/booking')
 def show_categories():
     categories = dao.get_all_categories()
     list_category = dao.get_all_categories()
-    room_standard_available = dao.get_available_room_standard()
-    room_deluxe_available = dao.get_available_room_deluxe()
-    room_vip_available = dao.get_available_room_vip()
-    print(room_standard_available)
-    if request.method == "POST":
-        name = request.form.get('name')
-        phone = request.form.get('phone')
-        cmnd = request.form.get('cmnd')
-        customer_type_id = request.form.get('option')
-        customer= Customer(name=name, phone=phone, cmnd=cmnd, customer_type_id=customer_type_id)
-        db.session.add(customer)
-        db.session.commit()
-
+    room_standard_available = dao.get_available_room_standard_count()
+    room_deluxe_available = dao.get_available_room_deluxe_count()
+    room_vip_available = dao.get_available_room_vip_count()
 
     return render_template('index.html', categories=categories, list_category=list_category, room_standard_available=room_standard_available,
                            room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available, logged_in=check_login())
-
-#test
-@app.route('/booking_details', methods=['POST'])
-def add_booking_route():
-    try:
-        # Lấy dữ liệu từ form
-        ngay_nhan_phong = datetime.strptime(request.form.get("ngayNhanPhong"), '%Y-%m-%d').date()
-        ngay_tra_phong = datetime.strptime(request.form.get("ngayTraPhong"), '%Y-%m-%d').date()
-        so_luong_phong = request.form.get("soLuongPhong")
-        ma_loai_phong = request.form.get("maLoaiPhong")
-
-        if not so_luong_phong:
-            return jsonify({"message": "Số lượng phòng không được để trống!"}), 400
-        so_luong_phong = int(so_luong_phong)  # Chuyển đổi sang số nguyên
-
-        loai_phong = load_room_type(ma_loai_phong)
-        # Lấy danh sách phòng trống
-        available_rooms = check_room_availability(ngay_nhan_phong, ngay_tra_phong, so_luong_phong, ma_loai_phong)
-        if len(available_rooms) < so_luong_phong:
-            # Lưu các thông tin đã nhập vào session
-            session['booking_data'] = {
-                'customer_data': request.form.to_dict(flat=False)  # Lưu toàn bộ thông tin khách hàng
-            }
-            print(session['booking_data'])
-            flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
-            return redirect(request.referrer or url_for('booking_route'))
-
-        # Lưu thông tin khách hàng và chi tiết từng phòng
-        room_details = []
-        for idx, maPhong in enumerate(available_rooms, start=1):
-            hoTen = request.form.getlist(f"hoTen_phong{idx}[]")
-            cmnd = request.form.getlist(f"cmnd_phong{idx}[]")
-            diaChi = request.form.getlist(f"diaChi_phong{idx}[]")
-            loaiKhach = [request.form.get(f"optradio_phong{idx}_{i + 1}") for i in range(len(hoTen))]
-
-            # Kiểm tra danh sách có đồng bộ
-            if not (len(hoTen) == len(cmnd) == len(diaChi)):
-
-                return jsonify({"message": f"Thông tin khách hàng cho phòng {idx} không đồng bộ!"}), 400
-            so_luong_khach = 0
-            for i in range(len(hoTen)):
-                so_luong_khach += 1
-                room_details.append({
-                    "maPhong": maPhong,
-                    "hoTen": hoTen[i],
-                    "cmnd": cmnd[i],
-                    "diaChi": diaChi[i],
-                    "loaiKhach": loaiKhach[i]
-                })
-
-        # Gọi hàm thêm booking từ DAO
-        booking_data = {
-            "ngayNhanPhong": ngay_nhan_phong,
-            "ngayTraPhong": ngay_tra_phong
-        }
-
-        maPhieuDat = add_booking(room_details, booking_data)
-
-        return render_template('booking_details.html',
-                                maPhieuDat = maPhieuDat,
-                                ma_loai_phong = ma_loai_phong,
-                                loai_phong= loai_phong,
-                                so_luong_khach = so_luong_khach,
-                                so_luong_phong=so_luong_phong,
-                                ngay_nhan_phong=ngay_nhan_phong,
-                                ngay_tra_phong=ngay_tra_phong)
-    except ValueError as ve:
-        return jsonify({"message": "Giá trị nhập vào không hợp lệ!", "error": str(ve)}), 400
-    except Exception as ex:
-        db.session.rollback()
-        return jsonify({"message": "Có lỗi xảy ra!", "error": str(ex)}), 400
-
 
 
 @app.route('/filter_category', methods=['POST'])
@@ -161,28 +79,55 @@ def rents():
 @app.route('/category/<int:id>')
 def details(id):
     category = dao.get_category_by_id(id)
-    return render_template('product-details.html', category=category, logged_in=check_login())
+    session['category_id'] = id
+    customer = dao.get_customer_by_id(session.get('user_id'))
+    return render_template('product-details.html', customer=customer, category=category, logged_in=check_login())
 
 @app.route('/booked', methods=['POST'])
 def booked():
-    # role = session.get('user_role')
-    role=3
-    account_id = session.get('user_id')
-    customer =dao.get_customer_by_account_id(account_id)
-    print(account_id)
     if request.method == "POST":
-        customer_name = request.form['name[]']
-        customer_phone=request.form['phone[]']
-        customer_id_card=request.form['cmnd[]']
-        customer_type=request.form['option[]']
-        check_in_date=datetime.strptime(request.form['check_in_date'],'%d/%m/%Y')
-        check_out_date=datetime.strptime(request.form['check_out_date'],'%d/%m/%Y')
+        category_id = session.get('category_id')
+        if (category_id == 1):
+            room_count = dao.get_available_room_standard_count()
+        if (category_id == 2):
+            room_count = dao.get_available_room_deluxe_count()
+        if (category_id == 3):
+            room_count = dao.get_available_room_vip_count()
+        room_details = []
+        for maPhong in range(1, room_count):
+            customer_name = request.form.getlist('name[]')
+            customer_phone=request.form.getlist('phone[]')
+            customer_id_card=request.form.getlist('cmnd[]')
+            customer_address = session.get("address")
+            customer_type=[request.form.get(f"option_{i + 1}") for i in range(len(customer_name))]
+            check_in_date=datetime.strptime(request.form['check_in_date'],'%d/%m/%Y')
+            check_out_date=datetime.strptime(request.form['check_out_date'],'%d/%m/%Y')
 
-        new_customer=dao.set_customer(customer_name,customer_id_card,"fsfsfds",customer_phone,customer_type)
+            if not(len(customer_name) == len(customer_phone) == len(customer_id_card)):
+                return jsonify({"message": "Lỗi tên, số, cc"}), 400
 
+            count = 0
+            for i in range(len(customer_name)):
+                count+=1
+                room_details.append({
+                    "maPhong":maPhong,
+                    "customer_name":customer_name[i],
+                    "customer_phone":customer_phone[i],
+                    "customer_id_card":customer_id_card[i],
+                    "customer_type":customer_type[i],
+                    "customer_address":customer_address
+                })
 
-        dao.set_room_booked(customer_id=new_customer.id,booking_date=datetime.now(),check_in_date=check_in_date
-                                      ,check_out_date=check_out_date)
+        booking_data={
+            "check_in_date":check_in_date,
+            "check_out_date":check_out_date
+        }
+
+        dao.add_booking(room_details,booking_data)
+
+        # new_customer=dao.set_customer(customer_name,customer_id_card,"fsfsfds",customer_phone,customer_type)
+        # dao.set_room_booked(customer_id=new_customer.id,booking_date=datetime.now(),check_in_date=check_in_date
+        #                               ,check_out_date=check_out_date)
         # db.session.add(room_booked)
         # db.session.commit()
         # db.session.flush()
@@ -253,6 +198,7 @@ def set_user_session(user):
         "Admin"
     )
     session['logged_in'] = True
+    # session['phone'] = user.phone if user else None
     session['address'] = user.customer.address if user.customer else "None"
 
 

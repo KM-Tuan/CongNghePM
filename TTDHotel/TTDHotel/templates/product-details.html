@@ -19,6 +19,14 @@
         </div>
         <div class="col-md-6">
             <h3 class="product-price text-center mb-4">{{ "{:,}".format(category.price)}} VNĐ</h3>
+
+            <div class="room-quantity-wrapper text-center mb-3">
+                <button class="btn btn-outline-secondary" id="decrease-room">-</button>
+                <input type="number" id="room-quantity" class="form-control d-inline-block text-center" value="1"
+                       min="1" max="5" style="width: 60px;" readonly>
+                <button class="btn btn-outline-secondary" id="increase-room">+</button>
+            </div>
+
             <div class="text-center">
                 {% if logged_in %}
                 <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng
@@ -50,34 +58,42 @@
             </div>
             <form method="post" action="/booked">
                 <div class="modal-body">
+                    <div class="form-group mt-4">
+                        <label for="room-quantity-modal">Số lượng phòng</label>
+                        <input type="number" class="form-control" id="room-quantity-modal" name="room_quantity"
+                               readonly>
+                    </div>
                     <div id="customer-fields">
                         <div class="card mb-3" id="customer-1">
                             <div class="card-header bg-light">Khách hàng 1</div>
                             <div class="card-body">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="fullname-1" name="name[]"
+                                    <input type="text" class="form-control"
+                                           value="{{ customer.name if customer else ''}}" id="fullname-1" name="name[]"
                                            placeholder="Họ và Tên" required>
                                     <label for="fullname-1">Họ và Tên</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="tel" class="form-control" id="phone-1" name="phone[]"
+                                    <input type="tel" class="form-control"
+                                           value="{{ customer.phone if customer else '' }}" id="phone-1" name="phone[]"
                                            placeholder="Số Điện Thoại" required>
                                     <label for="phone-1">Số Điện Thoại</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cmnd-1" name="cmnd[]"
+                                    <input type="text" class="form-control"
+                                           value="{{ customer.cmnd if customer else '' }}" id="cmnd-1" name="cmnd[]"
                                            placeholder="Căn cước/chứng minh thư" required>
                                     <label for="cmnd-1">Căn cước/chứng minh thư</label>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Loại khách hàng</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="option[]" id="option1"
+                                        <input class="form-check-input" type="radio" name="option_1" id="option1"
                                                value="1" checked>
                                         <label class="form-check-label" for="option1">Nội địa</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="option[]" id="option2"
+                                        <input class="form-check-input" type="radio" name="option_1" id="option2"
                                                value="2">
                                         <label class="form-check-label" for="option2">Ngoại địa</label>
                                     </div>
@@ -88,11 +104,13 @@
                     <button type="button" class="btn btn-info mt-2" id="add-customer-btn">Thêm khách hàng</button>
                     <div class="form-group mt-4">
                         <label for="datepicker1">Chọn ngày nhận</label>
-                        <input type="text" class="form-control" id="datepicker1" name="check_in_date" placeholder="Chọn ngày nhận" required>
+                        <input type="text" class="form-control" id="datepicker1" name="check_in_date"
+                               placeholder="Chọn ngày nhận" required>
                     </div>
                     <div class="form-group mt-3">
                         <label for="datepicker2">Chọn ngày trả</label>
-                        <input type="text" class="form-control" id="datepicker2" name="check_out_date" placeholder="Chọn ngày trả" required>
+                        <input type="text" class="form-control" id="datepicker2" name="check_out_date"
+                               placeholder="Chọn ngày trả" required>
                     </div>
                 </div>
                 <div class="modal-footer">

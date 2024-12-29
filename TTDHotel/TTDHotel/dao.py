@@ -22,6 +22,52 @@ def auth_user(username, password):
     )
 
 
+def add_booking(room_details, booking_data):
+    try:
+        phieu_dat = None
+
+        for customer in room_details:
+            # Add customer first
+            cus = Customer(
+                name=customer["customer_name"],
+                cmnd=customer["customer_id_card"],
+                address=customer["customer_address"],
+                phone=customer["customer_phone"],
+                customer_type_id=1 if customer["customer_type"] == "1" else 2
+            )
+            db.session.add(cus)
+            db.session.flush()  # Ensures the customer ID is generated
+
+            # Create the RoomBooked entry only after we have the customer ID
+            if not phieu_dat:
+                phieu_dat = RoomBooked(
+                    customer_id=cus.id,  # Correctly associate the customer_id
+                    booking_date=datetime.now(),
+                    check_in_date=booking_data["check_in_date"],
+                    check_out_date=booking_data["check_out_date"]
+                )
+                db.session.add(phieu_dat)
+                db.session.flush()  # Ensures the room booking ID is generated
+
+            # Add BookingDetail for each room the customer books
+            chi_tiet = BookingDetail(
+                room_booked_id=phieu_dat.id,
+                room_id=customer["maPhong"],  # Ensure room_id corresponds to an actual room
+                customer_id=cus.id
+            )
+            db.session.add(chi_tiet)
+
+        db.session.commit()
+
+        return phieu_dat.id  # Return the RoomBooked ID
+
+    except Exception as ex:
+        db.session.rollback()
+        print(f"Lỗi khi lưu phiếu đặt: {ex}")
+        raise ex
+
+
+
 def get_or_create_user(user_info):
     """Tạo mới người dùng nếu chưa tồn tại."""
     account = Account.query.filter(Account.username.__eq__(user_info['email'])).first()
@@ -83,14 +129,24 @@ def update_user(id, name=None, phone=None, password=None):
 
     return True
 
+
 def get_available_room_standard():
-    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==1).all())
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==1).all()
 
 def get_available_room_deluxe():
-    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==2).all())
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==2).all()
 
 def get_available_room_vip():
-    return len(Room.query.filter(Room.status_room==1 , Room.room_type_id==3).all())
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==3).all()
+
+def get_available_room_standard_count():
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==1).count()
+
+def get_available_room_deluxe_count():
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==2).count()
+
+def get_available_room_vip_count():
+    return Room.query.filter(Room.status_room==1 , Room.room_type_id==3).count()
 
 def get_user_by_id(user_id):
     return Account.query.get(user_id)
