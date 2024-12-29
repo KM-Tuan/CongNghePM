@@ -307,6 +307,14 @@ def load_categories():
         return categories
 
 
+def load_room_type(id=None):
+    query = Category.query
+    if id:
+        query = query.filter(Category.id == id)
+    return query.all()
+
+
+
 def load_contacts():
     return read_json('data/contacts.json')
 

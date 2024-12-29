@@ -39,12 +39,84 @@ def show_categories():
         phone = request.form.get('phone')
         cmnd = request.form.get('cmnd')
         customer_type_id = request.form.get('option')
-        customer= Customer(name=name, phone=phone, cmnd=cmnd, type_id=customer_type_id)
+        customer= Customer(name=name, phone=phone, cmnd=cmnd, customer_type_id=customer_type_id)
         db.session.add(customer)
         db.session.commit()
 
 
     return render_template('index.html', categories=categories, list_category=list_category, logged_in=check_login())
+
+#test
+@app.route('/booking_details', methods=['POST'])
+def add_booking_route():
+    try:
+        # Lấy dữ liệu từ form
+        ngay_nhan_phong = datetime.strptime(request.form.get("ngayNhanPhong"), '%Y-%m-%d').date()
+        ngay_tra_phong = datetime.strptime(request.form.get("ngayTraPhong"), '%Y-%m-%d').date()
+        so_luong_phong = request.form.get("soLuongPhong")
+        ma_loai_phong = request.form.get("maLoaiPhong")
+
+        if not so_luong_phong:
+            return jsonify({"message": "Số lượng phòng không được để trống!"}), 400
+        so_luong_phong = int(so_luong_phong)  # Chuyển đổi sang số nguyên
+
+        loai_phong = load_room_type(ma_loai_phong)
+        # Lấy danh sách phòng trống
+        available_rooms = check_room_availability(ngay_nhan_phong, ngay_tra_phong, so_luong_phong, ma_loai_phong)
+        if len(available_rooms) < so_luong_phong:
+            # Lưu các thông tin đã nhập vào session
+            session['booking_data'] = {
+                'customer_data': request.form.to_dict(flat=False)  # Lưu toàn bộ thông tin khách hàng
+            }
+            print(session['booking_data'])
+            flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
+            return redirect(request.referrer or url_for('booking_route'))
+
+        # Lưu thông tin khách hàng và chi tiết từng phòng
+        room_details = []
+        for idx, maPhong in enumerate(available_rooms, start=1):
+            hoTen = request.form.getlist(f"hoTen_phong{idx}[]")
+            cmnd = request.form.getlist(f"cmnd_phong{idx}[]")
+            diaChi = request.form.getlist(f"diaChi_phong{idx}[]")
+            loaiKhach = [request.form.get(f"optradio_phong{idx}_{i + 1}") for i in range(len(hoTen))]
+
+            # Kiểm tra danh sách có đồng bộ
+            if not (len(hoTen) == len(cmnd) == len(diaChi)):
+
+                return jsonify({"message": f"Thông tin khách hàng cho phòng {idx} không đồng bộ!"}), 400
+            so_luong_khach = 0
+            for i in range(len(hoTen)):
+                so_luong_khach += 1
+                room_details.append({
+                    "maPhong": maPhong,
+                    "hoTen": hoTen[i],
+                    "cmnd": cmnd[i],
+                    "diaChi": diaChi[i],
+                    "loaiKhach": loaiKhach[i]
+                })
+
+        # Gọi hàm thêm booking từ DAO
+        booking_data = {
+            "ngayNhanPhong": ngay_nhan_phong,
+            "ngayTraPhong": ngay_tra_phong
+        }
+
+        maPhieuDat = add_booking(room_details, booking_data)
+
+        return render_template('booking_details.html',
+                                maPhieuDat = maPhieuDat,
+                                ma_loai_phong = ma_loai_phong,
+                                loai_phong= loai_phong,
+                                so_luong_khach = so_luong_khach,
+                                so_luong_phong=so_luong_phong,
+                                ngay_nhan_phong=ngay_nhan_phong,
+                                ngay_tra_phong=ngay_tra_phong)
+    except ValueError as ve:
+        return jsonify({"message": "Giá trị nhập vào không hợp lệ!", "error": str(ve)}), 400
+    except Exception as ex:
+        db.session.rollback()
+        return jsonify({"message": "Có lỗi xảy ra!", "error": str(ex)}), 400
+
 
 
 @app.route('/filter_category', methods=['POST'])

@@ -57,7 +57,7 @@ class Customer(db.Model):
     name = Column(String(100))
     cmnd = Column(String(20), nullable=True)
     address = Column(String(255), nullable=True)
-    phone = Column(String(11), unique=True, nullable=True)
+    phone = Column(String(11),  nullable=True)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
     avatar = Column(String(200), default="https://example.com/avatar_default.jpg")
