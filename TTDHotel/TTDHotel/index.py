@@ -12,7 +12,7 @@ import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin, login, db
 import  cloudinary.uploader
 
-from TTDHotel.TTDHotel.dao import set_customer, set_booking_details, set_room_booked
+
 
 
 def check_login():
@@ -171,17 +171,17 @@ def booked():
     customer =dao.get_customer_by_account_id(account_id)
     print(account_id)
     if request.method == "POST":
-        customer_name = request.form['name']
-        customer_phone=request.form['phone']
-        customer_id_card=request.form['cmnd']
-        customer_type=request.form['option']
+        customer_name = request.form['name[]']
+        customer_phone=request.form['phone[]']
+        customer_id_card=request.form['cmnd[]']
+        customer_type=request.form['option[]']
         check_in_date=datetime.strptime(request.form['check_in_date'],'%d/%m/%Y')
         check_out_date=datetime.strptime(request.form['check_out_date'],'%d/%m/%Y')
 
         new_customer=dao.set_customer(customer_name,customer_id_card,"fsfsfds",customer_phone,customer_type)
 
 
-        set_room_booked(customer_id=new_customer.id,booking_date=datetime.now(),check_in_date=check_in_date
+        dao.set_room_booked(customer_id=new_customer.id,booking_date=datetime.now(),check_in_date=check_in_date
                                       ,check_out_date=check_out_date)
         # db.session.add(room_booked)
         # db.session.commit()
@@ -197,7 +197,7 @@ def history():
     # Tạo danh sách khách hàng liên quan đến từng booking
     enriched_bookings = []
     for booking in bookings:
-        customer = Customer.query.filter_by(id=booking.customer_id).first()
+        customer = dao.get_customer_by_id(booking.customer_id)
         enriched_bookings.append({
             'id': booking.id,
             'customer_name': customer.name,
