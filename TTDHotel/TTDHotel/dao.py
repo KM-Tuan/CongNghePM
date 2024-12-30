@@ -254,6 +254,10 @@ def get_room_booked_by_id(room_booked_id):
 def get_all_room_booked():
     return RoomBooked.query.all()
 
+def get_all_room_booked_by_account_id(id):
+    customer = get_customer_by_account_id(id)
+    return RoomBooked.query.filter(RoomBooked.customer_id==customer.id).all()
+
 def get_room_rented_by_id(room_rented_id):
     return RoomRented.query.get(room_rented_id)
 

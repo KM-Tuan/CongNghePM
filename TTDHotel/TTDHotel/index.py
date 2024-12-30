@@ -199,7 +199,6 @@ def history():
             'check_in_date': booking.check_in_date,
             'check_out_date': booking.check_out_date,
             'customer_type': customer.customer_type_id,
-            'customer_count': session.get('count')
         })
 
     return render_template('history.html', bookings=enriched_bookings)

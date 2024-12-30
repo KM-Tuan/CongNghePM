@@ -22,6 +22,7 @@
             <tbody>
             {% for booking in bookings %}
             <tr>
+                {% if session['user_id'].__eq__(booking.customer_account_id) %}
                 <th scope="row">{{ loop.index }}</th>
                 <td>{{ booking.customer_name }}</td>
                 <td>{{ booking.customer_phone }}</td>
@@ -35,6 +36,7 @@
                     Nước ngoài
                     {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
             </tbody>
