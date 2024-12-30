@@ -1,6 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -187,9 +184,11 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/home">Trang chủ</a>
                 </li>
+                {% if not session['logged_in'] or session['user_role'] == 3 %}
                 <li class="nav-item">
                     <a class="nav-link" href="/booking">Đặt phòng</a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="/rules">Quy định</a>
                 </li>
@@ -197,7 +196,7 @@
                     <a class="nav-link" href="/contacts">Liên hệ</a>
                 </li>
                 {% if session['logged_in'] %}
-                {% if session['user_role'] != 3 %}
+                {% if session['user_role'] == 2%}
                 <li class="nav-item">
                     <a class="nav-link" href="/rents">Thuê phòng</a>
                 </li>
@@ -291,16 +290,6 @@
                                value="{{ session['phone'] }}" required>
                         <label for="phone"><i class="bi bi-phone-fill me-2"></i>Số điện thoại</label>
                     </div>
-                    <!--                     <div class="form-floating mb-4">-->
-                    <!--                        <input type="text" class="form-control rounded-pill shadow-sm" id="address" name="address"-->
-                    <!--                               value="{{ session['address'] }}" required>-->
-                    <!--                        <label for="address"><i class="bi bi-phone-fill me-2"></i>Địa chỉ</label>-->
-                    <!--                    </div>-->
-                    <!--                     <div class="form-floating mb-4">-->
-                    <!--                        <input type="tel" class="form-control rounded-pill shadow-sm" id="cmnd" name="cmnd"-->
-                    <!--                               value="{{ session['cmnd'] }}" required>-->
-                    <!--                        <label for="cmnd"><i class="bi bi-phone-fill me-2"></i>Căn cước/chứng minh thư</label>-->
-                    <!--                    </div>-->
                 </div>
                 <!-- Modal Footer -->
                 <div class="modal-footer bg-light px-5 py-3">
@@ -355,6 +344,3 @@
         </div>
     </div>
 </div>
-
-<!--</body>-->
-<!--</html>-->

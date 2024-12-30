@@ -1,4 +1,5 @@
 import math
+import random
 # from crypt import methods
 from datetime import datetime
 from utils import hash_password
@@ -11,9 +12,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 import dao
 from TTDHotel.TTDHotel import app, oauth, facebook, admin, login, db
-import  cloudinary.uploader
-
-
+import cloudinary.uploader
 
 
 def check_login():
@@ -22,13 +21,16 @@ def check_login():
         session['next'] = request.url
     return logged_in
 
+
 @app.route('/home')
 def index():
     return render_template('welcome.html', logged_in=check_login())
 
+
 @app.template_filter('dict_without_key')
 def dict_without_key(d, key):
     return {k: v for k, v in d.items() if k != key}
+
 
 @app.route('/booking')
 def show_categories():
@@ -38,8 +40,10 @@ def show_categories():
     room_deluxe_available = dao.get_available_room_deluxe_count()
     room_vip_available = dao.get_available_room_vip_count()
 
-    return render_template('index.html', categories=categories, list_category=list_category, room_standard_available=room_standard_available,
-                           room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available, logged_in=check_login())
+    return render_template('index.html', categories=categories, list_category=list_category,
+                           room_standard_available=room_standard_available,
+                           room_deluxe_available=room_deluxe_available, room_vip_available=room_vip_available,
+                           logged_in=check_login())
 
 
 @app.route('/filter_category', methods=['POST'])
@@ -56,7 +60,8 @@ def filter_category():
     else:
         categories = dao.get_all_categories()
 
-    return render_template('index.html', list_category=list_category,categories=categories, category=category, selected_value=selected_value,
+    return render_template('index.html', list_category=list_category, categories=categories, category=category,
+                           selected_value=selected_value,
                            room_standard_available=room_standard_available, room_deluxe_available=room_deluxe_available,
                            room_vip_available=room_vip_available, logged_in=check_login())
 
@@ -66,16 +71,17 @@ def rules():
     rules = dao.load_rules()
     return render_template('rules.html', logged_in=check_login(), rules=rules)
 
+
 @app.route('/contacts')
 def contacts():
     contacts = dao.load_contacts()
     return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
 
 
-@app.route('/rents',methods=['GET','POST'])
+@app.route('/rents', methods=['GET', 'POST'])
 def rents():
-    enriched_bookings=[]
-    data ={}
+    enriched_bookings = []
+    data = {}
     if request.method == 'POST':
         room_booked_id = request.form.get('maDatPhong')
         room_booked = dao.get_room_booked_by_id(room_booked_id)
@@ -84,13 +90,13 @@ def rents():
             booking_detail = dao.get_booking_detail_by_booked_id(room_booked_id)
             room = dao.get_room_by_id(booking_detail[0].room_id)
 
-            data={
-                'room':room.name,
+            data = {
+                'room': room.name,
                 'check_in_date': room_booked.check_in_date.strftime('%d/%m/%Y'),
                 'check_out_date': room_booked.check_out_date.strftime('%d/%m/%Y'),
                 'booking_date': room_booked.booking_date.strftime('%d/%m/%Y'),
             }
-        # # Tạo danh sách khách hàng liên quan đến từng booking
+            # # Tạo danh sách khách hàng liên quan đến từng booking
             for booking in booking_detail:
                 customer = dao.get_customer_by_id(booking.customer_id)
                 enriched_bookings.append({
@@ -99,7 +105,7 @@ def rents():
                     'customer_phone': customer.phone,
                     'customer_address': customer.address,
                     'customer_cmnd': customer.cmnd,
-                    'customer_type': "Nội địa" if customer.customer_type_id==1 else 'Ngoại địa',
+                    'customer_type': "Nội địa" if customer.customer_type_id == 1 else 'Ngoại địa',
                 })
     return render_template(
         'rents.html',
@@ -108,13 +114,16 @@ def rents():
         logged_in=check_login()
     )
 
+
 @app.route('/category/<int:id>')
 def details(id):
     category = dao.get_category_by_id(id)
     categories = dao.get_category_by_another_id(id)
     session['category_id'] = id
     customer = dao.get_customer_by_id(session.get('user_id'))
-    return render_template('product-details.html', customer=customer, category=category, categories=categories, logged_in=check_login())
+    return render_template('product-details.html', customer=customer, category=category, categories=categories,
+                           logged_in=check_login())
+
 
 @app.route('/booked', methods=['POST'])
 def booked():
@@ -122,7 +131,6 @@ def booked():
         category_id = session.get('category_id')
         check_in_date = datetime.strptime(request.form['check_in_date'], '%d/%m/%Y')
         check_out_date = datetime.strptime(request.form['check_out_date'], '%d/%m/%Y')
-
 
         category = dao.load_room_type(category_id)
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
@@ -133,42 +141,44 @@ def booked():
                 'customer_data': request.form.to_dict(flat=False)  # Lưu toàn bộ thông tin khách hàng
             }
             flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
-            return redirect(request.referrer )
+            return redirect(request.referrer)
 
         room_details = []
-        for idx,maPhong in enumerate( available_rooms, start=1):
+        for idx, maPhong in enumerate(available_rooms, start=1):
             customer_name = request.form.getlist('name[]')
             customer_phone = request.form.getlist('phone[]')
             customer_id_card = request.form.getlist('cmnd[]')
             customer_address = request.form.getlist("address[]")
             customer_type = [request.form.get(f"option_{i + 1}") for i in range(len(customer_name))]
 
-            if not(len(customer_name) == len(customer_phone) == len(customer_id_card)):
+            if not (len(customer_name) == len(customer_phone) == len(customer_id_card)):
                 return jsonify({"message": "Lỗi tên, số, cc"}), 400
 
             count = 0
             for i in range(len(customer_name)):
-                count+=1
+                count += 1
                 room_details.append({
-                    "maPhong":maPhong,
-                    "customer_name":customer_name[i],
-                    "customer_phone":customer_phone[i],
-                    "customer_id_card":customer_id_card[i],
-                    "customer_type":customer_type[i],
-                    "customer_address":customer_address[i]
+                    "maPhong": maPhong,
+                    "customer_name": customer_name[i],
+                    "customer_phone": customer_phone[i],
+                    "customer_id_card": customer_id_card[i],
+                    "customer_type": customer_type[i],
+                    "customer_address": customer_address[i]
                 })
 
-        booking_data={
-            "check_in_date":check_in_date,
-            "check_out_date":check_out_date
+        booking_data = {
+            "check_in_date": check_in_date,
+            "check_out_date": check_out_date
         }
 
-        dao.add_booking(room_details,booking_data)
+        dao.add_booking(room_details, booking_data)
 
     return render_template('booking_details.html')
 
 
 app.route('/booking_details')
+
+
 def booking_details():
     pass
 
@@ -228,9 +238,69 @@ def login_my_user():
 
     return render_template('login.html')
 
+
+@app.route('/forgot_pass')
+def forgot_pass():
+    return render_template('forgot_password.html')
+
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    if request.method.__eq__('POST'):
+        phone = request.form.get('phone')
+        customer = dao.get_customer_by_phone(phone)
+        if customer:
+            session['account_id'] = customer.account_id
+            code = random.randint(100000, 999999)
+            session['code'] = code
+            flash(f'Mã xác thực: {code}', 'danger')
+            return render_template('verify_code.html')
+
+    flash('Số điện thoại không tồn tại', 'danger')
+    return redirect(request.referrer)
+
+
+@app.route('/verify_code', methods=['POST'])
+def verify_code():
+    if request.method.__eq__('POST'):
+        otp = request.form.get('otp')
+        code = session.get('code')
+        print(otp,code)
+        if otp.__eq__(code):
+            return render_template('change_password.html')
+
+    flash('Mã xác thực không đúng', 'danger')
+    return render_template('verify_code.html')
+
+
+@app.route('/change_password', methods=['POST'])
+def change():
+    if request.method.__eq__('POST'):
+        new_password = request.form.get('new-password')
+        confirm = request.form.get('confirm-password')
+
+        if new_password != confirm:
+            flash('Không trùng khớp.', 'danger')
+            return render_template('change_password.html')
+
+        id = session.get('account_id')
+        user = dao.get_user_by_id(id)
+        if user:
+            success = dao.update_user(id, password=new_password)
+            if success:
+                flash('Cập nhật mật khẩu thành công.', 'success')
+                return render_template('login.html')
+            else:
+                flash('Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.', 'danger')
+                return render_template('change_password.html')
+
+    flash('Đã xảy ra lỗi','danger')
+    return render_template('change_password.html')
+
+
 def set_user_session(user):
     session['user_id'] = user.id
-    session['user_role']=user.role
+    session['user_role'] = user.role
     session['user_name'] = (
         user.customer.name if user.customer else
         user.employee.name if user.employee else
@@ -250,10 +320,12 @@ def get_user():
     logged_in = session.get('logged_in')
     return dict(user_id=user_id, user_name=user_name, phone=phone, role=role, logged_in=logged_in)
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(request.referrer or '/')
+
 
 @app.route('/info', methods=['GET', 'POST'])
 def update_user():
@@ -280,6 +352,7 @@ def update_user():
 
     return redirect(request.referrer)
 
+
 @app.route('/changePassword', methods=['GET', 'POST'])
 def update_password():
     if request.method == 'POST':
@@ -304,6 +377,7 @@ def update_password():
                 flash('Mật khẩu hiện tại không đúng.', 'danger')
         return redirect(request.referrer)
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -314,7 +388,7 @@ def register():
         confirm = request.form.get('confirm')
         avatar = request.files.get('avatar')
         address = request.form.get('address')
-        cmnd= request.form.get('cmnd')
+        cmnd = request.form.get('cmnd')
         customer_type = request.form.get('customer_type')
         avatar_path = None
         role = request.form.get('role')  # Nhận role từ form
@@ -332,7 +406,7 @@ def register():
             avatar_path = res['secure_url']
 
         success = dao.add_user(name=name, phone=phone, username=username, password=password,
-                               customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
+                               customer_type_id=customer_type, address=address, cmnd=cmnd, avatar=avatar_path)
         if success:
             flash('Account created successfully!', 'success')
             return redirect('/login')
@@ -353,7 +427,6 @@ def home():
 ###################
 
 
-
 @app.route('/login_google')
 def login_google():
     google = oauth.create_client('google')  # create the Google oauth client
@@ -367,7 +440,7 @@ def authorize():
     token = google.authorize_access_token()  # Access token from Google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
-    user = oauth.google.userinfo()   # uses openid endpoint to fetch user info
+    user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
     # Here you use the profile/user data that you got and query your database find/register the user
     user = dao.get_or_create_user({
         'email': user_info.get('email'),
@@ -376,7 +449,7 @@ def authorize():
     })
     # and set ur own data in the session not the profile from Google
     session['profile'] = user_info
-    session['user_id']= user.id
+    session['user_id'] = user.id
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
     session['user_name'] = user_info['name']
@@ -389,7 +462,6 @@ def logout_google():
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')
-
 
 
 @app.route('/login_facebook')
@@ -413,7 +485,7 @@ def authorize_facebook():
 
     # Lưu thông tin vào session
     session['profile'] = user_info
-    session['user_id']= user.id
+    session['user_id'] = user.id
     session['logged_in'] = True
     session['user_name'] = user_info['name']
     next_page = session.get('next')
@@ -436,6 +508,7 @@ def list_routes():
         url = urllib.parse.unquote(f"{rule}")
         output.append(f"{rule.endpoint}: {url} [{methods}]")
     return "<br>".join(output)
+
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)
