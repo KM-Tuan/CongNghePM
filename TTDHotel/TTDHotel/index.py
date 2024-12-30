@@ -107,6 +107,11 @@ def rents():
                     'customer_cmnd': customer.cmnd,
                     'customer_type': "Nội địa" if customer.customer_type_id == 1 else 'Ngoại địa',
                 })
+
+            if data and enriched_bookings:
+                session['data'] = data
+                session['enriched_bookings'] = enriched_bookings
+                session['room_booked_id']=room_booked_id
     return render_template(
         'rents.html',
         room_booked=enriched_bookings,
@@ -134,7 +139,7 @@ def booked():
 
         category = dao.load_room_type(category_id)
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
-        print(available_rooms)
+
         if len(available_rooms) < 1:
             # Lưu các thông tin đã nhập vào session
             session['booking_data'] = {
@@ -151,7 +156,7 @@ def booked():
             customer_address = request.form.getlist("address[]")
             customer_type = [request.form.get(f"option_{i + 1}") for i in range(len(customer_name))]
 
-            if not (len(customer_name) == len(customer_phone) == len(customer_id_card)):
+            if not(len(customer_name) == len(customer_phone) == len(customer_id_card)):
                 return jsonify({"message": "Lỗi tên, số, cc"}), 400
 
             count = 0
@@ -174,6 +179,48 @@ def booked():
         dao.add_booking(room_details, booking_data)
 
     return render_template('booking_details.html')
+
+@app.route('/save_export', methods=['GET', 'POST'])
+def save_export():
+    if request.method == 'POST':
+        data =session.get('data')
+        employee=dao.get_employee_by_account_id(session.get('user_id'))
+        room_booked= dao.get_room_booked_by_id(session.get('room_booked_id'))
+        check_in_date = datetime.strptime(data['check_in_date'], "%d/%m/%Y")
+        check_out_date = datetime.strptime(data['check_out_date'], "%d/%m/%Y")
+        room_renting=dao.set_room_rented(room_booked_id=room_booked.id, customer_id=room_booked.customer_id,
+                                         check_in_date=check_in_date
+                                         , check_out_date=check_out_date, employee_id=employee.id)
+        db.session.add(room_renting)
+        db.session.commit()
+
+        booking_details=dao.get_booking_detail_by_booked_id(room_booked.id)
+        count=0
+        customer_type=1
+        for i in booking_details:
+            booking_detail=dao.set_renting_details(room_renting_id=room_renting.id,room_id= i.room_id,customer_id= i.customer_id)
+            customer=dao.get_customer_by_id(i.customer_id)
+            if customer.customer_type_id==2:
+                customer_type=app.config['foreigner']
+            count=count+1
+
+        ExtraGuest=1 if count<3 else (app.config['ExtraGuest']/100)
+
+        room=dao.get_room_by_id(booking_details[0].room_id)
+        number_of_days = (check_out_date - check_in_date).days
+
+        category= dao.get_category_by_id(room.room_type_id)
+
+        original_price= number_of_days * category.price
+        charge = original_price * ExtraGuest * customer_type - original_price
+
+        total=original_price+charge
+        print("tien goc" + str(original_price))
+
+        dao.set_bill(create_date = check_in_date,charge=charge,total=total,room_rented_id=room_renting.id)
+        return redirect(url_for('rents'))  # Chuyển hướng đến một trang thành công hoặc tải file
+
+    return render_template('rent.html')
 
 
 @app.route('/booking_details')
@@ -404,7 +451,7 @@ def register():
             avatar_path = res['secure_url']
 
         success = dao.add_user(name=name, phone=phone, username=username, password=password,
-                               customer_type_id=customer_type, address=address, cmnd=cmnd, avatar=avatar_path)
+                               customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
         if success:
             flash('Account created successfully!', 'success')
             return redirect('/login')
@@ -425,6 +472,7 @@ def home():
 ###################
 
 
+
 @app.route('/login_google')
 def login_google():
     google = oauth.create_client('google')  # create the Google oauth client
@@ -438,7 +486,7 @@ def authorize():
     token = google.authorize_access_token()  # Access token from Google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
-    user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
+    user = oauth.google.userinfo()   # uses openid endpoint to fetch user info
     # Here you use the profile/user data that you got and query your database find/register the user
     user = dao.get_or_create_user({
         'email': user_info.get('email'),
@@ -447,7 +495,7 @@ def authorize():
     })
     # and set ur own data in the session not the profile from Google
     session['profile'] = user_info
-    session['user_id'] = user.id
+    session['user_id']= user.id
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     session['logged_in'] = True
     session['user_name'] = user_info['name']
@@ -460,6 +508,7 @@ def logout_google():
     for key in list(session.keys()):
         session.pop(key)
     return redirect('/')
+
 
 
 @app.route('/login_facebook')
@@ -483,7 +532,7 @@ def authorize_facebook():
 
     # Lưu thông tin vào session
     session['profile'] = user_info
-    session['user_id'] = user.id
+    session['user_id']= user.id
     session['logged_in'] = True
     session['user_name'] = user_info['name']
     next_page = session.get('next')
@@ -506,7 +555,6 @@ def list_routes():
         url = urllib.parse.unquote(f"{rule}")
         output.append(f"{rule.endpoint}: {url} [{methods}]")
     return "<br>".join(output)
-
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5000, debug=True)
