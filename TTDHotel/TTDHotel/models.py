@@ -223,8 +223,8 @@ if __name__ == "__main__":
 
         phong = [
             Room(id=1,name='101', status_room=1, room_type_id=1),
-            Room(id=2,name='102',  status_room=2, room_type_id=1),
-            Room(id=3,name='103', status_room=3, room_type_id=3),
+            Room(id=2,name='102',  status_room=1, room_type_id=1),
+            Room(id=3,name='103', status_room=1, room_type_id=3),
             Room(id=4,name='104',  status_room=1, room_type_id=2),
             Room(id=5,name='105',  status_room=1, room_type_id=2),
             Room(id=6,name='106',  status_room=1, room_type_id=3),

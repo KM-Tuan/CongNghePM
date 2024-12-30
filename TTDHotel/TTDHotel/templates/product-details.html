@@ -19,14 +19,6 @@
         </div>
         <div class="col-md-6">
             <h3 class="product-price text-center mb-4">{{ "{:,}".format(category.price)}} VNĐ</h3>
-
-            <div class="room-quantity-wrapper text-center mb-3">
-                <button class="btn btn-outline-secondary" id="decrease-room">-</button>
-                <input type="number" id="room-quantity" class="form-control d-inline-block text-center" value="1"
-                       min="1" max="5" style="width: 60px;" readonly>
-                <button class="btn btn-outline-secondary" id="increase-room">+</button>
-            </div>
-
             <div class="text-center">
                 {% if logged_in %}
                 <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#bookingModal">Đặt phòng
@@ -58,11 +50,6 @@
             </div>
             <form method="post" action="/booked">
                 <div class="modal-body">
-                    <div class="form-group mt-4">
-                        <label for="room-quantity-modal">Số lượng phòng</label>
-                        <input type="number" class="form-control" id="room-quantity-modal" name="room_quantity"
-                               readonly>
-                    </div>
                     <div id="customer-fields">
                         <div class="card mb-3" id="customer-1">
                             <div class="card-header bg-light">Khách hàng 1</div>

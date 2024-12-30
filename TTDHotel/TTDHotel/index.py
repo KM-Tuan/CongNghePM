@@ -87,11 +87,8 @@ def details(id):
 def booked():
     if request.method == "POST":
         category_id = session.get('category_id')
-        room_quantity = request.form.get("room_quantity") #số lượng phòng đặt
         check_in_date = datetime.strptime(request.form['check_in_date'], '%d/%m/%Y')
         check_out_date = datetime.strptime(request.form['check_out_date'], '%d/%m/%Y')
-        room_quantity = int(room_quantity)  # Chuyển đổi sang số nguyên
-        booking_data = session.get('booking_data', {})
         # if (category_id == 1):
         #     room_count = dao.get_available_room_standard_count()
         # if (category_id == 2):
@@ -100,9 +97,9 @@ def booked():
         #     room_count = dao.get_available_room_vip_count()
 
         category = dao.load_room_type(category_id)
-        available_rooms = dao.check_room_availability(check_in_date, check_out_date, room_quantity, category_id)
+        available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
 
-        if len(available_rooms) < room_quantity:
+        if len(available_rooms) < 1:
             # Lưu các thông tin đã nhập vào session
             session['booking_data'] = {
                 'customer_data': request.form.to_dict(flat=False)  # Lưu toàn bộ thông tin khách hàng
@@ -111,6 +108,8 @@ def booked():
             flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
             return redirect(request.referrer )
 
+        customer_count = len(request.form.getlist('name[]'))
+        session['count'] = customer_count
         room_details = []
         for idx,maPhong in enumerate( available_rooms, start=1):
             customer_name = request.form.getlist('name[]')
@@ -118,8 +117,6 @@ def booked():
             customer_id_card = request.form.getlist('cmnd[]')
             customer_address = request.form.getlist("address[]")
             customer_type = [request.form.get(f"option_{i + 1}") for i in range(len(customer_name))]
-
-            print(customer_type)
 
             if not(len(customer_name) == len(customer_phone) == len(customer_id_card)):
                 return jsonify({"message": "Lỗi tên, số, cc"}), 400
@@ -160,7 +157,8 @@ def history():
             'booking_date': booking.booking_date,
             'check_in_date': booking.check_in_date,
             'check_out_date': booking.check_out_date,
-            'customer_type': customer.customer_type_id
+            'customer_type': customer.customer_type_id,
+            'customer_count': session.get('count')
         })
 
     return render_template('history.html', bookings=enriched_bookings)
