@@ -176,9 +176,7 @@ def booked():
     return render_template('booking_details.html')
 
 
-app.route('/booking_details')
-
-
+@app.route('/booking_details')
 def booking_details():
     pass
 
