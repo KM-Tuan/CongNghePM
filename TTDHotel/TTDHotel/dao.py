@@ -191,6 +191,10 @@ def get_all_customer_types():
     return CustomerType.query.all()
 
 
+def get_customer_by_phone(phone):
+    return Customer.query.filter(Customer.phone==phone).first()
+
+
 def get_status_account_by_id(status_account_id):
     return StatusAccount.query.get(status_account_id)
 
