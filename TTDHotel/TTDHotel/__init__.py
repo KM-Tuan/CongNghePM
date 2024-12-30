@@ -4,9 +4,10 @@ from urllib.parse import quote
 import  cloudinary, os
 from authlib.integrations.flask_client import OAuth
 from flask_login import LoginManager
-
-
+import json
+from sqlalchemy.testing.plugin.plugin_base import config
 app = Flask(__name__, template_folder="templates")
+
 
 app.secret_key = 'secret_key'
 
@@ -18,6 +19,27 @@ app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 
 db = SQLAlchemy(app)
 login = LoginManager(app)
+
+def read_json(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"File {file_path} không tồn tại!")
+        return {}
+    except json.JSONDecodeError:
+        print(f"File {file_path} không hợp lệ!")
+        return {}
+
+def load_rules():
+    return read_json('data/rules.json')
+rules = load_rules()
+app.config['max_customer']=rules['suc_chua_phong']['so_khach_toi_da']
+app.config['longest_time']=rules['dat_phong_khach_san']['thoi_gian_nhan_phong_toi_da']
+app.config['defaule_customer']=rules['gia_phong']['so_khach_co_ban']
+app.config['ExtraGuest']=rules['gia_phong']['phu_phi_khach_them']
+app.config['foreigner']=rules['gia_phong']['he_so_khach_nuoc_ngoai']
+
 
 cloudinary.config(
     cloud_name= 'dqpoa9ukn',

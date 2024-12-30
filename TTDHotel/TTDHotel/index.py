@@ -1,6 +1,10 @@
 import math
 # from crypt import methods
 from datetime import datetime
+
+from sqlalchemy.testing.util import total_size
+from unicodedata import category
+
 from utils import hash_password
 from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
@@ -101,6 +105,11 @@ def rents():
                     'customer_cmnd': customer.cmnd,
                     'customer_type': "Nội địa" if customer.customer_type_id==1 else 'Ngoại địa',
                 })
+
+            if data and enriched_bookings:
+                session['data'] = data
+                session['enriched_bookings'] = enriched_bookings
+                session['room_booked_id']=room_booked_id
     return render_template(
         'rents.html',
         room_booked=enriched_bookings,
@@ -124,9 +133,8 @@ def booked():
         check_out_date = datetime.strptime(request.form['check_out_date'], '%d/%m/%Y')
 
 
-        category = dao.load_room_type(category_id)
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
-        print(available_rooms)
+
         if len(available_rooms) < 1:
             # Lưu các thông tin đã nhập vào session
             session['booking_data'] = {
@@ -167,8 +175,51 @@ def booked():
 
     return render_template('booking_details.html')
 
+@app.route('/save_export', methods=['GET', 'POST'])
+def save_export():
+    if request.method == 'POST':
+        data =session.get('data')
+        employee=dao.get_employee_by_account_id(session.get('user_id'))
+        room_booked= dao.get_room_booked_by_id(session.get('room_booked_id'))
+        check_in_date = datetime.strptime(data['check_in_date'], "%d/%m/%Y")
+        check_out_date = datetime.strptime(data['check_out_date'], "%d/%m/%Y")
+        room_renting=dao.set_room_rented(room_booked_id=room_booked.id, customer_id=room_booked.customer_id,
+                                         check_in_date=check_in_date
+                                         , check_out_date=check_out_date, employee_id=employee.id)
+        db.session.add(room_renting)
+        db.session.commit()
 
-app.route('/booking_details')
+        booking_details=dao.get_booking_detail_by_booked_id(room_booked.id)
+        count=0
+        customer_type=1
+        for i in booking_details:
+            booking_detail=dao.set_renting_details(room_renting_id=room_renting.id,room_id= i.room_id,customer_id= i.customer_id)
+            customer=dao.get_customer_by_id(i.customer_id)
+            if customer.customer_type_id==2:
+                customer_type=app.config['foreigner']
+            count=count+1
+
+        ExtraGuest=1 if count<3 else (app.config['ExtraGuest']/100)
+
+        room=dao.get_room_by_id(booking_details[0].room_id)
+        number_of_days = (check_out_date - check_in_date).days
+
+        category= dao.get_category_by_id(room.room_type_id)
+
+        original_price= number_of_days * category.price
+        charge = original_price * ExtraGuest * customer_type - original_price
+
+
+        total=original_price+charge
+        print("tien goc" + str(original_price))
+
+        dao.set_bill(create_date = check_in_date,charge=charge,total=total,room_rented_id=room_renting.id)
+        return redirect(url_for('rents'))  # Chuyển hướng đến một trang thành công hoặc tải file
+
+    return render_template('rent.html')
+
+
+@app.route('/booking_details')
 def booking_details():
     pass
 
