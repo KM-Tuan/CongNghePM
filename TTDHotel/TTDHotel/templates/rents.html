@@ -22,45 +22,50 @@
 {% if data %}
 <div class="card mt-5 shadow-lg p-4 rounded-4" id="bookingCard">
     <h3 class="text-center mb-4" style="font-weight: 700; color: black;">Thông Tin Đặt Phòng</h3>
-    <div class="booking-details mb-4">
-        <p><strong>Phòng:</strong> {{ data.room }}</p>
-        <p><strong>Ngày Nhận Phòng:</strong> {{ data.check_in_date }}</p>
-        <p><strong>Ngày Trả Phòng:</strong> {{ data.check_out_date }}</p>
-        <p><strong>Ngày Đặt Phòng:</strong> {{ data.booking_date }}</p>
-    </div>
-    <div class="text-center mt-4">
-        <button id="generateTicketButton" class="btn btn-gradient btn-lg py-3 px-5" style="color: white">Lập Phiếu Thuê Phòng</button>
-    </div>
-    <div id="customerInfo" style="display: none;" class="mt-4">
-        <h4 class="text-center mb-3" style="font-weight: 700;">Danh Sách Khách Hàng</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>STT</th>
-                    <th>Tên Khách Hàng</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Địa Chỉ</th>
-                    <th>CMND</th>
-                    <th>Loại Khách</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for customer in room_booked %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ customer.customer_name }}</td>
-                    <td>{{ customer.customer_phone }}</td>
-                    <td>{{ customer.customer_address }}</td>
-                    <td>{{ customer.customer_cmnd }}</td>
-                    <td>{{ customer.customer_type }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="text-center mt-4" id="saveExportButtonContainer" style="display: none;">
-        <button id="saveExportButton" class="btn btn-gradient btn-lg py-3 px-5" style="color: white">Lưu và Xuất Phiếu</button>
-    </div>
+    <form action="/save_export" method="POST" >
+        <div class="booking-details mb-4">
+            <p><strong>Phòng:</strong> <span  name="room">{{ data.room }}</span></p>
+            <p><strong>Ngày Nhận Phòng:</strong> <span name="check_in_date" id="check_in_date">{{ data.check_in_date }}</span></p>
+            <p><strong>Ngày Trả Phòng:</strong> <span name="check_out_date">{{ data.check_out_date }}</span></p>
+            <p><strong>Ngày Đặt Phòng:</strong> <span name="booking_date">{{ data.booking_date }}</span></p>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="button" id="generateTicketButton" class="btn btn-gradient btn-lg py-3 px-5" style="color: white">Lập Phiếu Thuê Phòng</button>
+        </div>
+
+        <div id="customerInfo" style="display: none;" class="mt-4">
+            <h4 class="text-center mb-3" style="font-weight: 700;">Danh Sách Khách Hàng</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên Khách Hàng</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Địa Chỉ</th>
+                        <th>CMND</th>
+                        <th>Loại Khách</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in room_booked %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ customer.customer_name }}</td>
+                        <td>{{ customer.customer_phone }}</td>
+                        <td>{{ customer.customer_address }}</td>
+                        <td>{{ customer.customer_cmnd }}</td>
+                        <td>{{ customer.customer_type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4" id="saveExportButtonContainer" style="display: none;">
+            <button type="submit" id="saveExportButton" class="btn btn-gradient btn-lg py-3 px-5" style="color: white">Lưu và Xuất Phiếu</button>
+        </div>
+    </form>
 </div>
 {% else %}
 <p class="text-center text-danger mt-5">Không tìm thấy thông tin cho mã thuê phòng.</p>

@@ -3,11 +3,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import cast, func, Integer, and_, exists,  extract
 from datetime import datetime
 
-from TTDHotel.TTDHotel.utils import hash_password
+from utils import hash_password
 from TTDHotel.TTDHotel import app, db
 from models import Category, Account, RentingDetail, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, \
     Room, RoomBooked, RoomRented, Bill, BookingDetail
-
+from sqlalchemy import func
 
 def auth_user(username, password):
     password_hash = hash_password(password)
@@ -15,9 +15,8 @@ def auth_user(username, password):
         Account.query.options(
             db.joinedload(Account.customer),
             db.joinedload(Account.employee),
-
         )
-        .filter_by(username=username, password=password_hash)
+        .filter(func.binary(Account.username) == username, func.binary(Account.password) == password_hash)
         .first()
     )
 
@@ -226,6 +225,9 @@ def get_all_categories():
 def get_employee_by_id(employee_id):
     return Employee.query.get(employee_id)
 
+def get_employee_by_account_id(account_id):
+    return Employee.query.filter(Employee.account_id == account_id).first()
+
 
 def get_all_employees():
     return Employee.query.all()
@@ -370,6 +372,12 @@ def set_booking_details(room_booked_id, room_id, customer_id):
     db.session.add(booking_datails)
     db.session.commit()
 
+def set_renting_details(room_renting_id, room_id, customer_id):
+    renting_detail = RentingDetail(room_rented_id=room_renting_id, room_id=room_id, customer_id=customer_id)
+    db.session.add(renting_detail)
+    db.session.commit()
+
+
 def set_room_rented(room_booked_id, customer_id, check_in_date, check_out_date, employee_id):
     room_rented = RoomRented(room_booked_id=room_booked_id, customer_id=customer_id, check_in_date=check_in_date,
                              check_out_date=check_out_date, employee_id=employee_id)
@@ -444,7 +452,7 @@ def doanh_thu_theo_thang(thang: int = None, nam: int = None):
             db.session.query(
                 Room.id.label("maPhong"),
                 Category.name.label("tenLoaiPhong"),
-                func.coalesce(func.sum(Bill.total + Bill.charge), 0).label("doanhThu")  # Sử dụng coalesce để thay 0 cho phòng không có doanh thu
+                func.coalesce(func.sum(Bill.total ), 0).label("doanhThu")  # Sử dụng coalesce để thay 0 cho phòng không có doanh thu
             )
             .join(Category, Category.id == Room.room_type_id)  # Liên kết đến bảng Loại Phòng
             .outerjoin(RentingDetail, RentingDetail.room_id == Room.id)  # Sử dụng outerjoin
