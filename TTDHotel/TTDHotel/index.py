@@ -1,7 +1,7 @@
 import math
 # from crypt import methods
 from datetime import datetime
-
+from utils import hash_password
 from authlib.integrations.flask_client import OAuth
 from django.contrib.messages import success
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
@@ -111,9 +111,10 @@ def rents():
 @app.route('/category/<int:id>')
 def details(id):
     category = dao.get_category_by_id(id)
+    categories = dao.get_category_by_another_id(id)
     session['category_id'] = id
     customer = dao.get_customer_by_id(session.get('user_id'))
-    return render_template('product-details.html', customer=customer, category=category, logged_in=check_login())
+    return render_template('product-details.html', customer=customer, category=category, categories=categories, logged_in=check_login())
 
 @app.route('/booked', methods=['POST'])
 def booked():
@@ -134,8 +135,6 @@ def booked():
             flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
             return redirect(request.referrer )
 
-        customer_count = len(request.form.getlist('name[]'))
-        session['count'] = customer_count
         room_details = []
         for idx,maPhong in enumerate( available_rooms, start=1):
             customer_name = request.form.getlist('name[]')
@@ -166,7 +165,13 @@ def booked():
 
         dao.add_booking(room_details,booking_data)
 
-    return redirect(url_for('history'))
+    return render_template('booking_details.html')
+
+
+app.route('/booking_details')
+def booking_details():
+    pass
+
 
 @app.route('/history')
 def history():
@@ -289,7 +294,7 @@ def update_password():
 
         user = dao.get_user_by_id(id)
         if user:
-            if user.password == dao.hash(old_password):
+            if user.password == hash_password(old_password):
                 success = dao.update_user(id, password=new_password)
                 if success:
                     flash('Cập nhật mật khẩu thành công.', 'success')

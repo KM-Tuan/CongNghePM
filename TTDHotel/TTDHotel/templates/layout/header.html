@@ -156,6 +156,20 @@
         background-color: #5a6268;
         box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
     }
+    .notification-container {
+        position: fixed;
+        top: 80px;
+        right: 225px;
+        z-index: 1050;
+        max-width: 300px;
+    }
+
+    .alert {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
 </style>
 <nav class="navbar navbar-expand-sm navbar-dark fixed-top">
     <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -240,6 +254,18 @@
         </div>
     </div>
 </nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="notification-container">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
 <div class="modal fade" id="changeInfoModal" tabindex="-1" aria-labelledby="changeInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

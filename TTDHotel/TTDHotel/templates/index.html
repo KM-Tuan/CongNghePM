@@ -28,7 +28,6 @@
     </div>
 </section>
 
-
 <!-- Product Section -->
 <section class="container py-4">
     <div class="row justify-content-center flex-row flex-wrap">
@@ -40,8 +39,15 @@
                          style="height: 300px; object-fit: cover; transition: transform 0.3s ease-in-out;">
                 </a>
                 <div class="card-body">
-                    <h5 class="card-title text-dark">{{ p.name }}</h5>
-                    <p class="card-title text-danger font-weight-bold">{{ "{:,}".format(p.price)}} VNĐ</p>
+                    <!-- Thêm icon trước tên phòng -->
+                    <h5 class="card-title text-dark">
+                        <i class="fas fa-bed text-primary"></i> {{ p.name }}
+                    </h5>
+
+                    <!-- Thêm icon trước giá tiền -->
+                    <p class="card-title text-danger font-weight-bold">
+                        <i class="fas fa-tags text-success"></i> {{ "{:,}".format(p.price)}} VNĐ
+                    </p>
                 </div>
             </div>
         </div>

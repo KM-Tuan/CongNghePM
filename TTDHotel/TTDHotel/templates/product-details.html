@@ -39,6 +39,28 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <h2 class="section-title">Sản phẩm liên quan</h2>
+        </div>
+        <div class="row mt-5 related-products">
+            {% for cate in categories %}
+            <div class="col-md-4">
+                <div class="card product-card">
+                    <img src="{{ cate.image }}" class="card-img-top" alt="Related Product">
+                    <div class="card-body">
+                        <h5 class="fas fa-bed text-primary">{{ cate.name }}</h5>
+                        <br><p class="fas fa-tags text-success">{{ "{:,}".format(cate.price)}} VNĐ</p>
+                        <br><a href="/category/{{ cate.id }}" class="btn btn-outline-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
 </div>
 
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
@@ -68,7 +90,8 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control"
-                                           value="{{ customer.address if customer else ''}}" id="diachi-1" name="address[]"
+                                           value="{{ customer.address if customer else ''}}" id="diachi-1"
+                                           name="address[]"
                                            placeholder="Địa chỉ" required>
                                     <label for="diachi-1">Địa chỉ</label>
                                 </div>
@@ -119,7 +142,7 @@
 
 <style>
     body {
-        background: linear-gradient(135deg, #f3f4f6, #e3e9f2);
+        background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
         color: #333;
         line-height: 1.6;
     }
@@ -191,6 +214,92 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+    .product-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-card .card-body {
+        padding: 20px;
+    }
+
+    .product-card img {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        object-fit: cover;
+        height: 250px;
+        width: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card img:hover {
+        transform: scale(1.05);
+    }
+
+    .product-card .card-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .product-card .card-text {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .product-card .btn-outline-primary {
+        background: transparent;
+        border-color: #667eea;
+        color: #667eea;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .product-card .btn-outline-primary:hover {
+        background-color: #667eea;
+        color: white;
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 2.4rem;
+        font-weight: bold;
+        color: #5a67d8;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    /* Spacing and Centering for Related Products */
+    .related-products {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    .related-products .col-md-4 {
+        flex: 0 0 calc(33.333% - 30px); /* Ensures 3 cards per row with space */
+        max-width: calc(33.333% - 30px);  /* Ensures 3 cards per row with space */
+        padding: 0; /* Remove padding from individual columns */
+    }
+
+    .related-products .col-md-4 .product-card {
+        margin-bottom: 30px;
+        width: 100%; /* Ensure the cards fit within the column */
+    }
+
 </style>
 
 {% block scripts %}

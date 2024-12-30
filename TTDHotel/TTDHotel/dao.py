@@ -206,6 +206,8 @@ def get_role_by_id(role_id):
 def get_all_roles():
     return Role.query.all()
 
+def get_category_by_another_id(id):
+    return Category.query.filter(Category.id!=id).all()
 
 def get_category_by_id(category_id):
     return Category.query.get(category_id)
