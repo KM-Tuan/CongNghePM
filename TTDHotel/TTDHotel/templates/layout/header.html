@@ -166,6 +166,19 @@
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+    .user-avatar {
+        width: 38px;  /* Kích thước avatar */
+        height: 38px; /* Kích thước avatar */
+        object-fit: cover; /* Giữ tỉ lệ hình ảnh */
+        border: 2px solid #42a5f5; /* Đường viền */
+        margin-right: 10px; /* Khoảng cách với tên người dùng */
+    }
+
+    .user-avatar:hover {
+        border-color: #1e88e5; /* Đổi màu viền khi hover */
+        transform: scale(1.1); /* Hiệu ứng phóng to */
+        transition: all 0.3s ease;
+    }
 
 </style>
 <nav class="navbar navbar-expand-sm navbar-dark fixed-top">
@@ -211,9 +224,14 @@
                     <a class="nav-link dropdown-toggle text-info d-flex align-items-center" href="#" id="userDropdown"
                        role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="user-icon">&#128002;</span>
+                        <!-- Avatar -->
+                        {% if user_id > 3 %}
+                        <img src="{{ avatar }}" alt="Avatar" class="rounded-circle user-avatar"/>
+                        {% endif %}
+                        <!-- User name -->
                         <span class="user-name ms-2">{{ user_name }}</span>
                     </a>
+
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeInfoModal"
                                style="cursor: pointer;">

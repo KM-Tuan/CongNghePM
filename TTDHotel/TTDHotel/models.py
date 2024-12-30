@@ -67,7 +67,7 @@ class Customer(db.Model):
     phone = Column(String(20),  nullable=True)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
-    avatar = Column(String(200), default="https://example.com/avatar_default.jpg")
+    avatar = Column(String(200), default="https://hoanghaihotel.vn/Data/images/tintuc/10032021170917-gioi-thieu-ve-khach-san-hoang-hai.jpg")
     room_booked = relationship('RoomBooked', backref=backref('customer', lazy=True))
     booking_detail = relationship('BookingDetail', backref=backref('customer', lazy=True))
     renting_detail = relationship('RentingDetail', backref=backref('customer', lazy=True))

@@ -125,7 +125,7 @@ def details(id):
     category = dao.get_category_by_id(id)
     categories = dao.get_category_by_another_id(id)
     session['category_id'] = id
-    customer = dao.get_customer_by_id(session.get('user_id'))
+    customer = dao.get_customer_by_account_id(session.get('user_id'))
     return render_template('product-details.html', customer=customer, category=category, categories=categories,
                            logged_in=check_login())
 
@@ -353,6 +353,9 @@ def set_user_session(user):
     session['logged_in'] = True
     # session['phone'] = user.phone if user else None
     session['address'] = user.customer.address if user.customer else "None"
+    if user.role==3:
+        cus = dao.get_customer_by_account_id(user.id)
+        session['avatar'] = cus.avatar
 
 
 @app.context_processor
@@ -362,7 +365,8 @@ def get_user():
     phone = session.get('phone')
     role = session.get('user_role')
     logged_in = session.get('logged_in')
-    return dict(user_id=user_id, user_name=user_name, phone=phone, role=role, logged_in=logged_in)
+    avatar = session.get('avatar')
+    return dict(user_id=user_id, user_name=user_name, phone=phone, role=role, avatar=avatar, logged_in=logged_in)
 
 
 @app.route('/logout')
