@@ -2,141 +2,199 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center mb-4" style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 2.2rem; color: #34495e;">Nhập mã thuê phòng</h2>
-    <div class="card shadow-lg rounded-4 p-4" style="background: #ffffff;">
+    <h2 class="text-center mb-4"
+        style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.4rem; color: #2c3e50;">Nhập mã thuê
+        phòng</h2>
+    <div class="card shadow-lg rounded-4 p-4 bg-light">
         <form id="bookingForm">
             <div class="form-group mb-3">
-                <label for="bookingCode" class="form-label text-muted" style="font-weight: 500; font-size: 1rem;">Mã thuê phòng</label>
-                <input type="text" class="form-control form-control-lg border-0 shadow-sm rounded-3 p-3" id="bookingCode" placeholder="Nhập mã thuê phòng" required>
+                <label for="bookingCode" class="form-label text-muted"
+                       style="font-weight: 500; font-size: 1rem;">Mã thuê phòng</label>
+                <input type="text" class="form-control form-control-lg border-0 shadow-sm rounded-3 p-3"
+                       id="bookingCode" placeholder="Nhập mã thuê phòng" required>
             </div>
             <button type="submit" class="btn btn-gradient btn-lg w-100 text-white py-3">Xác nhận</button>
         </form>
     </div>
 
-    <!-- Container to hold multiple booking tickets -->
-    <div id="ticketContainer" class="mt-4" style="margin-bottom:20px"></div>
+    <div id="ticketContainer" class="mt-4"></div>
+    <div id="rentalTicketContainer" class="mt-5"></div>
 </div>
 
 <style>
-/* Modern and compact card style */
-.card {
-    border-radius: 20px;
-    background: linear-gradient(135deg, #f5f6fa, #dcdde1);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    max-width: 500px;
-    margin: auto;
-}
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f6f8;
+        color: #2c3e50;
+    }
 
-/* Ticket styling */
-.ticket {
-    margin-top: 12px;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, opacity 0.3s ease-in-out;
-}
+    .card {
+        border-radius: 20px;
+        background: linear-gradient(135deg, #ffffff, #eef2f5);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        padding: 25px;
+        max-width: 500px;
+        margin: auto;
+    }
 
-/* Header */
-.ticket-header {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #3498db;
-    margin-bottom: 15px;
-    text-align: center;
-}
+    .ticket, .rental-ticket {
+        width: 100%;
+        max-width: 600px;
+        margin-top: 12px;
+        padding: 20px;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: auto;
+    }
 
-/* Ticket content */
-.ticket p {
-    font-size: 1rem;
-    color: #2c3e50;
-    margin-bottom: 5px;
-}
+    .ticket-header, .rental-ticket-header {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1abc9c;
+        margin-bottom: 15px;
+        text-align: center;
+    }
 
-/* Booking Code styling */
-.ticket .text-info {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #2980b9;
-}
+    .ticket p, .rental-ticket p {
+        font-size: 1.2rem;
+        color: #34495e;
+        margin-bottom: 10px;
+        text-align: center;
+    }
 
-/* Button gradient style */
-.btn-gradient {
-    background: linear-gradient(135deg, #3498db, #9b59b6);
-    border: none;
-    border-radius: 50px;
-    font-weight: 700;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .btn-gradient {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        padding: 10px 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-/* Button hover effect */
-.btn-gradient:hover {
-    background: linear-gradient(135deg, #9b59b6, #3498db);
-    transform: scale(1.05);
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
-}
+    .btn-gradient:hover {
+        background: linear-gradient(135deg, #2575fc, #6a11cb);
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
 
-/* Ticket fade-in effect */
-.ticket {
-    opacity: 0;
-    transform: scale(0.95);
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    }
 
-.ticket.show {
-    opacity: 1;
-    transform: scale(1);
-}
+    th, td {
+        text-align: center;
+        padding: 12px;
+    }
 
+    th {
+        background-color: #2575fc;
+        color: white;
+        font-weight: 700;
+    }
+
+    td:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+
+    td:nth-child(even) {
+        background-color: #ffffff;
+    }
 </style>
 
 {% block scripts %}
 <script>
     document.getElementById('bookingForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
 
-        // Get the booking code value
         var bookingCode = document.getElementById('bookingCode').value.trim();
+        if (!bookingCode) return;
 
-        // Check if the input is empty or if the booking code already exists
-        if (bookingCode === "") {
-            return; // Do nothing if the input is empty
-        }
-
-        // Check if the booking code already exists in the ticket container
-        var existingTickets = document.querySelectorAll('#ticketContainer .ticket');
-        for (var i = 0; i < existingTickets.length; i++) {
-            var ticketCode = existingTickets[i].querySelector('.text-info').textContent.trim();
-            if (ticketCode === bookingCode) {
-                // If the booking code exists, do not add a new ticket
+        var existingTickets = document.querySelectorAll('#ticketContainer .ticket, #rentalTicketContainer .rental-ticket');
+        for (var ticket of existingTickets) {
+            if (ticket.querySelector('.text-info').textContent.trim() === bookingCode) {
                 alert('Mã thuê phòng này đã được nhập trước đó!');
                 return;
             }
         }
 
-        // Create a new ticket div dynamically
         var ticketContainer = document.getElementById('ticketContainer');
         var newTicket = document.createElement('div');
-        newTicket.classList.add('ticket'); // Add the 'ticket' class for styling
-
-        // Add ticket content (with the booking code)
+        newTicket.classList.add('ticket');
         newTicket.innerHTML = `
             <div class="ticket-header">
-                <h3 class="text-primary">Phiếu Đặt Phòng</h3>
+                <h3>Phiếu Đặt Phòng</h3>
             </div>
             <p><strong>Mã thuê phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+            <p><strong>Phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+            <p><strong>Ngày nhận:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+            <p><strong>Ngày trả:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+            <button class="btn btn-gradient btn-sm mt-3 create-booking-btn" data-booking-code="${bookingCode}">Lập Phiếu Thuê Phòng</button>
         `;
-
-        // Append the new ticket to the ticket container
         ticketContainer.appendChild(newTicket);
-
-        // Clear the input field after submission
         document.getElementById('bookingCode').value = "";
+    });
 
-        // Apply fade-in effect
-        setTimeout(function () {
-            newTicket.classList.add('show');
-        }, 100); // Delay the fade-in effect for a smoother experience
+    document.getElementById('ticketContainer').addEventListener('click', function (event) {
+        if (event.target.classList.contains('create-booking-btn')) {
+            var bookingCode = event.target.getAttribute('data-booking-code');
+            var rentalContainer = document.getElementById('rentalTicketContainer');
+
+            var rentalTicket = document.createElement('div');
+            rentalTicket.classList.add('rental-ticket');
+            rentalTicket.innerHTML = `
+                <div class="rental-ticket-header">Phiếu Thuê Phòng</div>
+                <p><strong>Mã thuê phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+                <p><strong>Phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+                <p><strong>Ngày nhận:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+                <p><strong>Ngày trả:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Số thứ tự</th>
+                            <th>Khách hàng</th>
+                            <th>CMND</th>
+                            <th>Địa chỉ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Nguyễn Văn A</td>
+                            <td>123456789</td>
+                            <td>Hà Nội</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Trần Thị B</td>
+                            <td>987654321</td>
+                            <td>TP. Hồ Chí Minh</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-gradient btn-sm mt-3">Xác nhận</button>
+            `;
+            rentalContainer.appendChild(rentalTicket);
+            event.target.closest('.ticket').remove();
+        }
+    });
+
+    document.getElementById('rentalTicketContainer').addEventListener('click', function (event) {
+        if (event.target.textContent.trim() === "Xác nhận") {
+            const rentalTicket = event.target.closest('.rental-ticket');
+            if (rentalTicket) {
+                rentalTicket.remove();
+            }
+        }
     });
 </script>
 {% endblock %}
