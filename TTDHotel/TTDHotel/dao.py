@@ -7,7 +7,7 @@ from utils import hash_password
 from TTDHotel.TTDHotel import app, db
 from models import Category, Account, RentingDetail, RoomStatus, CustomerType, StatusAccount, Role, Employee, Customer, \
     Room, RoomBooked, RoomRented, Bill, BookingDetail
-
+from sqlalchemy import func
 
 def auth_user(username, password):
     password_hash = hash_password(password)
@@ -15,9 +15,8 @@ def auth_user(username, password):
         Account.query.options(
             db.joinedload(Account.customer),
             db.joinedload(Account.employee),
-
         )
-        .filter_by(username=username, password=password_hash)
+        .filter(func.binary(Account.username) == username, func.binary(Account.password) == password_hash)
         .first()
     )
 
