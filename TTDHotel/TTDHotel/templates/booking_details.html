@@ -3,22 +3,23 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-center mb-4"
-        style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.6rem; color: #2c3e50; text-transform: uppercase;">
+        style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.4rem; color: #2c3e50; text-transform: uppercase;">
         Chi Tiết Đặt Phòng</h2>
-    <div class="card shadow-lg rounded-4 p-4 bg-light">
-        <h3 class="text-center mb-4" style="font-weight: 700; color: black;">Thông Tin Phòng</h3>
+
+    <div class="card shadow-lg rounded-4 p-4 bg-white">
+        <h3 class="text-center mb-4" style="font-weight: 700; color: #333;">Thông Tin Phòng</h3>
         <div class="booking-details mb-4">
             <p><strong>Số Phòng:</strong> {{room}}</p>
             <p><strong>Loại Phòng:</strong> {{category.name}}</p>
             <p><strong>Phụ thu:</strong> {{charge}}</p>
-            <p><strong>Tổng Tiền:</strong> {{total}} VND</p>
-            <p><strong>Ngày Nhận Phòng:</strong> {{booking_data.check_in_date}}</p>
-            <p><strong>Ngày Trả Phòng:</strong> {{booking_data.check_out_date}}</p>
+            <p><strong>Tổng Tiền:</strong> {{ "{:,}".format(total)}} VND</p>
+            <p><strong>Ngày Nhận Phòng:</strong> {{ booking_data.check_in_date.strftime('%d-%m-%Y') }}</p>
+            <p><strong>Ngày Trả Phòng:</strong> {{ booking_data.check_out_date.strftime('%d-%m-%Y') }}</p>
         </div>
     </div>
 
-    <div class="card shadow-lg rounded-4 p-4 bg-light mt-4">
-        <h3 class="text-center mb-4" style="font-weight: 700; color: black;">Danh Sách Khách Hàng</h3>
+    <div class="card shadow-lg rounded-4 p-4 bg-white mt-4">
+        <h3 class="text-center mb-4" style="font-weight: 700; color: #333;">Danh Sách Khách Hàng</h3>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -31,23 +32,23 @@
             </tr>
             </thead>
             <tbody>
-             {% for customer in room_details %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ customer.customer_name }}</td>
-                        <td>{{ customer.customer_phone }}</td>
-                        <td>{{ customer.customer_address }}</td>
-                        <td>{{ customer.customer_id_card }}</td>
-                        <td>{{ customer.customer_type }}</td>
-                    </tr>
-                    {% endfor %}
+            {% for customer in room_details %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.customer_phone }}</td>
+                <td>{{ customer.customer_address }}</td>
+                <td>{{ customer.customer_id_card }}</td>
+                <td>{{ customer.customer_type }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
 
     <div class="text-center mt-4">
         <a href="/booking">
-            <button class="btn btn-gradient btn-lg py-3 px-5" style="color: white">Trở về</button>
+            <button class="btn btn-gradient btn-lg py-3 px-5" style="color: white; margin-bottom: 50px;">Trở về</button>
         </a>
     </div>
 
@@ -57,48 +58,82 @@
     body {
         background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
         color: #2c3e50;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 900px;
     }
 
     .card {
-        border-radius: 20px;
-        background: linear-gradient(135deg, #ffffff, #f9fafb);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        padding: 25px;
-        max-width: 800px;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+        padding: 30px;
         margin: auto;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
     }
 
     .btn-gradient {
         background: linear-gradient(135deg, #6a11cb, #2575fc);
         border: none;
         border-radius: 50px;
-        font-weight: 700;
+        font-weight: 600;
         transition: all 0.3s ease;
     }
 
     .btn-gradient:hover {
         background: linear-gradient(135deg, #2575fc, #6a11cb);
         transform: scale(1.05);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     }
 
     .table {
         margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
     }
 
     th {
         background-color: #2575fc;
         color: black;
+        text-align: center;
+        padding: 12px;
     }
 
     td {
         background-color: #f9f9f9;
+        text-align: center;
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .booking-details p {
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-4 {
+        margin-top: 1.5rem;
     }
 </style>
 
 <script>
+    // Optional JavaScript: Function to go back to the previous page
     function goBack() {
-        window.history.back(); // Quay lại trang trước đó
+        window.history.back();
     }
 </script>
 {% endblock %}

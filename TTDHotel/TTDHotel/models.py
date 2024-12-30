@@ -229,6 +229,13 @@ if __name__ == "__main__":
             Room(id=5,name='105',  status_room=1, room_type_id=2),
             Room(id=6,name='106',  status_room=1, room_type_id=3),
             Room(id=7,name='107',  status_room=1, room_type_id=1),
+            Room(id=8, name='108', status_room=1, room_type_id=3),
+            Room(id=9, name='109', status_room=1, room_type_id=1),
+            Room(id=10, name='110', status_room=1, room_type_id=3),
+            Room(id=11, name='111', status_room=1, room_type_id=2),
+            Room(id=12, name='112', status_room=1, room_type_id=2),
+            Room(id=13, name='113', status_room=1, room_type_id=3),
+            Room(id=14, name='114', status_room=1, room_type_id=1),
         ]
 
         # phieu_dat_phong = [
