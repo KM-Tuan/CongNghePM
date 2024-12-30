@@ -8,11 +8,12 @@
     <div class="card shadow-lg rounded-4 p-4 bg-light">
         <h3 class="text-center mb-4" style="font-weight: 700; color: black;">Thông Tin Phòng</h3>
         <div class="booking-details mb-4">
-            <p><strong>Số Phòng:</strong> 101</p>
-            <p><strong>Loại Phòng:</strong> Deluxe</p>
-            <p><strong>Giá Tiền:</strong> 1,200,000 VND</p>
-            <p><strong>Ngày Nhận Phòng:</strong> 2024-12-30</p>
-            <p><strong>Ngày Trả Phòng:</strong> 2025-01-02</p>
+            <p><strong>Số Phòng:</strong> {{room}}</p>
+            <p><strong>Loại Phòng:</strong> {{category.name}}</p>
+            <p><strong>Phụ thu:</strong> {{charge}}</p>
+            <p><strong>Tổng Tiền:</strong> {{total}} VND</p>
+            <p><strong>Ngày Nhận Phòng:</strong> {{booking_data.check_in_date}}</p>
+            <p><strong>Ngày Trả Phòng:</strong> {{booking_data.check_out_date}}</p>
         </div>
     </div>
 
@@ -30,22 +31,16 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
-                <td>Nguyen Van A</td>
-                <td>0123456789</td>
-                <td>Hanoi</td>
-                <td>123456789</td>
-                <td>Cá Nhân</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Tran Thi B</td>
-                <td>0987654321</td>
-                <td>Ho Chi Minh City</td>
-                <td>987654321</td>
-                <td>Công Ty</td>
-            </tr>
+             {% for customer in room_details %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ customer.customer_name }}</td>
+                        <td>{{ customer.customer_phone }}</td>
+                        <td>{{ customer.customer_address }}</td>
+                        <td>{{ customer.customer_id_card }}</td>
+                        <td>{{ customer.customer_type }}</td>
+                    </tr>
+                    {% endfor %}
             </tbody>
         </table>
     </div>

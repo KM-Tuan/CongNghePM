@@ -132,12 +132,14 @@ def details(id):
 
 @app.route('/booked', methods=['POST'])
 def booked():
+    room_details = []
     if request.method == "POST":
         category_id = session.get('category_id')
         check_in_date = datetime.strptime(request.form['check_in_date'], '%d/%m/%Y')
         check_out_date = datetime.strptime(request.form['check_out_date'], '%d/%m/%Y')
 
-        category = dao.load_room_type(category_id)
+        category = dao.get_category_by_id(category_id)
+
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
 
         if len(available_rooms) < 1:
@@ -148,7 +150,7 @@ def booked():
             flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
             return redirect(request.referrer)
 
-        room_details = []
+
         for idx, maPhong in enumerate(available_rooms, start=1):
             customer_name = request.form.getlist('name[]')
             customer_phone = request.form.getlist('phone[]')
@@ -176,9 +178,31 @@ def booked():
             "check_out_date": check_out_date
         }
 
-        dao.add_booking(room_details, booking_data)
+        room= dao.get_room_by_id(room_details[0]["maPhong"])
 
-    return render_template('booking_details.html')
+        room_booked=dao.add_booking(room_details, booking_data)
+
+        booking_details = dao.get_booking_detail_by_booked_id(room_booked)
+        count = 0
+        customer_type = 1
+        for i in booking_details:
+            customer = dao.get_customer_by_id(i.customer_id)
+            if customer.customer_type_id == 2:
+                customer_type = app.config['foreigner']
+            count = count + 1
+
+        ExtraGuest = 1 if count < 3 else (app.config['ExtraGuest'] / 100)
+
+        number_of_days = (check_out_date - check_in_date).days
+
+        original_price = number_of_days * category.price
+        charge = original_price * ExtraGuest * customer_type - original_price
+
+        total = original_price + charge
+        return render_template('booking_details.html', category_id=category_id, total=total, charge=charge
+                           , booking_data=booking_data, room_details=room_details, room=room , category=category)
+    return render_template('booking_details.html', category_id=None
+                           , booking_data=[], room_detail=[])
 
 @app.route('/save_export', methods=['GET', 'POST'])
 def save_export():
@@ -225,7 +249,13 @@ def save_export():
 
 @app.route('/booking_details')
 def booking_details():
-    pass
+    category_id= session['category_id']
+    booking_data=session['booking_data']
+    room_detail=ssession['room_details']
+
+
+    return render_template('booking_details.html',category_id=category_id
+                           ,booking_data=booking_data,room_detail=room_detail)
 
 
 @app.route('/history')
