@@ -28,9 +28,9 @@ class AuthenticatedView(ModelView):
         # Lấy tất cả các cột từ model
         self.column_list = [column.key for column in model.__table__.columns]
 
-        # Thêm các cột từ các quan hệ (nếu có)
-        for relation in model.__mapper__.relationships.keys():
-            self.column_list.append(relation)
+        # # Thêm các cột từ các quan hệ (nếu có)
+        # for relation in model.__mapper__.relationships.keys():
+        #     self.column_list.append(relation)
 
         super(AuthenticatedView, self).__init__(model, session, **kwargs)
 
@@ -44,9 +44,11 @@ admin.add_view(AuthenticatedView(Role, db.session, category='Quản lý tài kho
 admin.add_view(AuthenticatedView(Category, db.session, category='Quản lý phòng'))
 admin.add_view(AuthenticatedView(Employee, db.session, category='Quản lý nhân sự'))
 admin.add_view(AuthenticatedView(Room, db.session, category='Quản lý phòng'))
-admin.add_view(AuthenticatedView(RoomBooked, db.session, category='Quản lý đặt/thuê phòng'))
-admin.add_view(AuthenticatedView(RoomRented, db.session, category='Quản lý đặt/thuê phòng'))
+admin.add_view(AuthenticatedView(RoomBooked, db.session, category='Quản lý đặt phòng'))
+admin.add_view(AuthenticatedView(RoomRented, db.session, category='Quản lý thuê phòng'))
 admin.add_view(AuthenticatedView(Bill, db.session, category='Quản lý hóa đơn'))
+admin.add_view(AuthenticatedView(BookingDetail, db.session, category='Quản lý đặt phòng'))
+admin.add_view(AuthenticatedView(RentingDetail, db.session, category='Quản lý thuê phòng'))
 
 
 class LogoutView(BaseView):

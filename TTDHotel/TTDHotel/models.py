@@ -13,26 +13,31 @@ class RoomStatus(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     room = relationship('Room', backref=backref('status', lazy=True))
+    def __str__(self):
+        return self.name
 
 class CustomerType(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     customer = relationship('Customer', backref=backref('customer_type', lazy=True))
-
+    def __str__(self):
+        return self.name
 
 
 class StatusAccount(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     account = relationship('Account', backref=backref('status_account', lazy=True))
-
+    def __str__(self):
+        return self.name
 
 
 class Role(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     account = relationship('Account', backref=backref('account_role', lazy=True))
-
+    def __str__(self):
+        return self.name
 
 class Category(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -51,13 +56,15 @@ class Employee(db.Model):
     address = Column(String(255))
     account_id = Column(Integer, ForeignKey('account.id'), nullable = True)
     room_rented = relationship('RoomRented', backref=backref('employee', lazy=True))
+    def __str__(self):
+        return self.name
 
 class Customer(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     cmnd = Column(String(20), nullable=True)
     address = Column(String(255), nullable=True)
-    phone = Column(String(11),  nullable=True)
+    phone = Column(String(20),  nullable=True)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     account_id = Column(Integer, ForeignKey('account.id'), nullable=True)
     avatar = Column(String(200), default="https://example.com/avatar_default.jpg")
@@ -75,6 +82,9 @@ class Room(db.Model):
     room_type_id = Column(Integer, ForeignKey('category.id'), nullable=False)
     booking_detail = relationship('BookingDetail', backref=backref('room', lazy=True))
     renting_detail = relationship('RentingDetail', backref=backref('room', lazy=True))
+
+    def __str__(self):
+        return self.name
 
 class RoomBooked(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)

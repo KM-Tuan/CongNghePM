@@ -116,10 +116,11 @@ def booked():
             customer_name = request.form.getlist('name[]')
             customer_phone = request.form.getlist('phone[]')
             customer_id_card = request.form.getlist('cmnd[]')
-            customer_address = session.get("address")
+            customer_address = request.form.getlist("address[]")
             customer_type = [request.form.get(f"option_{i + 1}") for i in range(len(customer_name))]
 
-            print(customer_name)
+            print(customer_type)
+
             if not(len(customer_name) == len(customer_phone) == len(customer_id_card)):
                 return jsonify({"message": "Lỗi tên, số, cc"}), 400
 
@@ -132,7 +133,7 @@ def booked():
                     "customer_phone":customer_phone[i],
                     "customer_id_card":customer_id_card[i],
                     "customer_type":customer_type[i],
-                    "customer_address":customer_address
+                    "customer_address":customer_address[i]
                 })
 
         booking_data={

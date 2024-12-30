@@ -37,7 +37,7 @@ addCustomerBtn.addEventListener('click', function () {
                     <label for="phone-${customerCount}">Số Điện Thoại</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="fullname-${customerCount}" name="address[]" placeholder="Địa chỉ" required>
+                    <input type="text" class="form-control" id="address-${customerCount}" name="address[]" placeholder="Địa chỉ" required>
                     <label for="address-${customerCount}">Địa chỉ</label>
                 </div>
                 <div class="form-floating mb-3">
@@ -92,6 +92,11 @@ bookingModal.addEventListener('hidden.bs.modal', function () {
                     <input type="tel" class="form-control" value="{{ customer.phone if customer else '' }}" id="phone-1" name="phone[]"
                            placeholder="Số Điện Thoại" required>
                     <label for="phone-1">Số Điện Thoại</label>
+                </div>
+                 <div class="form-floating mb-3">
+                    <input type="text" class="form-control" value="{{ customer.name if customer else ''}}" id="address-1" name="address[]"
+                           placeholder="Địa chỉ" required>
+                    <label for="address-1">Địa chỉ</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" value="{{ customer.cmnd if customer else '' }}" id="cmnd-1" name="cmnd[]"
