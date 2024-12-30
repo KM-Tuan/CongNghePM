@@ -101,7 +101,7 @@ def booked():
 
         category = dao.load_room_type(category_id)
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, room_quantity, category_id)
-
+        print(len(available_rooms))
         if len(available_rooms) < room_quantity:
             # Lưu các thông tin đã nhập vào session
             session['booking_data'] = {
