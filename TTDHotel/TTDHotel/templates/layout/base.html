@@ -25,32 +25,31 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.vi.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Ngày nhận phòng (chỉ có thể chọn từ hôm nay trở đi)
-        $('#datepicker1').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose: true,
-            todayHighlight: true,
-            startDate: new Date(), // Hôm nay trở đi
-            language: 'vi'
-        }).on('changeDate', function (e) {
-            // Khi người dùng chọn ngày nhận phòng, đặt startDate cho ngày trả phòng
-            var selectedDate = new Date(e.date);
-            $('#datepicker2').datepicker('setStartDate', selectedDate);
-        });
+    <script>
+        $(document).ready(function () {
+            // Ngày nhận phòng (chỉ có thể chọn từ hôm nay trở đi)
+            $('#datepicker1').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                startDate: new Date(), // Hôm nay trở đi
+                language: 'vi'
+            }).on('changeDate', function (e) {
+                // Khi người dùng chọn ngày nhận phòng, đặt startDate cho ngày trả phòng
+                var selectedDate = new Date(e.date);
+                $('#datepicker2').datepicker('setStartDate', selectedDate);
+            });
 
-        // Ngày trả phòng ( bắt đầu từ ngày nhận phòng)
-        $('#datepicker2').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose: true,
-            todayHighlight: true,
-            startDate: new Date(), // Hôm nay trở đi (cập nhật sau khi chọn ngày nhận phòng)
-            language: 'vi'
+            // Ngày trả phòng ( bắt đầu từ ngày nhận phòng)
+            $('#datepicker2').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                startDate: new Date(), // Hôm nay trở đi (cập nhật sau khi chọn ngày nhận phòng)
+                language: 'vi'
+            });
         });
-    });
-</script>
-
+    </script>
 
 
     <style>
@@ -72,6 +71,18 @@
 
 <div class="content">
     <!--    <div class="container">-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-4">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     {% block content required %}
     {% endblock %}
     <!--    </div>-->
