@@ -1,4 +1,5 @@
 import math
+# from crypt import methods
 from datetime import datetime
 
 from authlib.integrations.flask_client import OAuth
@@ -71,10 +72,41 @@ def contacts():
     return render_template('contacts.html', logged_in=check_login(), contacts=contacts)
 
 
-@app.route('/rents')
+@app.route('/rents',methods=['GET','POST'])
 def rents():
-    return render_template('rents.html',logged_in = check_login())
+    enriched_bookings=[]
+    data ={}
+    if request.method == 'POST':
+        room_booked_id = request.form.get('maDatPhong')
+        room_booked = dao.get_room_booked_by_id(room_booked_id)
+        print(room_booked_id)
+        if room_booked:
+            booking_detail = dao.get_booking_detail_by_booked_id(room_booked_id)
+            room = dao.get_room_by_id(booking_detail[0].room_id)
 
+            data={
+                'room':room.name,
+                'check_in_date': room_booked.check_in_date.strftime('%d/%m/%Y'),
+                'check_out_date': room_booked.check_out_date.strftime('%d/%m/%Y'),
+                'booking_date': room_booked.booking_date.strftime('%d/%m/%Y'),
+            }
+        # # Tạo danh sách khách hàng liên quan đến từng booking
+            for booking in booking_detail:
+                customer = dao.get_customer_by_id(booking.customer_id)
+                enriched_bookings.append({
+                    'id': booking.id,
+                    'customer_name': customer.name,
+                    'customer_phone': customer.phone,
+                    'customer_address': customer.address,
+                    'customer_cmnd': customer.cmnd,
+                    'customer_type': "Nội địa" if customer.customer_type_id==1 else 'Ngoại địa',
+                })
+    return render_template(
+        'rents.html',
+        room_booked=enriched_bookings,
+        data=data,
+        logged_in=check_login()
+    )
 
 @app.route('/category/<int:id>')
 def details(id):
@@ -89,22 +121,16 @@ def booked():
         category_id = session.get('category_id')
         check_in_date = datetime.strptime(request.form['check_in_date'], '%d/%m/%Y')
         check_out_date = datetime.strptime(request.form['check_out_date'], '%d/%m/%Y')
-        # if (category_id == 1):
-        #     room_count = dao.get_available_room_standard_count()
-        # if (category_id == 2):
-        #     room_count = dao.get_available_room_deluxe_count()
-        # if (category_id == 3):
-        #     room_count = dao.get_available_room_vip_count()
+
 
         category = dao.load_room_type(category_id)
         available_rooms = dao.check_room_availability(check_in_date, check_out_date, 1, category_id)
-
+        print(available_rooms)
         if len(available_rooms) < 1:
             # Lưu các thông tin đã nhập vào session
             session['booking_data'] = {
                 'customer_data': request.form.to_dict(flat=False)  # Lưu toàn bộ thông tin khách hàng
             }
-            print(session['booking_data'])
             flash("Không còn đủ phòng trống trong khoảng thời gian bạn chọn!", "warning")
             return redirect(request.referrer )
 

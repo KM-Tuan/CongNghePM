@@ -6,12 +6,12 @@
         style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.4rem; color: #2c3e50;">Nhập mã thuê
         phòng</h2>
     <div class="card shadow-lg rounded-4 p-4 bg-light">
-        <form id="bookingForm">
+        <form id="bookingForm" method="POST" action="/rents" >
             <div class="form-group mb-3">
                 <label for="bookingCode" class="form-label text-muted"
                        style="font-weight: 500; font-size: 1rem;">Mã thuê phòng</label>
                 <input type="text" class="form-control form-control-lg border-0 shadow-sm rounded-3 p-3"
-                       id="bookingCode" placeholder="Nhập mã thuê phòng" required>
+                       id="bookingCode" name ="maDatPhong" placeholder="Nhập mã thuê phòng" required>
             </div>
             <button type="submit" class="btn btn-gradient btn-lg w-100 text-white py-3">Xác nhận</button>
         </form>
@@ -126,93 +126,44 @@
         background-color: #f9f9f9;
     }
 </style>
+{% if data and room_booked %}
+<div id="bookingInfo">
+    <h3>Thông Tin Đặt Phòng</h3>
+    <p><strong>Phòng:</strong> {{ data.room }}</p>
+    <p><strong>Ngày Nhận Phòng:</strong> {{ data.check_in_date }}</p>
+    <p><strong>Ngày Trả Phòng:</strong> {{ data.check_out_date }}</p>
+    <p><strong>Ngày Đặt Phòng:</strong> {{ data.booking_date }}</p>
+</div>
 
-{% block scripts %}
-<script>
-    document.getElementById('bookingForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+<div id="customerInfo">
+    <h3>Danh Sách Khách Hàng</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên Khách Hàng</th>
+                <th>Số Điện Thoại</th>
+                <th>Địa Chỉ</th>
+                <th>CMND</th>
+                <th>Loại Khách</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in room_booked %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.customer_phone }}</td>
+                <td>{{ customer.customer_address }}</td>
+                <td>{{ customer.customer_cmnd }}</td>
+                <td>{{ customer.customer_type }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>Không tìm thấy thông tin cho mã thuê phòng.</p>
+{% endif %}
 
-        var bookingCode = document.getElementById('bookingCode').value.trim();
-        if (!bookingCode) return;
-
-        var existingTickets = document.querySelectorAll('#ticketContainer .ticket, #rentalTicketContainer .rental-ticket');
-        for (var ticket of existingTickets) {
-            if (ticket.querySelector('.text-info').textContent.trim() === bookingCode) {
-                alert('Mã thuê phòng này đã được nhập trước đó!');
-                return;
-            }
-        }
-
-        var ticketContainer = document.getElementById('ticketContainer');
-        var newTicket = document.createElement('div');
-        newTicket.classList.add('ticket');
-        newTicket.innerHTML = `
-            <div class="ticket-header">
-                <h3>Phiếu Đặt Phòng</h3>
-            </div>
-            <p><strong>Mã thuê phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-            <p><strong>Phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-            <p><strong>Ngày nhận:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-            <p><strong>Ngày trả:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-            <button class="btn btn-gradient btn-sm mt-3 create-booking-btn" data-booking-code="${bookingCode}">Lập Phiếu Thuê Phòng</button>
-        `;
-        ticketContainer.appendChild(newTicket);
-        document.getElementById('bookingCode').value = "";
-    });
-
-    document.getElementById('ticketContainer').addEventListener('click', function (event) {
-        if (event.target.classList.contains('create-booking-btn')) {
-            var bookingCode = event.target.getAttribute('data-booking-code');
-            var rentalContainer = document.getElementById('rentalTicketContainer');
-
-            var rentalTicket = document.createElement('div');
-            rentalTicket.classList.add('rental-ticket');
-            rentalTicket.innerHTML = `
-                <div class="rental-ticket-header">Phiếu Thuê Phòng</div>
-                <p><strong>Mã thuê phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-                <p><strong>Phòng:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-                <p><strong>Ngày nhận:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-                <p><strong>Ngày trả:</strong> <span class="fw-bold text-info">${bookingCode}</span></p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Số thứ tự</th>
-                            <th>Khách hàng</th>
-                            <th>CMND</th>
-                            <th>Địa chỉ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>123456789</td>
-                            <td>Hà Nội</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Trần Thị B</td>
-                            <td>987654321</td>
-                            <td>TP. Hồ Chí Minh</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-gradient btn-sm mt-3">Xác nhận</button>
-            `;
-
-            rentalContainer.appendChild(rentalTicket);
-            event.target.closest('.ticket').remove();
-        }
-    });
-
-    document.getElementById('rentalTicketContainer').addEventListener('click', function (event) {
-        if (event.target.textContent.trim() === "Xác nhận") {
-            const rentalTicket = event.target.closest('.rental-ticket');
-            if (rentalTicket) {
-                rentalTicket.remove();
-            }
-        }
-    });
-</script>
-{% endblock %}
 {% endblock %}

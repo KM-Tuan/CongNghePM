@@ -151,6 +151,8 @@ def check_room_availability(ngay_nhan_phong, ngay_tra_phong, so_luong_phong, loa
 
     return [room[0] for room in available_rooms]  # Trả về danh sách mã phòng trống
 
+def get_booking_detail_by_booked_id(booked_id):
+    return BookingDetail.query.filter(BookingDetail.room_booked_id == booked_id).all()
 
 def get_available_room_standard():
     return Room.query.filter(Room.status_room==1 , Room.room_type_id==1).all()
