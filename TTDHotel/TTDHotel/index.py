@@ -251,7 +251,7 @@ def save_export():
 def booking_details():
     category_id= session['category_id']
     booking_data=session['booking_data']
-    room_detail=ssession['room_details']
+    room_detail=session['room_details']
 
 
     return render_template('booking_details.html',category_id=category_id
@@ -482,13 +482,13 @@ def register():
             res = cloudinary.uploader.upload(avatar)
             avatar_path = res['secure_url']
 
-        success = dao.add_user(name=name, phone=phone, username=username, password=password,
+        dao.add_user(name=name, phone=phone, username=username, password=password,
                                customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
-        if success:
-            flash('Account created successfully!', 'success')
-            return redirect('/login')
-        else:
-            flash('An error occurred while creating the account. Please try again.', 'danger')
+
+        flash('Account created successfully!', 'success')
+        return redirect('/login')
+    else:
+        flash('An error occurred while creating the account. Please try again.', 'danger')
 
     return render_template('register.html')
 
