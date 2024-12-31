@@ -466,7 +466,7 @@ def register():
         avatar = request.files.get('avatar')
         address = request.form.get('address')
         cmnd = request.form.get('cmnd')
-        customer_type = request.form.get('customer_type')
+        customer_type = request.form.get('option')
         avatar_path = None
         role = request.form.get('role')  # Nhận role từ form
 
@@ -482,13 +482,13 @@ def register():
             res = cloudinary.uploader.upload(avatar)
             avatar_path = res['secure_url']
 
-        success = dao.add_user(name=name, phone=phone, username=username, password=password,
+        dao.add_user(name=name, phone=phone, username=username, password=password,
                                customer_type_id=customer_type, address=address, cmnd=cmnd,  avatar=avatar_path)
-        if success:
-            flash('Account created successfully!', 'success')
-            return redirect('/login')
-        else:
-            flash('An error occurred while creating the account. Please try again.', 'danger')
+
+        flash('Account created successfully!', 'success')
+        return redirect('/login')
+    else:
+        flash('An error occurred while creating the account. Please try again.', 'danger')
 
     return render_template('register.html')
 
