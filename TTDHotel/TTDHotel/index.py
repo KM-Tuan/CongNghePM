@@ -191,12 +191,12 @@ def booked():
                 customer_type = app.config['foreigner']
             count = count + 1
 
-        ExtraGuest = (100 if count < 3 else (app.config['ExtraGuest']) / 100)
+        ExtraGuest = (100 if count < 3 else (100+app.config['ExtraGuest'])) / 100
 
         number_of_days = (check_out_date - check_in_date).days
 
         original_price = number_of_days * category.price
-        charge = original_price * (1+ExtraGuest) * customer_type - original_price
+        charge = original_price * (ExtraGuest) * customer_type - original_price
 
         total = original_price + charge
         return render_template('booking_details.html', category_id=category_id, total=total, charge=charge
@@ -228,7 +228,7 @@ def save_export():
                 customer_type=app.config['foreigner']
             count=count+1
 
-        ExtraGuest=1 if count<3 else (app.config['ExtraGuest']/100)
+        ExtraGuest=(100 if count<3 else (100+app.config['ExtraGuest']))/100
 
         room=dao.get_room_by_id(booking_details[0].room_id)
         number_of_days = (check_out_date - check_in_date).days
@@ -466,7 +466,7 @@ def register():
         avatar = request.files.get('avatar')
         address = request.form.get('address')
         cmnd = request.form.get('cmnd')
-        customer_type = request.form.get('customer_type')
+        customer_type = request.form.get('option')
         avatar_path = None
         role = request.form.get('role')  # Nhận role từ form
 
@@ -520,10 +520,12 @@ def authorize():
     user_info = resp.json()
     user = oauth.google.userinfo()   # uses openid endpoint to fetch user info
     # Here you use the profile/user data that you got and query your database find/register the user
+    res=cloudinary.uploader.upload(user_info.get('picture'))
+    avatar_path = res['secure_url']
     user = dao.get_or_create_user({
         'email': user_info.get('email'),
         'name': user_info.get('name'),
-        'picture': user_info.get('picture')
+        'picture': avatar_path
     })
     # and set ur own data in the session not the profile from Google
     session['profile'] = user_info
@@ -554,12 +556,13 @@ def authorize_facebook():
     token = facebook.authorize_access_token()  # Lấy access token từ Facebook
     resp = facebook.get('me?fields=id,name,email,picture')  # Truy vấn thông tin người dùng
     user_info = resp.json()
-
+    res=cloudinary.uploader.upload(user_info.get('picture', {}).get('data', {}).get('url'))
+    avatar_path = res['secure_url']
     # Xử lý thông tin người dùng
     user = dao.get_or_create_user({
         'email': user_info.get('email'),
         'name': user_info.get('name'),
-        'picture': user_info.get('picture', {}).get('data', {}).get('url')
+        'picture': avatar_path
     })
 
     # Lưu thông tin vào session
