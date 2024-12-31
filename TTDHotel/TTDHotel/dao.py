@@ -101,6 +101,7 @@ def add_user(name,phone, username  , password ,address, customer_type_id ,cmnd =
     db.session.commit()
 
 
+
 def update_user(id, name=None, phone=None, password=None):
     """Cập nhật thông tin người dùng."""
     customer = Customer.query.filter(Customer.account_id == id).first()
