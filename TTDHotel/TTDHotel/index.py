@@ -191,12 +191,14 @@ def booked():
                 customer_type = app.config['foreigner']
             count = count + 1
 
-        ExtraGuest = (100 if count < 3 else (app.config['ExtraGuest']) / 100)
-
+        ExtraGuest = (100 if count < 3 else (app.config['ExtraGuest'])) / 100
+        print(ExtraGuest)
         number_of_days = (check_out_date - check_in_date).days
-
+        print(number_of_days)
         original_price = number_of_days * category.price
-        charge = original_price * (1+ExtraGuest) * customer_type - original_price
+        print(original_price)
+        print(customer_type)
+        charge = original_price * ExtraGuest * customer_type - original_price
 
         total = original_price + charge
         return render_template('booking_details.html', category_id=category_id, total=total, charge=charge
@@ -228,7 +230,7 @@ def save_export():
                 customer_type=app.config['foreigner']
             count=count+1
 
-        ExtraGuest=1 if count<3 else (app.config['ExtraGuest']/100)
+        ExtraGuest = (100 if count < 3 else (app.config['ExtraGuest'])) / 100
 
         room=dao.get_room_by_id(booking_details[0].room_id)
         number_of_days = (check_out_date - check_in_date).days
