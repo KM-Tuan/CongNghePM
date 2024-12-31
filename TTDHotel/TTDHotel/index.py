@@ -251,7 +251,7 @@ def save_export():
 def booking_details():
     category_id= session['category_id']
     booking_data=session['booking_data']
-    room_detail=ssession['room_details']
+    room_detail=session['room_details']
 
 
     return render_template('booking_details.html',category_id=category_id
