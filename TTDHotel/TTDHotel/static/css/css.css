@@ -12,16 +12,11 @@
 body {
     background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
     font-family: 'Montserrat', sans-serif;
-    scroll-behavior: smooth;
-}
-
-body {
-    background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
-    display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    display: flex;
+    scroll-behavior: smooth;
 }
-
 .content {
     padding-top: 62px;
     flex: 1;
