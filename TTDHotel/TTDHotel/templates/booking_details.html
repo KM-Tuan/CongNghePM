@@ -39,7 +39,7 @@
                 <td>{{ customer.customer_phone }}</td>
                 <td>{{ customer.customer_address }}</td>
                 <td>{{ customer.customer_id_card }}</td>
-                <td>{{ "Nội địa" if customer.customer_type.__eq__(1) else "Nước ngoài" }}</td>
+                <td>{{ "Nội địa" if customer.customer_type=='1' else "Nước ngoài" }}</td>
             </tr>
             {% endfor %}
             </tbody>

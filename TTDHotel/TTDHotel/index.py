@@ -201,6 +201,7 @@ def booked():
         total = original_price + charge
         return render_template('booking_details.html', category_id=category_id, total=total, charge=charge
                            , booking_data=booking_data, room_details=room_details, room=room , category=category)
+
     return render_template('booking_details.html', category_id=None
                            , booking_data=[], room_detail=[])
 
