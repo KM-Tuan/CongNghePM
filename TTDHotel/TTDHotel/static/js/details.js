@@ -79,27 +79,27 @@ bookingModal.addEventListener('hidden.bs.modal', function () {
     // Reset customer fields to default
     customerFields.innerHTML = `
         <div class="card mb-3" id="customer-1">
-            <div class="card-header bg-light">Khách hàng 1
+            <div class="card-header">Khách hàng 1
                 <button type="button" class="btn-close ms-2" aria-label="Close" onclick="removeCustomer(1)"></button>
             </div>
             <div class="card-body">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" value="{{ customer.name if customer else ''}}" id="fullname-1" name="name[]"
+                    <input type="text" class="form-control" value="" id="fullname-1" name="name[]"
                            placeholder="Họ và Tên" required>
                     <label for="fullname-1">Họ và Tên</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="tel" class="form-control" value="{{ customer.phone if customer else '' }}" id="phone-1" name="phone[]"
+                    <input type="tel" class="form-control" value="" id="phone-1" name="phone[]"
                            placeholder="Số Điện Thoại" required>
                     <label for="phone-1">Số Điện Thoại</label>
                 </div>
                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control" value="{{ customer.name if customer else ''}}" id="address-1" name="address[]"
+                    <input type="text" class="form-control" value="" id="address-1" name="address[]"
                            placeholder="Địa chỉ" required>
                     <label for="address-1">Địa chỉ</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" value="{{ customer.cmnd if customer else '' }}" id="cmnd-1" name="cmnd[]"
+                    <input type="text" class="form-control" value="" id="cmnd-1" name="cmnd[]"
                            placeholder="Căn cước/chứng minh thư" required>
                     <label for="cmnd-1">Căn cước/chứng minh thư</label>
                 </div>
@@ -162,3 +162,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const roomQuantity = document.getElementById('room-quantity').value;
         roomQuantityModal.value = roomQuantity;
     });
+

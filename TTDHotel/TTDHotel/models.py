@@ -232,10 +232,15 @@ if __name__ == "__main__":
             Room(id=8, name='108', status_room=1, room_type_id=3),
             Room(id=9, name='109', status_room=1, room_type_id=1),
             Room(id=10, name='110', status_room=1, room_type_id=3),
-            Room(id=11, name='111', status_room=1, room_type_id=2),
-            Room(id=12, name='112', status_room=1, room_type_id=2),
-            Room(id=13, name='113', status_room=1, room_type_id=3),
-            Room(id=14, name='114', status_room=1, room_type_id=1),
+            Room(id=11, name='201', status_room=1, room_type_id=2),
+            Room(id=12, name='202', status_room=1, room_type_id=2),
+            Room(id=13, name='203', status_room=1, room_type_id=3),
+            Room(id=15, name='204', status_room=1, room_type_id=1),
+            Room(id=16, name='205', status_room=1, room_type_id=1),
+            Room(id=17, name='206', status_room=1, room_type_id=2),
+            Room(id=18, name='207', status_room=1, room_type_id=1),
+            Room(id=19, name='208', status_room=1, room_type_id=2),
+            Room(id=20, name='209', status_room=1, room_type_id=3),
         ]
 
         # phieu_dat_phong = [
