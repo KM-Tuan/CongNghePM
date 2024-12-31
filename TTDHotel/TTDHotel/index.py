@@ -292,7 +292,7 @@ def process_admin_login():
 
 
 @login.user_loader
-def get_user_by_id(user_id):
+def get(user_id):
     return dao.get_user_by_id(int(user_id))
 
 
@@ -316,7 +316,6 @@ def login_my_user():
 @app.route('/forgot_pass')
 def forgot_pass():
     return render_template('forgot_password.html')
-
 
 @app.route('/forgot_password', methods=['POST'])
 def forgot_password():
